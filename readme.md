@@ -1,1 +1,1 @@
-test
+test Jaculi cooler typ
