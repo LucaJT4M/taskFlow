@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 from be.api import health, user_route, task_route, auth
 from be.core.db import init_db
 
 app = FastAPI()
+oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 app.add_middleware(
     CORSMiddleware,
