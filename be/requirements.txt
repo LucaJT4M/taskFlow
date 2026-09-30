@@ -3,4 +3,7 @@ fastapi
 sqlalchemy
 python-dotenv
 psycopg[binary]
-psycopg
+passlib[bcrypt]
+python-multipart
+python-jose[cryptography]
+pwdlib[argon2]

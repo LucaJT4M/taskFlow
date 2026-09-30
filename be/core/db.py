@@ -1,19 +1,21 @@
 from sqlalchemy import create_engine
-import os
-from pathlib import Path
-from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker, declarative_base
+from be.core.config import DATABASE_URL
 
-ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
-load_dotenv(dotenv_path=ENV_PATH)
-
-DATABASE_URL = os.getenv("DATABASE_URL")
 Base = declarative_base()
 
 if not DATABASE_URL:
 	raise RuntimeError("DATABASE_URL is not set. Add it to be/.env or export it in your environment.")
 
 engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
