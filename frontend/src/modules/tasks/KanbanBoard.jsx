@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import TaskCard from './TaskCard'
+
+const API_URL = 'http://localhost:8000'
 
 const COLUMNS = [
   { status: 'todo', title: 'To Do' },
@@ -6,20 +9,28 @@ const COLUMNS = [
   { status: 'done', title: 'Erledigt' },
 ]
 
-// Testdaten – später kommen die Aufgaben vom Backend
-const DEMO_TASKS = [
-  { id: 1, title: 'DB-Schema erstellen', description: 'Tabelle tasks', status: 'done' },
-  { id: 2, title: 'Endpunkte bauen', description: 'CRUD für Aufgaben', status: 'in_progress' },
-  { id: 3, title: 'Kanban-UI', description: 'Board mit API verbinden', status: 'todo' },
-]
-
 function KanbanBoard() {
+  const [tasks, setTasks] = useState([])
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API_URL}/tasks`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then(setTasks)
+      .catch((err) => setError(err.message))
+  }, [])
+
+  if (error) return <p>Fehler: {error}</p>
+
   return (
     <div className="board">
       {COLUMNS.map((col) => (
         <div key={col.status} className="column">
           <h3>{col.title}</h3>
-          {DEMO_TASKS
+          {tasks
             .filter((task) => task.status === col.status)
             .map((task) => (
               <TaskCard key={task.id} task={task} />
