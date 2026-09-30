@@ -1,8 +1,10 @@
-function App() {
+import KanbanBoard from "./modules/tasks/KanbanBoard";
+
+function App () {
   return (
     <div>
-      <h1>TaskFlow</h1>
-      <p>Kanban-Board kommt hier hin</p>
+      <h1>Task-Flow</h1>
+      <KanbanBoard />
     </div>
   )
 }
