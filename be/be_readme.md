@@ -1,13 +1,51 @@
-### Starten des BE:
+## Starten des BE:
 
-1. Docker starten: docker compose up
-2. aus dem RootFolder (taskflow folder): uvicorn.exe be.main:app --reload
+1. venv erstellen: python -m venv venv
+2. venv aktivieren: ./venv/Scripts/activate
+3. im venv alle pakete herunterladen: pip install -r ./be/requirements.txt
+4. Docker starten: docker compose up
+5. aus dem RootFolder (taskflow folder): uvicorn.exe be.main:app --reload
 
-## Health Endpoint
+### Health Endpoint
 
-- /live => returns {"status": "alive"}
-- /ready => checks if DB is ready for connection
+**Check ob api ready**
 
-## Auth Endpoint
+```
+GET /api/health/live
+```
 
-- /
+gibt optimaler weise {"status": "ready"} zurück
+
+**Checkt ob db ready ist**
+
+```
+GET /api/health/ready
+```
+
+gibt optimaler weise: {
+"status": "ready",
+"database": "ok",
+} zurück
+
+### Auth Endpoint
+
+**JWT token für Session holen**
+gibt jwt token zurück, wenn user richtig authentifiziert wurde
+
+```
+GET /api/auth/token
+```
+
+### User Endpoints
+
+**User erstellen**
+
+```
+POST /api/user/{username},{password}
+```
+
+**Alle User auslese**
+
+```
+GET /api/user
+```

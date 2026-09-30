@@ -10,8 +10,8 @@ class User_Service:
     def get_user_by_username(self, db, username: str):
         return db.query(User).filter(User.username == username).first()
 
-    def authenticate_user(self, username: str, password: str):
-        user = self.get_user_by_username(self.db, username)
+    def authenticate_user(self, db, username: str, password: str):
+        user = self.get_user_by_username(db, username)
         if not user:
             return False
         if not verify_password(password, user.hashed_password):

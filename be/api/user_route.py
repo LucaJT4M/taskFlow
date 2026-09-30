@@ -10,6 +10,7 @@ service = User_Service()
 
 @router.post("", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    """Erstellt User in DB"""
     try:
         return service.create_user(db, user.username, user.password)
     except ValueError as e:
@@ -17,6 +18,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.get("", response_model=list[UserResponse])
 def get_users(db: Session = Depends(get_db)):
+    """Returnt alle User in der DB"""
     try:
         return service.get_users(db)
 
