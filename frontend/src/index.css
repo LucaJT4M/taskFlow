@@ -3,3 +3,8 @@ body { margin: 0; padding: 24px; font-family: sans-serif; background: #f4f5f7; }
 .column { background: #ebecf0; border-radius: 6px; padding: 12px; min-height: 300px; }
 .card { background: white; border-radius: 4px; padding: 10px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
 .card p { margin: 4px 0 0; font-size: 14px; color: #5e6c84; }
+.task-form { display: flex; gap: 8px; margin-bottom: 16px; }
+.task-form input { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; }
+.card-actions { display: flex; gap: 4px; margin-top: 8px; }
+.card-actions button { cursor: pointer; }
+.error { color: #c00; }
