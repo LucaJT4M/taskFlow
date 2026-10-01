@@ -48,26 +48,35 @@ function handleLogout() {
     }
   }
 
+  const today = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+  const doneCount = tasks.filter((t) => t.status === 'done').length
+
     return (
-    <div className="tasks-page">
-      <header className="tasks-header">
-        <h1>Task-Flow</h1>
-        <div className="header-actions">
-          <div className="view-switch">
-            <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>Liste</button>
-            <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
-          </div>
-          <button onClick={handleLogout}>Logout</button>
+    <div className="app-dark">
+        <div className="tasks-page">
+                <header className="tasks-header">
+            <div>
+            <p className="eyebrow">{today}</p>
+            <h1>Meine Aufgaben</h1>
+            <p className="subtitle">{tasks.length - doneCount} offen · {doneCount} erledigt</p>
+            </div>
+            <div className="header-actions">
+            <div className="view-switch">
+                <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>Liste</button>
+                <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
+            </div>
+            <button className="btn-ghost" onClick={handleLogout}>Logout</button>
+            </div>
+        </header>
+
+        {error && <p className="error">Fehler: {error}</p>}
+        <TaskForm onCreate={handleCreate} />
+
+        {view === 'board'
+            ? <KanbanBoard tasks={tasks} onUpdate={handleUpdate} onDelete={handleDelete} />
+            : <TaskList tasks={tasks} onUpdate={handleUpdate} onDelete={handleDelete} />}
         </div>
-      </header>
-
-      {error && <p className="error">Fehler: {error}</p>}
-      <TaskForm onCreate={handleCreate} />
-
-      {view === 'board'
-        ? <KanbanBoard tasks={tasks} onUpdate={handleUpdate} onDelete={handleDelete} />
-        : <TaskList tasks={tasks} onUpdate={handleUpdate} onDelete={handleDelete} />}
-    </div>
+    </div>    
   )
 }
 
