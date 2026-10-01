@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/authService";
+import { toast } from "react-toastify";
 
 function ProtectedRoute() {
     const [authenticated, setAuthenticated] = useState<boolean | null>(null);
@@ -22,6 +23,7 @@ function ProtectedRoute() {
 
     // Not authenticated
     if (!authenticated) {
+        toast.error("Unauthorized. Please log in to continue.");
         return <Navigate to="/" replace />;
     }
 

@@ -1,5 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 function RegisterForm() {
     const [username, setUsername] = useState("")
@@ -55,41 +56,23 @@ function RegisterForm() {
             const data = await login_response.json();
             localStorage.setItem("access_token", data.access_token);
 
-            navigate("/board")
+            navigate("/dashboard")
         } catch (error) {
+			const message = error instanceof Error ? error.message : "Registration failed";
+			toast.error(message);
             console.error(error);
         }
     }
 
 	return (
-		<section
-			id="register-form"
-			aria-label="Register"
-			style={{
-				maxWidth: 520,
-				margin: "16px auto",
-				padding: 24,
-				borderRadius: 20,
-				background: "linear-gradient(140deg, #f6fff8 0%, #eef6ff 100%)",
-				boxShadow: "0 12px 32px rgba(16, 24, 40, 0.1)",
-			}}
-		>
-			<h2 style={{ margin: "0 0 6px", fontSize: 28, color: "#17324d" }}>Create account</h2>
-			<p style={{ margin: "0 0 18px", color: "#4d6179" }}>Join TaskFlow in a few seconds.</p>
+		<section id="register-form" aria-label="Register" className="auth-shell">
+			<h2 className="auth-title">Create account</h2>
+			<p className="auth-subtitle">Join TaskFlow in a few seconds.</p>
 
-			<form
-				style={{
-					border: "1px solid #d6e3f3",
-					borderRadius: 14,
-					padding: 16,
-					background: "#ffffff",
-					boxShadow: "0 4px 14px rgba(0, 18, 42, 0.08)",
-				}}
-                onSubmit={handleSubmit}
-			>
-				<h3 style={{ margin: "0 0 12px", color: "#17324d" }}>Register</h3>
+			<form className="auth-card" onSubmit={handleSubmit}>
+				<h3 className="auth-card-title">Register</h3>
 
-				<label htmlFor="register-username" style={{ fontSize: 14, color: "#3f556f" }}>
+				<label htmlFor="register-username" className="auth-label">
 					Username
 				</label>
 				<input
@@ -97,21 +80,12 @@ function RegisterForm() {
 					name="username"
 					type="text"
 					placeholder="choose username"
-					style={{
-						display: "block",
-						width: "100%",
-						boxSizing: "border-box",
-						margin: "6px 0 10px",
-						padding: "10px 12px",
-						border: "1px solid #c8d8ec",
-						borderRadius: 10,
-						outline: "none",
-					}}
+                    className="auth-input"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
 				/>
 
-				<label htmlFor="register-password" style={{ fontSize: 14, color: "#3f556f" }}>
+				<label htmlFor="register-password" className="auth-label">
 					Password
 				</label>
 				<input
@@ -119,21 +93,12 @@ function RegisterForm() {
 					name="password"
 					type="password"
 					placeholder="choose password"
-					style={{
-						display: "block",
-						width: "100%",
-						boxSizing: "border-box",
-						margin: "6px 0 10px",
-						padding: "10px 12px",
-						border: "1px solid #c8d8ec",
-						borderRadius: 10,
-						outline: "none",
-					}}
+                    className="auth-input"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
 				/>
 
-				<label htmlFor="register-password-repeat" style={{ fontSize: 14, color: "#3f556f" }}>
+				<label htmlFor="register-password-repeat" className="auth-label">
 					Repeat password
 				</label>
 				<input
@@ -141,39 +106,18 @@ function RegisterForm() {
 					name="password-repeat"
 					type="password"
 					placeholder="repeat password"
-					style={{
-						display: "block",
-						width: "100%",
-						boxSizing: "border-box",
-						margin: "6px 0 12px",
-						padding: "10px 12px",
-						border: "1px solid #c8d8ec",
-						borderRadius: 10,
-						outline: "none",
-					}}
+                    className="auth-input"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
 				/>
 
-				<button
-					type="submit"
-					style={{
-						width: "100%",
-						padding: "10px 12px",
-						borderRadius: 10,
-						border: "1px solid #a8c7e8",
-						color: "#17324d",
-						background: "#eef6ff",
-						cursor: "pointer",
-						transition: "background 0.2s ease",
-					}}
-				>
+				<button type="submit" className="auth-button auth-button-secondary">
 					Create account
 				</button>
 
-				<p style={{ margin: "12px 0 0", fontSize: 14, color: "#4d6179" }}>
+				<p className="auth-switch-text">
 					Already have an account?{" "}
-					<Link to="/">Back to login</Link>
+					<Link className="auth-switch-link" to="/">Back to login</Link>
 				</p>
 			</form>
 		</section>
