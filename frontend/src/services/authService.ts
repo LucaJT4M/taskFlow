@@ -1,7 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
-const navigate = useNavigate();
-
 export async function getCurrentUser() {
     const token = localStorage.getItem("access_token");
 
@@ -25,5 +21,4 @@ export async function getCurrentUser() {
 
 export function logout() {
     localStorage.removeItem("access_token"); // Logs the user out
-    navigate("/")
 }

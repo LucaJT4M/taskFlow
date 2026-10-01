@@ -1,7 +1,7 @@
-import KanbanBoard from "./modules/tasks/KanbanBoard";
 import LoginForm from "./modules/login/LoginForm";
 import RegisterForm from "./modules/login/RegisterForm";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import TasksPage from "./modules/tasks/TasksPage";
 import ProtectedRoute from "./modules/ProtectedRoute";
 
 function App () {
@@ -12,9 +12,9 @@ function App () {
         <Route path="" element={<LoginForm/>}/>
         <Route path="/signup" element={<RegisterForm/>}/>
 
-        {/* Private routest ;) */}
+        {/* Private Routes */}
         <Route element={<ProtectedRoute/>}>
-          <Route path="/board" element={<KanbanBoard/>}/>
+          <Route path="/board" element={<TasksPage/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
