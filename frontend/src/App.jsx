@@ -1,11 +1,16 @@
 import KanbanBoard from "./modules/tasks/KanbanBoard";
+import LoginForm from "./modules/login/LoginForm";
+import RegisterForm from "./modules/login/RegisterForm";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App () {
   return (
-    <div>
-      <h1>Task-Flow</h1>
-      <KanbanBoard />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="" element={<LoginForm/>}/>
+        <Route path="/signup" element={<RegisterForm/>}/>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
