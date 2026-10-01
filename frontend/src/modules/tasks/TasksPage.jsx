@@ -3,11 +3,19 @@ import KanbanBoard from './KanbanBoard'
 import TaskList from './TaskList'
 import TaskForm from './TaskForm'
 import { getTasks, createTask, updateTask, deleteTask } from './tasksApi'
+import { logout } from '../../services/authService'
+import { useNavigate } from 'react-router-dom'
 
 function TasksPage() {
   const [tasks, setTasks] = useState([])
   const [error, setError] = useState(null)
   const [view, setView] = useState('board') // 'board' | 'list'
+  const navigate = useNavigate()
+
+function handleLogout() {
+  logout()
+  navigate('/')
+}
 
   useEffect(() => {
     getTasks().then(setTasks).catch((err) => setError(err.message))
@@ -40,13 +48,16 @@ function TasksPage() {
     }
   }
 
-  return (
+    return (
     <div className="tasks-page">
       <header className="tasks-header">
         <h1>Task-Flow</h1>
-        <div className="view-switch">
-          <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>Liste</button>
-          <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
+        <div className="header-actions">
+          <div className="view-switch">
+            <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>Liste</button>
+            <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
+          </div>
+          <button onClick={handleLogout}>Logout</button>
         </div>
       </header>
 

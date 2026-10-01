@@ -17,3 +17,4 @@ body { margin: 0; padding: 24px; font-family: sans-serif; background: #f4f5f7; }
 .task-list th, .task-list td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ebecf0; }
 .task-list th { background: #ebecf0; font-size: 13px; color: #5e6c84; }
 .empty { color: #5e6c84; }
+.header-actions { display: flex; gap: 12px; align-items: center; }
