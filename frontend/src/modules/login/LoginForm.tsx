@@ -1,5 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function LoginForm() {
     const [username, setUsername] = useState("")
@@ -25,7 +26,10 @@ function LoginForm() {
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.detail || "Login failed");
+                const detail = Array.isArray(error.detail)
+                    ? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+                    : error.detail;
+                throw new Error(detail || "Login failed");
             }
 
             const data = await response.json();
@@ -33,6 +37,8 @@ function LoginForm() {
 
             navigate("/dashboard")
         } catch (error) {
+            const message = error instanceof Error ? error.message : "Login failed";
+            toast.error(message);
             console.error(error);
         }
     }

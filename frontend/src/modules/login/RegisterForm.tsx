@@ -1,5 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 function RegisterForm() {
     const [username, setUsername] = useState("")
@@ -57,6 +58,8 @@ function RegisterForm() {
 
             navigate("/dashboard")
         } catch (error) {
+			const message = error instanceof Error ? error.message : "Registration failed";
+			toast.error(message);
             console.error(error);
         }
     }
