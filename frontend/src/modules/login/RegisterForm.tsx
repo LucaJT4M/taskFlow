@@ -6,6 +6,8 @@ function RegisterForm() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+	const [showPassword, setShowPassword] = useState(false)
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const navigate = useNavigate()
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -88,28 +90,48 @@ function RegisterForm() {
 				<label htmlFor="register-password" className="auth-label">
 					Password
 				</label>
-				<input
-					id="register-password"
-					name="password"
-					type="password"
-					placeholder="choose password"
+				<div className="auth-input-row">
+					<input
+						id="register-password"
+						name="password"
+						type={showPassword ? "text" : "password"}
+						placeholder="choose password"
                     className="auth-input"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-				/>
+					/>
+					<button
+						type="button"
+						className="auth-toggle"
+						onClick={() => setShowPassword((prev) => !prev)}
+						aria-label={showPassword ? "Hide password" : "Show password"}
+					>
+						{showPassword ? "Hide" : "Show"}
+					</button>
+				</div>
 
 				<label htmlFor="register-password-repeat" className="auth-label">
 					Repeat password
 				</label>
-				<input
-					id="register-password-repeat"
-					name="password-repeat"
-					type="password"
-					placeholder="repeat password"
+				<div className="auth-input-row">
+					<input
+						id="register-password-repeat"
+						name="password-repeat"
+						type={showConfirmPassword ? "text" : "password"}
+						placeholder="repeat password"
                     className="auth-input"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-				/>
+					/>
+					<button
+						type="button"
+						className="auth-toggle"
+						onClick={() => setShowConfirmPassword((prev) => !prev)}
+						aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+					>
+						{showConfirmPassword ? "Hide" : "Show"}
+					</button>
+				</div>
 
 				<button type="submit" className="auth-button auth-button-secondary">
 					Create account

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 function LoginForm() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate()
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -67,15 +68,25 @@ function LoginForm() {
                 <label htmlFor="login-password" className="auth-label">
                     Password
                 </label>
-                <input
-                    id="login-password"
-                    name="password"
-                    type="password"
-                    placeholder="your password"
-                    className="auth-input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="auth-input-row">
+                    <input
+                        id="login-password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="your password"
+                        className="auth-input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                        type="button"
+                        className="auth-toggle"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                        {showPassword ? "Hide" : "Show"}
+                    </button>
+                </div>
 
                 <button type="submit" className="auth-button auth-button-primary">
                     Login
