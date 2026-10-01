@@ -55,7 +55,7 @@ function RegisterForm() {
             const data = await login_response.json();
             localStorage.setItem("access_token", data.access_token);
 
-            navigate("/board")
+            navigate("/dashboard")
         } catch (error) {
             console.error(error);
         }

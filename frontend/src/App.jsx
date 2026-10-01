@@ -14,7 +14,7 @@ function App () {
 
         {/* Private Routes */}
         <Route element={<ProtectedRoute/>}>
-          <Route path="/board" element={<TasksPage/>}/>
+          <Route path="/dashboard" element={<TasksPage/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
