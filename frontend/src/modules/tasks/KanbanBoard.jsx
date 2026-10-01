@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import TaskCard from './TaskCard'
 import TaskForm from './TaskForm'
 import { getTasks, createTask, updateTask, deleteTask } from './tasksApi'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '../../services/authService'
 
 const COLUMNS = [
   { status: 'todo', title: 'To Do' },
@@ -12,6 +14,8 @@ const COLUMNS = [
 function KanbanBoard() {
   const [tasks, setTasks] = useState([])
   const [error, setError] = useState(null)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     getTasks().then(setTasks).catch((err) => setError(err.message))
@@ -46,6 +50,9 @@ function KanbanBoard() {
 
   return (
     <>
+      <button onClick={(e) => logout()}>
+        Logout
+      </button>
       {error && <p className="error">Fehler: {error}</p>}
       <TaskForm onCreate={handleCreate} />
       <div className="board">

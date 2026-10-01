@@ -4,7 +4,7 @@ from be.services.user_service import User_Service
 from be.schemas.user_schema import UserCreate, UserResponse
 from be.core.db import get_db
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="/user", tags=["Users"])
 
 service = User_Service()
 

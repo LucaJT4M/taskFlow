@@ -1,17 +1,40 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 
-
-
 function LoginForm() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const navigate = useNavigate()
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        console.log("Username:", username);
-        console.log("Password:", password);
+        try {
+            const body = new URLSearchParams();
+
+            body.append("username", username);
+            body.append("password", password);
+
+            const response = await fetch("http://localhost:8000/auth/token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: body.toString(),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || "Login failed");
+            }
+
+            const data = await response.json();
+            localStorage.setItem("access_token", data.access_token);
+
+            navigate("/board")
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -40,6 +63,7 @@ function LoginForm() {
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                     boxShadow: "0 4px 14px rgba(0, 18, 42, 0.08)",
                 }}
+                onSubmit={handleSubmit}
             >
                 <h3 style={{ margin: "0 0 12px", color: "#17324d" }}>Login</h3>
 
@@ -52,7 +76,9 @@ function LoginForm() {
                     type="text"
                     placeholder="your username"
                     style={{
+                        display: "block",
                         width: "100%",
+                        boxSizing: "border-box",
                         margin: "6px 0 10px",
                         padding: "10px 12px",
                         border: "1px solid #c8d8ec",
@@ -72,7 +98,9 @@ function LoginForm() {
                     type="password"
                     placeholder="your password"
                     style={{
+                        display: "block",
                         width: "100%",
+                        boxSizing: "border-box",
                         margin: "6px 0 12px",
                         padding: "10px 12px",
                         border: "1px solid #c8d8ec",
@@ -84,7 +112,7 @@ function LoginForm() {
                 />
 
                 <button
-                    type="button"
+                    type="submit"
                     style={{
                         width: "100%",
                         padding: "10px 12px",
