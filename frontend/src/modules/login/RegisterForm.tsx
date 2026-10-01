@@ -1,6 +1,66 @@
 import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
 
 function RegisterForm() {
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const navigate = useNavigate()
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        try {
+			const loginBody = new URLSearchParams();
+
+            if (password !== confirmPassword) {
+                throw new Error("Password and confirm password not same");
+            }
+
+            const response = await fetch("http://localhost:8000/user", {
+                method: "POST",
+                headers: {
+					"Content-Type": "application/json",
+                },
+				body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+				const detail = Array.isArray(error.detail)
+					? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+					: error.detail;
+				throw new Error(detail || "Signup failed");
+            }
+
+			loginBody.append("username", username);
+			loginBody.append("password", password);
+
+            const login_response = await fetch("http://localhost:8000/auth/token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+				body: loginBody.toString(),
+            });
+
+            if (!login_response.ok) {
+				const error = await login_response.json();
+				const detail = Array.isArray(error.detail)
+					? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+					: error.detail;
+				throw new Error(detail || "Login failed");
+            }
+
+            const data = await login_response.json();
+            localStorage.setItem("access_token", data.access_token);
+
+            navigate("/board")
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 	return (
 		<section
 			id="register-form"
@@ -25,6 +85,7 @@ function RegisterForm() {
 					background: "#ffffff",
 					boxShadow: "0 4px 14px rgba(0, 18, 42, 0.08)",
 				}}
+                onSubmit={handleSubmit}
 			>
 				<h3 style={{ margin: "0 0 12px", color: "#17324d" }}>Register</h3>
 
@@ -37,13 +98,17 @@ function RegisterForm() {
 					type="text"
 					placeholder="choose username"
 					style={{
+						display: "block",
 						width: "100%",
+						boxSizing: "border-box",
 						margin: "6px 0 10px",
 						padding: "10px 12px",
 						border: "1px solid #c8d8ec",
 						borderRadius: 10,
 						outline: "none",
 					}}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
 				/>
 
 				<label htmlFor="register-password" style={{ fontSize: 14, color: "#3f556f" }}>
@@ -55,13 +120,17 @@ function RegisterForm() {
 					type="password"
 					placeholder="choose password"
 					style={{
+						display: "block",
 						width: "100%",
+						boxSizing: "border-box",
 						margin: "6px 0 10px",
 						padding: "10px 12px",
 						border: "1px solid #c8d8ec",
 						borderRadius: 10,
 						outline: "none",
 					}}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
 				/>
 
 				<label htmlFor="register-password-repeat" style={{ fontSize: 14, color: "#3f556f" }}>
@@ -73,17 +142,21 @@ function RegisterForm() {
 					type="password"
 					placeholder="repeat password"
 					style={{
+						display: "block",
 						width: "100%",
+						boxSizing: "border-box",
 						margin: "6px 0 12px",
 						padding: "10px 12px",
 						border: "1px solid #c8d8ec",
 						borderRadius: 10,
 						outline: "none",
 					}}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
 				/>
 
 				<button
-					type="button"
+					type="submit"
 					style={{
 						width: "100%",
 						padding: "10px 12px",
