@@ -3,13 +3,14 @@ from be.models.user_model import User
 from be.core.db import get_db
 from passlib.context import CryptContext
 from be.security.password import hash_password, verify_password
-from be.main import oauth_2_scheme
 from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from be.core.config import SECRET_KEY, ALGORITHM
 from be.Classes.token import TokenData
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 class User_Service:
     def get_user_by_username(self, db, username: str):
@@ -43,7 +44,7 @@ class User_Service:
     def get_users(self, db):
         return db.query(User)
 
-    async def get_current_user(self, token: str = Depends(oauth_2_scheme)) -> User:
+    async def get_current_user(self, token: str = Depends(oauth_2_scheme), db: Session = Depends(get_db)) -> User:
         credential_execption = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -62,7 +63,7 @@ class User_Service:
         except JWTError:
             raise credential_execption
         
-        user = self.get_user_by_name(token_data.username)
+        user = self.get_user_by_username(db, token_data.username)
 
         if user is None:
             raise credential_execption

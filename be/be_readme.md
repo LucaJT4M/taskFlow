@@ -1,51 +1,157 @@
-## Starten des BE:
+## Backend starten
 
-1. venv erstellen: python -m venv venv
-2. venv aktivieren: ./venv/Scripts/activate
-3. im venv alle pakete herunterladen: pip install -r ./be/requirements.txt
-4. Docker starten: docker compose up
-5. aus dem RootFolder (taskflow folder): uvicorn.exe be.main:app --reload
+1. Venv erstellen:
 
-### Health Endpoint
-
-**Check ob api ready**
-
-```
-GET /api/health/live
+```bash
+python -m venv venv
 ```
 
-gibt optimaler weise {"status": "ready"} zurück
+2. Venv aktivieren (Windows PowerShell):
 
-**Checkt ob db ready ist**
-
-```
-GET /api/health/ready
+```powershell
+.\venv\Scripts\Activate.ps1
 ```
 
-gibt optimaler weise: {
-"status": "ready",
-"database": "ok",
-} zurück
+3. Dependencies installieren:
 
-### Auth Endpoint
-
-**JWT token für Session holen**
-gibt jwt token zurück, wenn user richtig authentifiziert wurde
-
-```
-GET /api/auth/token
+```bash
+pip install -r ./be/requirements.txt
 ```
 
-### User Endpoints
+4. Datenbank starten (aus dem Projekt-Root):
 
-**User erstellen**
-
-```
-POST /api/user/{username},{password}
+```bash
+docker compose up
 ```
 
-**Alle User auslese**
+5. API starten (aus dem Projekt-Root):
 
+```bash
+uvicorn be.main:app --reload
 ```
-GET /api/user
+
+Swagger Docs:
+
+```text
+http://127.0.0.1:8000/docs
 ```
+
+## Health Endpoints
+
+Liveness:
+
+```http
+GET /health/live
+```
+
+Antwort:
+
+```json
+{ "status": "alive" }
+```
+
+Readiness (DB check):
+
+```http
+GET /health/ready
+```
+
+Antwort (ok):
+
+```json
+{
+  "status": "ready",
+  "database": "ok"
+}
+```
+
+## Auth Endpoints
+
+JWT Token holen (OAuth2 Password Flow):
+
+```http
+POST /auth/token
+Content-Type: application/x-www-form-urlencoded
+```
+
+Body Felder:
+
+```text
+username=<username>
+password=<password>
+```
+
+Antwort:
+
+```json
+{
+  "access_token": "<jwt>",
+  "token_type": "bearer"
+}
+```
+
+Aktuellen User aus Token lesen:
+
+```http
+GET /auth/me
+Authorization: Bearer <jwt>
+```
+
+## User Endpoints
+
+User erstellen:
+
+```http
+POST /users
+Content-Type: application/json
+```
+
+Body:
+
+```json
+{
+  "username": "alice",
+  "password": "secret"
+}
+```
+
+Alle User lesen:
+
+```http
+GET /users
+```
+
+## Task Endpoints
+
+Alle Tasks:
+
+```http
+GET /tasks
+```
+
+Task erstellen:
+
+```http
+POST /tasks
+Content-Type: application/json
+```
+
+Task updaten:
+
+```http
+PATCH /tasks/{task_id}
+Content-Type: application/json
+```
+
+Task loeschen:
+
+```http
+DELETE /tasks/{task_id}
+```
+
+## Swagger Authorize verwenden
+
+1. In Swagger `POST /auth/token` ausfuehren und Token holen.
+2. Oben rechts auf `Authorize` klicken.
+3. `Bearer <token>` eintragen und bestaetigen.
+4. Geschuetzte Endpoints wie `GET /auth/me` testen.

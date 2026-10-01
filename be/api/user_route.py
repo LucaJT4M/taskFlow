@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from be.services.user_service import User_Service
 from be.schemas.user_schema import UserCreate, UserResponse
 from be.core.db import get_db
-from be.main import oauth_2_scheme
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
