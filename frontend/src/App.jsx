@@ -1,9 +1,24 @@
-import KanbanBoard from "./modules/tasks/KanbanBoard";
+import { useState } from 'react'
+import KanbanBoard from './modules/tasks/KanbanBoard'
+import LoginPage from './modules/auth/LoginPage'
+import { getToken, logout } from './modules/auth/authApi'
 
-function App () {
+function App() {
+  const [token, setToken] = useState(getToken())
+
+  function handleLogout() {
+    logout()
+    setToken(null)
+  }
+
+  if (!token) return <LoginPage onLogin={setToken} />
+
   return (
     <div>
-      <h1>Task-Flow</h1>
+      <header className="app-header">
+        <h1>Task-Flow</h1>
+        <button onClick={handleLogout}>Abmelden</button>
+      </header>
       <KanbanBoard />
     </div>
   )
