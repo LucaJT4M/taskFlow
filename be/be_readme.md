@@ -102,7 +102,7 @@ Authorization: Bearer <jwt>
 User erstellen:
 
 ```http
-POST /users
+POST /user
 Content-Type: application/json
 ```
 
@@ -118,7 +118,51 @@ Body:
 Alle User lesen:
 
 ```http
-GET /users
+GET /user
+```
+
+Nur admin: Einzelnen User lesen:
+
+```http
+GET /user/{username}
+```
+
+Nur admin: User loeschen:
+
+```http
+DELETE /user/{username}
+```
+
+User updaten (admin oder User selbst):
+
+```http
+PUT /user/{username}
+Content-Type: application/json
+```
+
+Body ist partiell moeglich:
+
+```json
+{
+  "password": "newSecret"
+}
+```
+
+oder:
+
+```json
+{
+  "username": "newName"
+}
+```
+
+oder beides:
+
+```json
+{
+  "username": "newName",
+  "password": "newSecret"
+}
 ```
 
 ## Task Endpoints
@@ -155,3 +199,10 @@ DELETE /tasks/{task_id}
 2. Oben rechts auf `Authorize` klicken.
 3. `Bearer <token>` eintragen und bestaetigen.
 4. Geschuetzte Endpoints wie `GET /auth/me` testen.
+
+## Rollen/Autorisierung
+
+- `GET /user` nur admin.
+- `GET /user/{username}` nur admin.
+- `DELETE /user/{username}` nur admin.
+- `PUT /user/{username}` admin oder Benutzer selbst (`sub` im JWT entspricht `{username}`).

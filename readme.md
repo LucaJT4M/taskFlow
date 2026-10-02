@@ -9,7 +9,7 @@ TaskFlow is a full-stack task management app with:
 ## Tech Stack
 
 - Backend: FastAPI, SQLAlchemy, PostgreSQL, JWT (OAuth2 password flow)
-- Frontend: React, Vite, React Router
+- Frontend: React, Vite, React Router, React Toastify
 - Database: Postgres 17 (Docker)
 
 ## Project Structure
@@ -27,6 +27,10 @@ taskFlow/
 - Python 3.11+
 - Node.js + npm
 - Docker Desktop
+
+Node note:
+
+- Current frontend dependencies expect Node `20.19+` (or `22.12+`).
 
 ## Environment Configuration
 
@@ -94,7 +98,7 @@ npm --prefix frontend install
 npm --prefix frontend run dev
 ```
 
-Frontend URL is shown in terminal (usually `http://127.0.0.1:5173`).
+Frontend URL is shown in terminal (usually `http://127.0.0.1:5173`, or next free port).
 
 ## API Overview
 
@@ -111,7 +115,10 @@ Frontend URL is shown in terminal (usually `http://127.0.0.1:5173`).
 ### Users
 
 - `POST /user` (JSON body)
-- `GET /user`
+- `GET /user` (admin only)
+- `GET /user/{username}` (admin only)
+- `PUT /user/{username}` (admin or the user itself)
+- `DELETE /user/{username}` (admin only)
 
 Example user create body:
 
@@ -121,6 +128,19 @@ Example user create body:
   "password": "secret"
 }
 ```
+
+Example user update body (partial update):
+
+```json
+{
+	"password": "newSecret"
+}
+```
+
+`PUT /user/{username}` accepts one or both fields:
+
+- `username`
+- `password`
 
 ### Tasks
 
@@ -144,6 +164,11 @@ Example user create body:
 
 - Cause: Sending form-urlencoded to `POST /user`
 - Fix: Send JSON (`Content-Type: application/json`)
+
+### 403 on User endpoints
+
+- `GET /user`, `GET /user/{username}`, `DELETE /user/{username}` require admin token.
+- `PUT /user/{username}` requires admin token or token owner matching `{username}`.
 
 ### `DATABASE_URL is not set`
 
