@@ -525,3 +525,13 @@ body { margin: 0; }
 .task-list,
 .task-form,
 .view-switch { box-shadow: var(--shadow); }
+
+/* ========== Icons ========== */
+.btn-ghost,
+.view-switch button,
+.task-form button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.app-dark svg { flex-shrink: 0; }

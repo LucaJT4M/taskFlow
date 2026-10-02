@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from be.services.user_service import UserService
-from be.schemas.user_schema import UserCreate, UserResponse, UserUpdate
+
 from be.core.db import get_db
-from be.api.auth import get_current_username
+from be.services.user_service import UserService
+from be.schemas.user_schema import UserResponse, UserCreate, UserUpdate
+from be.security.jwt_auth import get_current_username
 
-router = APIRouter(prefix="/user", tags=["Users"])
+router = APIRouter(prefix="/tasks", tags=["Tasks"])
+service = UserService
 
-service = UserService()
 
 @router.post("", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
@@ -50,16 +51,5 @@ def update_user(username: str, user: UserUpdate, db: Session = Depends(get_db), 
 
         raise HTTPException(status_code=403, detail="Not authorized for user output")
 
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@router.get("/{username}", response_model=UserResponse)
-def get_user_by_username(username: str, db: Session = Depends(get_db), current_user: str = Depends(get_current_username)):
-    try:
-        if current_user == "admin":
-            return service.get_user_by_username(db, username)
-
-        raise HTTPException(status_code=403, detail="Not authorized for user output")
-    
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

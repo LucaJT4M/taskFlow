@@ -1,16 +1,20 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../services/authService";
 import { toast } from "react-toastify";
+import { getCurrentUser } from "../../services/authService";
 
-function ProtectedRoute() {
+function AdminRoute() {
     const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
     useEffect(() => {
         async function checkAuthentication() {
             const user = await getCurrentUser();
 
-            setAuthenticated(user !== null);
+            if (user.username === "admin") {
+                setAuthenticated(user !== null);
+            } else {
+                setAuthenticated(false);
+            }
         }
 
         checkAuthentication();
@@ -23,12 +27,12 @@ function ProtectedRoute() {
 
     // Not authenticated
     if (!authenticated) {
-        toast.error("Unauthorized. Please log in to continue.");
-        return <Navigate to="/" replace />;
+        toast.error("Unauthorized. No rights for this site.");
+        return <Navigate to="/dashboard" replace />;
     }
 
     // Authenticated
     return <Outlet />;
 }
 
-export default ProtectedRoute;
+export default AdminRoute;

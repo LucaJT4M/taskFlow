@@ -1,4 +1,5 @@
 import { STATUSES } from './taskStatus'
+import { Check, Trash2 } from 'lucide-react'
 
 function TaskList({ tasks, onUpdate, onDelete }) {
   if (tasks.length === 0) {
@@ -16,7 +17,7 @@ function TaskList({ tasks, onUpdate, onDelete }) {
               title={isDone ? 'Als offen markieren' : 'Als erledigt markieren'}
               onClick={() => onUpdate(task, { status: isDone ? 'todo' : 'done' })}
             >
-              {isDone && '✓'}
+              {isDone && <Check size={12} strokeWidth={3} />}
             </button>
 
             <div className="task-main">
@@ -35,7 +36,7 @@ function TaskList({ tasks, onUpdate, onDelete }) {
               ))}
             </select>
 
-            <button className="icon-btn delete" title="Löschen" onClick={() => onDelete(task)}>✕</button>
+            <button className="icon-btn delete" title="Löschen" onClick={() => onDelete(task)}><Trash2 size={15} strokeWidth={1.75} /></button>
           </div>
         )
       })}

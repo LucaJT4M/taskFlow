@@ -1,4 +1,5 @@
 import { STATUSES } from './taskStatus'
+import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
 
 const ORDER = STATUSES.map((s) => s.status)
 
@@ -18,11 +19,17 @@ function TaskCard({ task, onMove, onDelete }) {
         </span>
         <div className="card-actions">
           <button className="icon-btn" title="Zurück" disabled={index === 0}
-            onClick={() => onMove(task, ORDER[index - 1])}>←</button>
+            onClick={() => onMove(task, ORDER[index - 1])}>
+            <ChevronLeft size={16} strokeWidth={1.75} />
+          </button>
           <button className="icon-btn" title="Weiter" disabled={index === ORDER.length - 1}
-            onClick={() => onMove(task, ORDER[index + 1])}>→</button>
+            onClick={() => onMove(task, ORDER[index + 1])}>
+            <ChevronRight size={16} strokeWidth={1.75} />
+          </button>
           <button className="icon-btn delete" title="Löschen"
-            onClick={() => onDelete(task)}>✕</button>
+            onClick={() => onDelete(task)}>
+            <Trash2 size={15} strokeWidth={1.75} />
+          </button>
         </div>
       </div>
     </article>
