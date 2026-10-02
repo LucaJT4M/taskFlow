@@ -184,3 +184,27 @@ Example user update body (partial update):
 
 - Root `docker-compose.yml` runs only Postgres.
 - Backend CORS currently allows `http://localhost:5173` and `http://localhost:5174`.
+
+## Modularisierung: kurze Projektprüfung
+
+Für die Vorbereitung der Präsentation wurde Codex gefragt, ob TaskFlow dem Modularisierungsprinzip folgt und wie sich die Struktur verbessern lässt. Die Prüfung erfolgte anhand der Projektordner und des vorhandenen Quellcodes; es wurden dabei keine Funktionen oder Tests ausgeführt.
+
+### Einschätzung
+
+TaskFlow folgt dem Modularisierungsprinzip bereits in wesentlichen Teilen:
+
+- Das Backend trennt API-Routen (`be/api/`), Geschäftslogik (`be/services/`), Datenmodelle (`be/models/`), Validierung und Antwortformate (`be/schemas/`) sowie Datenbank und Konfiguration (`be/core/`).
+- Das Frontend trennt Login und Registrierung, Aufgabenfunktionen und gemeinsame API-Dienste in eigene Bereiche. Die Aufgabenansichten (`TaskList`, `KanbanBoard`, `TaskForm`) sind außerdem einzelne Komponenten.
+- Die Oberfläche spricht das Backend über HTTP-Endpunkte an; dadurch bleiben Frontend und Backend als größere Systemteile getrennt.
+
+Die Modularisierung ist jedoch noch nicht durchgehend: Im Backend enthält `be/api/task_route.py` neben der HTTP-Behandlung auch Datenbankzugriffe und Aufgabenlogik. In `be/api/auth.py` liegen sowohl Token-Hilfsfunktionen als auch Endpunkte. Im Frontend führt `TasksPage.jsx` Zustand, API-Aufrufe und Seitenaufbau zusammen. Login und Registrierung enthalten direkte `fetch`-Aufrufe und wiederholen Teile der Fehlerbehandlung.
+
+### Sinnvolle nächste Schritte
+
+1. Eine `task_service.py` ergänzen und Datenbankoperationen für Aufgaben aus `task_route.py` dorthin verschieben. Die Route sollte hauptsächlich HTTP-Eingaben entgegennehmen, den Dienst aufrufen und HTTP-Antworten liefern.
+2. Authentifizierungslogik wie Token-Erstellung und Token-Prüfung in ein eigenes Modul, zum Beispiel `be/security/`, verschieben. `be/api/auth.py` kann dann bei den Endpunkten bleiben.
+3. Im Frontend einen zentralen Authentifizierungsdienst mit Funktionen wie `login()` und `register()` bereitstellen und die Komponenten diesen Dienst verwenden lassen. So werden URL, Token-Ablage und Fehlerbehandlung nicht in mehreren Formularen gepflegt.
+4. Falls `TasksPage.jsx` weiter wächst, API-Zustand und Aufgabenaktionen in einen Hook oder Controller auslagern. Die Seite kann dann vorwiegend die Komponenten zusammensetzen.
+5. Einheitliche Benennungen verwenden, zum Beispiel `UserService` statt `User_Service`, und ungenutzte beziehungsweise doppelte Authentifizierungs-Hilfsfunktionen entfernen.
+
+Diese Änderungen sind Empfehlungen für eine schrittweise Weiterentwicklung. Die bestehende Struktur ist bereits modular angelegt; es handelt sich nicht um einen vollständigen Umbau.
