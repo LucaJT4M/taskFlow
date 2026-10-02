@@ -8,4 +8,4 @@ class Task(Base):
     title = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
     status = Column(String(20), nullable=False, default="todo")
-    owner_id = Column(Integer, ForeignKey("user_id"), nullable=False, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)

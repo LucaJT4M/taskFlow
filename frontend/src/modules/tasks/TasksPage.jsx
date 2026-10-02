@@ -8,7 +8,7 @@ import TaskForm from './TaskForm'
 import { useTasks } from './useTasks'
 import { useTheme } from './useTheme'
 import { logout } from '../../services/authService'
-import { useCurrentUser } from './UseCurrentUser'
+import { useCurrentUser } from './useCurrentUser'
 
 const FILTER_TITLES = {
   all: 'Meine Aufgaben',
