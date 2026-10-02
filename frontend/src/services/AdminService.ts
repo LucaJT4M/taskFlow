@@ -25,15 +25,46 @@ export async function getUsers() {
             throw new Error(detail || "couldnt get user data");
         }
 
-        return await response.json();
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
     } catch (error) {
         const message = error instanceof Error ? error.message : "Login failed";
         toast.error(message);
         console.error(error);
-        return false;
+        return [];
     }
 }
 
 export async function getTasks() {
     // Gets all the tasks for the admin dashboard
+    try {
+        const token = localStorage.getItem("access_token");
+
+        if (!token) {
+            throw new Error("Not authenticated");
+        }
+
+        const response = await fetch(base_url + "/tasks", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            const detail = Array.isArray(error.detail)
+                ? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+                : error.detail;
+            throw new Error(detail || "couldnt get task data");
+        }
+
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Could not load tasks";
+        toast.error(message);
+        console.error(error);
+        return [];
+    }
 }

@@ -7,8 +7,7 @@ from be.schemas.user_schema import UserResponse, UserCreate, UserUpdate
 from be.security.jwt_auth import get_current_username
 
 router = APIRouter(prefix="/user", tags=["Users"])
-service = UserService
-
+service = UserService()
 
 @router.post("", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):

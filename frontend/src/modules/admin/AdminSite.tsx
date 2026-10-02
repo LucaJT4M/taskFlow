@@ -2,56 +2,100 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getUsers, getTasks } from "../../services/AdminService";
 
-const users = [
-    { id: 1, name: "Lena Fischer", role: "Frontend Developer", total: 6, done: 3 },
-    { id: 2, name: "Noah Bauer", role: "Backend Developer", total: 5, done: 2 },
-    { id: 3, name: "Mia Becker", role: "QA Engineer", total: 4, done: 4 },
-    { id: 4, name: "Jonas Klein", role: "Product Owner", total: 3, done: 1 },
-];
+type AdminUser = {
+    id: number;
+    name: string;
+    role: string;
+    total: number;
+    done: number;
+};
 
-const tasks = [
-    {
-        id: 1,
-        title: "Create API error mapping",
-        user: "Noah Bauer",
-        status: "To Do",
-        dueDate: "2026-10-10",
-        priority: "High",
-    },
-    {
-        id: 2,
-        title: "Update login empty-state copy",
-        user: "Lena Fischer",
-        status: "In Progress",
-        dueDate: "2026-10-05",
-        priority: "Medium",
-    },
-    {
-        id: 3,
-        title: "Regression pass on auth flow",
-        user: "Mia Becker",
-        status: "Done",
-        dueDate: "2026-10-03",
-        priority: "Low",
-    },
-    {
-        id: 4,
-        title: "Define sprint acceptance notes",
-        user: "Jonas Klein",
-        status: "To Do",
-        dueDate: "2026-10-11",
-        priority: "Medium",
-    },
-];
+type AdminTask = {
+    id: number;
+    title: string;
+    user: string;
+    status: "To Do" | "In Progress" | "Done";
+    dueDate: string;
+    priority: "Low" | "Medium" | "High";
+};
+
+function toUiStatus(status: unknown): AdminTask["status"] {
+    if (status === "done" || status === "Done") {
+        return "Done";
+    }
+
+    if (status === "in_progress" || status === "In Progress") {
+        return "In Progress";
+    }
+
+    return "To Do";
+}
+
+function toUiPriority(priority: unknown): AdminTask["priority"] {
+    if (priority === "High" || priority === "high") {
+        return "High";
+    }
+
+    if (priority === "Low" || priority === "low") {
+        return "Low";
+    }
+
+    return "Medium";
+}
 
 function AdminSite() {
     const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
-    const [users, setUsers] = useState(() => getUsers())
-    const [tasks, setTasks] = useState(() => getTasks())
+    const [users, setUsers] = useState<AdminUser[]>([]);
+    const [tasks, setTasks] = useState<AdminTask[]>([]);
 
     useEffect(() => {
         localStorage.setItem("theme", theme);
     }, [theme]);
+
+    useEffect(() => {
+        async function loadAdminData() {
+            const [usersData, tasksData] = await Promise.all([getUsers(), getTasks()]);
+
+            const normalizedTasks: AdminTask[] = (Array.isArray(tasksData) ? tasksData : []).map((task: any, index: number) => ({
+                id: Number(task.id ?? index + 1),
+                title: typeof task.title === "string" && task.title.trim() ? task.title : "Untitled task",
+                user:
+                    typeof task.user === "string" && task.user.trim()
+                        ? task.user
+                        : typeof task.username === "string" && task.username.trim()
+                            ? task.username
+                            : "Unassigned",
+                status: toUiStatus(task.status),
+                dueDate: typeof task.dueDate === "string" && task.dueDate.trim() ? task.dueDate : "-",
+                priority: toUiPriority(task.priority),
+            }));
+
+            const normalizedUsers: AdminUser[] = (Array.isArray(usersData) ? usersData : []).map((user: any, index: number) => {
+                const name =
+                    typeof user.name === "string" && user.name.trim()
+                        ? user.name
+                        : typeof user.username === "string" && user.username.trim()
+                            ? user.username
+                            : `User ${index + 1}`;
+
+                const total = normalizedTasks.filter((task) => task.user === name).length;
+                const done = normalizedTasks.filter((task) => task.user === name && task.status === "Done").length;
+
+                return {
+                    id: Number(user.id ?? index + 1),
+                    name,
+                    role: typeof user.role === "string" && user.role.trim() ? user.role : "Team Member",
+                    total,
+                    done,
+                };
+            });
+
+            setTasks(normalizedTasks);
+            setUsers(normalizedUsers);
+        }
+
+        loadAdminData();
+    }, []);
 
     function toggleTheme() {
         setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
@@ -130,7 +174,7 @@ function AdminSite() {
 
                         <ul className="admin-user-list">
                             {users.map((user) => {
-                                const progress = Math.round((user.done / user.total) * 100);
+                                const progress = user.total > 0 ? Math.round((user.done / user.total) * 100) : 0;
 
                                 return (
                                     <li key={user.id}>
