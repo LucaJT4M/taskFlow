@@ -19,7 +19,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.get("", response_model=list[UserResponse])
 def get_users(db: Session = Depends(get_db), current_user: str = Depends(get_current_username)):
-    """Returnt alle User in der DB"""
+    """Returnt alle User in der DB, man muss aber dafür admin sein"""
     try:
         if current_user == "admin":
             return service.get_users(db)
