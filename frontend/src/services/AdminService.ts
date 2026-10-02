@@ -33,10 +33,9 @@ export async function getUsers() {
         console.error(error);
         return [];
     }
-}
+};
 
-export async function getTasks() {
-    // Gets all the tasks for the admin dashboard
+export async function addUser(username: string, password: string) {
     try {
         const token = localStorage.getItem("access_token");
 
@@ -44,11 +43,17 @@ export async function getTasks() {
             throw new Error("Not authenticated");
         }
 
-        const response = await fetch(base_url + "/tasks", {
-            method: "GET",
+        const user_body = new URLSearchParams();
+
+        user_body.append("username", username);
+        user_body.append("password", password);
+
+        const response = await fetch(base_url + "/user", {
+            method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            body: user_body.toString(),
         });
 
         if (!response.ok) {
@@ -56,13 +61,13 @@ export async function getTasks() {
             const detail = Array.isArray(error.detail)
                 ? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
                 : error.detail;
-            throw new Error(detail || "couldnt get task data");
+            throw new Error(detail || "couldnt create user");
         }
 
         const data = await response.json();
         return Array.isArray(data) ? data : [];
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Could not load tasks";
+        const message = error instanceof Error ? error.message : "couldnt create user";
         toast.error(message);
         console.error(error);
         return [];
