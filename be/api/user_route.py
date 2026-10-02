@@ -52,3 +52,11 @@ def update_user(username: str, user: UserUpdate, db: Session = Depends(get_db), 
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/{username}", response_model=UserResponse)
+def get_user_by_username(username: str, db: Session = Depends(get_db)):
+    try:
+        return service.get_user_by_username(username)
+
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail="Error in get_user_by_username")
