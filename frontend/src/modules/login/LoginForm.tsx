@@ -1,46 +1,19 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { login } from "../../services/authService";
 
 function LoginForm() {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
-    const navigate = useNavigate()
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        try {
-            const body = new URLSearchParams();
-
-            body.append("username", username);
-            body.append("password", password);
-
-            const response = await fetch("http://localhost:8000/auth/token", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: body.toString(),
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                const detail = Array.isArray(error.detail)
-                    ? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
-                    : error.detail;
-                throw new Error(detail || "Login failed");
-            }
-
-            const data = await response.json();
-            localStorage.setItem("access_token", data.access_token);
-
+        const success = await login(username, password)
+        if (success) {
             navigate("/dashboard")
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Login failed";
-            toast.error(message);
-            console.error(error);
         }
     }
 

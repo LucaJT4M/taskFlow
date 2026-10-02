@@ -12,7 +12,7 @@ from be.Classes.token import TokenData
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
-class User_Service:
+class UserService:
     def get_user_by_username(self, db, username: str):
         return db.query(User).filter(User.username == username).first()
 
@@ -79,30 +79,4 @@ class User_Service:
 
         db.commit()
         db.refresh(user)
-        return user
-
-    async def get_current_user(self, token: str = Depends(oauth_2_scheme), db: Session = Depends(get_db)) -> User:
-        credential_execption = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
-
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            username: str = payload.get("sub")
-
-            if username is None:
-                raise credential_execption
-            
-            token_data = TokenData(username=username)
-
-        except JWTError:
-            raise credential_execption
-        
-        user = self.get_user_by_username(db, token_data.username)
-
-        if user is None:
-            raise credential_execption
-        
         return user

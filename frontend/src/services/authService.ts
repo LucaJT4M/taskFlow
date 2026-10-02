@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export async function getCurrentUser() {
     const token = localStorage.getItem("access_token");
 
@@ -21,4 +23,70 @@ export async function getCurrentUser() {
 
 export function logout() {
     localStorage.removeItem("access_token"); // Logs the user out
+}
+
+export async function login(username: string, password: string) {
+    try {
+            const body = new URLSearchParams();
+
+            body.append("username", username);
+            body.append("password", password);
+
+            const response = await fetch("http://localhost:8000/auth/token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: body.toString(),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                const detail = Array.isArray(error.detail)
+                    ? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+                    : error.detail;
+                throw new Error(detail || "Login failed");
+            }
+
+            const data = await response.json();
+            localStorage.setItem("access_token", data.access_token);
+
+            return true;
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Login failed";
+            toast.error(message);
+            console.error(error);
+            return false;
+        }
+}
+
+export async function sign_up(username: string, password: string, confirmPassword: string) {
+    try {
+            if (password !== confirmPassword) {
+                throw new Error("Password and confirm password not same");
+            }
+
+            const response = await fetch("http://localhost:8000/user", {
+                method: "POST",
+                headers: {
+					"Content-Type": "application/json",
+                },
+				body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+				const detail = Array.isArray(error.detail)
+					? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
+					: error.detail;
+				throw new Error(detail || "Signup failed");
+            }
+
+			return await login(username, password)
+        } catch (error) {
+			const message = error instanceof Error ? error.message : "Registration failed";
+			toast.error(message);
+            console.error(error);
+            return false;
+        }
 }

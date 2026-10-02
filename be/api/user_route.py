@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from be.services.user_service import User_Service
+from be.services.user_service import UserService
 from be.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from be.core.db import get_db
 from be.api.auth import get_current_username
 
 router = APIRouter(prefix="/user", tags=["Users"])
 
-service = User_Service()
+service = UserService()
 
 @router.post("", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):

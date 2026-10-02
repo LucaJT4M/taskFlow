@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { sign_up } from "../../services/authService";
 
 function RegisterForm() {
     const [username, setUsername] = useState("")
@@ -13,57 +13,10 @@ function RegisterForm() {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        try {
-			const loginBody = new URLSearchParams();
-
-            if (password !== confirmPassword) {
-                throw new Error("Password and confirm password not same");
-            }
-
-            const response = await fetch("http://localhost:8000/user", {
-                method: "POST",
-                headers: {
-					"Content-Type": "application/json",
-                },
-				body: JSON.stringify({ username, password }),
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-				const detail = Array.isArray(error.detail)
-					? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
-					: error.detail;
-				throw new Error(detail || "Signup failed");
-            }
-
-			loginBody.append("username", username);
-			loginBody.append("password", password);
-
-            const login_response = await fetch("http://localhost:8000/auth/token", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-				body: loginBody.toString(),
-            });
-
-            if (!login_response.ok) {
-				const error = await login_response.json();
-				const detail = Array.isArray(error.detail)
-					? error.detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join(", ")
-					: error.detail;
-				throw new Error(detail || "Login failed");
-            }
-
-            const data = await login_response.json();
-            localStorage.setItem("access_token", data.access_token);
-
-            navigate("/dashboard")
-        } catch (error) {
-			const message = error instanceof Error ? error.message : "Registration failed";
-			toast.error(message);
-            console.error(error);
-        }
+		const success = await sign_up(username, password, confirmPassword)
+		if (success) {
+			navigate("/dashboard")
+		}
     }
 
 	return (

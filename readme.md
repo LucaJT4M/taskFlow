@@ -197,14 +197,25 @@ TaskFlow folgt dem Modularisierungsprinzip bereits in wesentlichen Teilen:
 - Das Frontend trennt Login und Registrierung, Aufgabenfunktionen und gemeinsame API-Dienste in eigene Bereiche. Die Aufgabenansichten (`TaskList`, `KanbanBoard`, `TaskForm`) sind außerdem einzelne Komponenten.
 - Die Oberfläche spricht das Backend über HTTP-Endpunkte an; dadurch bleiben Frontend und Backend als größere Systemteile getrennt.
 
-Die Modularisierung ist jedoch noch nicht durchgehend: Im Backend enthält `be/api/task_route.py` neben der HTTP-Behandlung auch Datenbankzugriffe und Aufgabenlogik. In `be/api/auth.py` liegen sowohl Token-Hilfsfunktionen als auch Endpunkte. Im Frontend führt `TasksPage.jsx` Zustand, API-Aufrufe und Seitenaufbau zusammen. Login und Registrierung enthalten direkte `fetch`-Aufrufe und wiederholen Teile der Fehlerbehandlung.
+Bei einer erneuten Prüfung am 2. Oktober 2026 waren weitere Schritte umgesetzt: JWT-Funktionen liegen inzwischen in `be/security/jwt_auth.py`, die Service-Klasse heißt `UserService`, und Login sowie Registrierung rufen Funktionen in `frontend/src/services/authService.ts` auf. Die Modularisierung ist aber noch nicht durchgehend: `be/api/task_route.py` enthält weiterhin Datenbankzugriffe und Aufgabenlogik. `TasksPage.jsx` bündelt Aufgabenstatus, API-Aufrufe und Seitenaufbau. Außerdem enthält `UserService` noch JWT- und FastAPI-Abhängigkeiten mit einer eigenen Funktion zur Token-Prüfung, obwohl die Routen bereits `be/security/jwt_auth.py` verwenden.
+
+### Seit der ersten Prüfung vorgenommene Änderungen
+
+Im aktuellen Quellcode sind gegenüber der ersten Prüfung folgende Änderungen erkennbar:
+
+- Token-Erstellung und Prüfung des aktuellen Benutzernamens wurden aus `be/api/auth.py` in das neue Modul `be/security/jwt_auth.py` verschoben. Die Authentifizierungs-Routen importieren diese Funktionen nun.
+- Die Service-Klasse wurde von `User_Service` in `UserService` umbenannt; die betroffenen Routen und der Authentifizierungs-Endpunkt verwenden den neuen Namen.
+- Im Frontend wurden die direkten Login- und Registrierungsaufrufe aus `LoginForm.tsx` und `RegisterForm.tsx` in Funktionen in `frontend/src/services/authService.ts` verlagert. Die Formulare rufen nun `login()` beziehungsweise `sign_up()` auf und kümmern sich anschließend um die Navigation.
+- Der Authentifizierungsdienst übernimmt die Anfrage an die API, das Speichern des Tokens und die Fehlerbenachrichtigung. Die Registrierungsfunktion prüft außerdem die Passwortbestätigung und meldet den Benutzer nach erfolgreicher Registrierung direkt an.
+
+Damit wurden insbesondere die zuvor empfohlenen Schritte zur Auslagerung der JWT-Funktionen und zur Zentralisierung der Login-/Registrierungsaufrufe teilweise umgesetzt. Die Aufgabenlogik wurde bislang nicht in einen eigenen Service ausgelagert; auch die doppelte Token-Prüfung in `UserService` ist noch vorhanden.
 
 ### Sinnvolle nächste Schritte
 
-1. Eine `task_service.py` ergänzen und Datenbankoperationen für Aufgaben aus `task_route.py` dorthin verschieben. Die Route sollte hauptsächlich HTTP-Eingaben entgegennehmen, den Dienst aufrufen und HTTP-Antworten liefern.
-2. Authentifizierungslogik wie Token-Erstellung und Token-Prüfung in ein eigenes Modul, zum Beispiel `be/security/`, verschieben. `be/api/auth.py` kann dann bei den Endpunkten bleiben.
-3. Im Frontend einen zentralen Authentifizierungsdienst mit Funktionen wie `login()` und `register()` bereitstellen und die Komponenten diesen Dienst verwenden lassen. So werden URL, Token-Ablage und Fehlerbehandlung nicht in mehreren Formularen gepflegt.
-4. Falls `TasksPage.jsx` weiter wächst, API-Zustand und Aufgabenaktionen in einen Hook oder Controller auslagern. Die Seite kann dann vorwiegend die Komponenten zusammensetzen.
-5. Einheitliche Benennungen verwenden, zum Beispiel `UserService` statt `User_Service`, und ungenutzte beziehungsweise doppelte Authentifizierungs-Hilfsfunktionen entfernen.
+1. Einen `task_service.py` ergänzen und Datenbankoperationen für Aufgaben aus `task_route.py` dorthin verschieben. Die Route sollte hauptsächlich HTTP-Eingaben entgegennehmen, den Dienst aufrufen und HTTP-Antworten liefern.
+2. Die doppelte Token-Prüfung im `UserService` entfernen oder zentral über `be/security/jwt_auth.py` lösen. Dadurch bleibt Authentifizierung an einer Stelle.
+3. `TasksPage.jsx` bei weiterem Wachstum in einen Hook für Aufgabenstatus und Aktionen aufteilen. Die Seite kann dann hauptsächlich die Komponenten zusammensetzen.
+4. Im Frontend `authService.ts` aufteilen, falls es weiter wächst: HTTP-/Token-Verwaltung einerseits und Benachrichtigungen andererseits. Aktuell ist `react-toastify` direkt im Dienst eingebunden, wodurch der Dienst auch eine UI-Aufgabe übernimmt.
+5. Einheitliche Namenskonventionen verwenden, zum Beispiel `signUp` statt `sign_up`, und ungenutzte Abhängigkeiten aus `UserService` entfernen.
 
 Diese Änderungen sind Empfehlungen für eine schrittweise Weiterentwicklung. Die bestehende Struktur ist bereits modular angelegt; es handelt sich nicht um einen vollständigen Umbau.
