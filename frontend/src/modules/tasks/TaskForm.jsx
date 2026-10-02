@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 
 function TaskForm({ onCreate }) {
   const [title, setTitle] = useState('')
@@ -24,7 +25,10 @@ function TaskForm({ onCreate }) {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <button type="submit">Hinzufügen</button>
+      <button type="submit">
+        <Plus size={16} strokeWidth={2} />
+        Hinzufügen
+      </button>
     </form>
   )
 }

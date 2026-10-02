@@ -5,6 +5,7 @@ import TaskList from './TaskList'
 import TaskForm from './TaskForm'
 import { getTasks, createTask, updateTask, deleteTask } from './tasksApi'
 import { logout } from '../../services/authService'
+import { Check, Moon, Sun, LogOut, LayoutList, Kanban } from 'lucide-react'
 
 function TasksPage() {
   const [tasks, setTasks] = useState([])
@@ -66,7 +67,7 @@ function TasksPage() {
 
         <nav className="topbar">
           <div className="brand">
-            <span className="brand-mark">✓</span>
+            <span className="brand-mark"><Check size={15} strokeWidth={3} /></span>
             TaskFlow
           </div>
           <div className="topbar-actions">
@@ -75,9 +76,12 @@ function TasksPage() {
               onClick={toggleTheme}
               title={theme === 'light' ? 'Dunkles Design' : 'Helles Design'}
             >
-              {theme === 'light' ? '☾' : '☀'}
+            {theme === 'light' ? <Moon size={17} strokeWidth={1.75} /> : <Sun size={17} strokeWidth={1.75} />}
             </button>
-            <button className="btn-ghost" onClick={handleLogout}>Logout</button>
+            <button className="btn-ghost" onClick={handleLogout}>
+              <LogOut size={15} strokeWidth={1.75} />
+              Logout
+            </button>
           </div>
         </nav>
 
@@ -88,8 +92,14 @@ function TasksPage() {
             <p className="subtitle">{tasks.length - doneCount} offen · {doneCount} erledigt</p>
           </div>
           <div className="view-switch">
-            <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>Liste</button>
-            <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
+            <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
+              <LayoutList size={15} strokeWidth={1.75} />
+              Liste
+            </button>
+            <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>
+              <Kanban size={15} strokeWidth={1.75} />
+              Board
+            </button>
           </div>
         </header>
 
