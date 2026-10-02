@@ -1,102 +1,113 @@
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState } from "react";
+import { Check, Eye, EyeOff, Moon, Sun } from "lucide-react";
 import { sign_up } from "../../services/authService";
+import { useTheme } from "../tasks/useTheme";
 
 function RegisterForm() {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
-	const [showPassword, setShowPassword] = useState(false)
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { theme, toggleTheme } = useTheme();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
-		const success = await sign_up(username, password, confirmPassword)
-		if (success) {
-			navigate("/dashboard")
-		}
+        const success = await sign_up(username, password, confirmPassword);
+        if (success) {
+            navigate("/dashboard");
+        }
     }
 
-	return (
-		<section id="register-form" aria-label="Register" className="auth-shell">
-			<h2 className="auth-title">Create account</h2>
-			<p className="auth-subtitle">Join TaskFlow in a few seconds.</p>
+    return (
+        <div className="app-dark auth-page" data-theme={theme}>
+            <button
+                type="button"
+                className="theme-toggle"
+                onClick={toggleTheme}
+                title={theme === "light" ? "Dunkles Design" : "Helles Design"}
+            >
+                {theme === "light" ? <Moon size={17} strokeWidth={1.75} /> : <Sun size={17} strokeWidth={1.75} />}
+            </button>
 
-			<form className="auth-card" onSubmit={handleSubmit}>
-				<h3 className="auth-card-title">Register</h3>
+            <div className="brand auth-brand">
+                <span className="brand-mark"><Check size={15} strokeWidth={3} /></span>
+                TaskFlow
+            </div>
 
-				<label htmlFor="register-username" className="auth-label">
-					Username
-				</label>
-				<input
-					id="register-username"
-					name="username"
-					type="text"
-					placeholder="choose username"
-                    className="auth-input"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-				/>
+            <section className="auth-shell" aria-label="Registrieren">
+                <h1 className="auth-title">Konto erstellen</h1>
+                <p className="auth-subtitle">In wenigen Sekunden startklar.</p>
 
-				<label htmlFor="register-password" className="auth-label">
-					Password
-				</label>
-				<div className="auth-input-row">
-					<input
-						id="register-password"
-						name="password"
-						type={showPassword ? "text" : "password"}
-						placeholder="choose password"
-                    className="auth-input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-					/>
-					<button
-						type="button"
-						className="auth-toggle"
-						onClick={() => setShowPassword((prev) => !prev)}
-						aria-label={showPassword ? "Hide password" : "Show password"}
-					>
-						{showPassword ? "Hide" : "Show"}
-					</button>
-				</div>
+                <form className="auth-card" onSubmit={handleSubmit}>
+                    <label htmlFor="register-username" className="auth-label">Benutzername</label>
+                    <input
+                        id="register-username"
+                        name="username"
+                        type="text"
+                        autoComplete="username"
+                        placeholder="Benutzername wählen"
+                        className="auth-input"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
 
-				<label htmlFor="register-password-repeat" className="auth-label">
-					Repeat password
-				</label>
-				<div className="auth-input-row">
-					<input
-						id="register-password-repeat"
-						name="password-repeat"
-						type={showConfirmPassword ? "text" : "password"}
-						placeholder="repeat password"
-                    className="auth-input"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-					/>
-					<button
-						type="button"
-						className="auth-toggle"
-						onClick={() => setShowConfirmPassword((prev) => !prev)}
-						aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
-					>
-						{showConfirmPassword ? "Hide" : "Show"}
-					</button>
-				</div>
+                    <label htmlFor="register-password" className="auth-label">Passwort</label>
+                    <div className="auth-input-row">
+                        <input
+                            id="register-password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="new-password"
+                            placeholder="Passwort wählen"
+                            className="auth-input"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button
+                            type="button"
+                            className="auth-toggle"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                        >
+                            {showPassword ? <EyeOff size={17} strokeWidth={1.75} /> : <Eye size={17} strokeWidth={1.75} />}
+                        </button>
+                    </div>
 
-				<button type="submit" className="auth-button auth-button-secondary">
-					Create account
-				</button>
+                    <label htmlFor="register-password-repeat" className="auth-label">Passwort wiederholen</label>
+                    <div className="auth-input-row">
+                        <input
+                            id="register-password-repeat"
+                            name="password-repeat"
+                            type={showConfirmPassword ? "text" : "password"}
+                            autoComplete="new-password"
+                            placeholder="Passwort wiederholen"
+                            className="auth-input"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                        <button
+                            type="button"
+                            className="auth-toggle"
+                            onClick={() => setShowConfirmPassword((prev) => !prev)}
+                            aria-label={showConfirmPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                        >
+                            {showConfirmPassword ? <EyeOff size={17} strokeWidth={1.75} /> : <Eye size={17} strokeWidth={1.75} />}
+                        </button>
+                    </div>
 
-				<p className="auth-switch-text">
-					Already have an account?{" "}
-					<Link className="auth-switch-link" to="/">Back to login</Link>
-				</p>
-			</form>
-		</section>
-	);
+                    <button type="submit" className="auth-button">Konto erstellen</button>
+                </form>
+
+                <p className="auth-switch-text">
+                    Schon ein Konto?{" "}
+                    <Link className="auth-switch-link" to="/">Zur Anmeldung</Link>
+                </p>
+            </section>
+        </div>
+    );
 }
 
 export default RegisterForm;
