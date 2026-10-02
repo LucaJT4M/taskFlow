@@ -1,61 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Check, Moon, Sun, LogOut, LayoutList, Kanban } from 'lucide-react'
 import KanbanBoard from './KanbanBoard'
 import TaskList from './TaskList'
 import TaskForm from './TaskForm'
-import { getTasks, createTask, updateTask, deleteTask } from './tasksApi'
+import { useTasks } from './useTasks'
+import { useTheme } from './useTheme'
 import { logout } from '../../services/authService'
-import { Check, Moon, Sun, LogOut, LayoutList, Kanban } from 'lucide-react'
 
 function TasksPage() {
-  const [tasks, setTasks] = useState([])
-  const [error, setError] = useState(null)
+  const { tasks, error, addTask, editTask, removeTask } = useTasks()
+  const { theme, toggleTheme } = useTheme()
   const [view, setView] = useState('board') // 'board' | 'list'
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light')
   const navigate = useNavigate()
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme)
-  }, [theme])
-
-  useEffect(() => {
-    getTasks().then(setTasks).catch((err) => setError(err.message))
-  }, [])
-
-  function toggleTheme() {
-    setTheme((t) => (t === 'light' ? 'dark' : 'light'))
-  }
 
   function handleLogout() {
     logout()
     navigate('/')
-  }
-
-  async function handleCreate(data) {
-    try {
-      const created = await createTask(data)
-      setTasks((prev) => [...prev, created])
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  async function handleUpdate(task, changes) {
-    try {
-      const updated = await updateTask(task.id, changes)
-      setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  async function handleDelete(task) {
-    try {
-      await deleteTask(task.id)
-      setTasks((prev) => prev.filter((t) => t.id !== task.id))
-    } catch (err) {
-      setError(err.message)
-    }
   }
 
   const today = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -104,11 +65,11 @@ function TasksPage() {
         </header>
 
         {error && <p className="error">Fehler: {error}</p>}
-        <TaskForm onCreate={handleCreate} />
+        <TaskForm onCreate={addTask} />
 
         {view === 'board'
-          ? <KanbanBoard tasks={tasks} onUpdate={handleUpdate} onDelete={handleDelete} />
-          : <TaskList tasks={tasks} onUpdate={handleUpdate} onDelete={handleDelete} />}
+          ? <KanbanBoard tasks={tasks} onUpdate={editTask} onDelete={removeTask} />
+          : <TaskList tasks={tasks} onUpdate={editTask} onDelete={removeTask} />}
       </div>
     </div>
   )
