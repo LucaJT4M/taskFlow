@@ -182,7 +182,7 @@ body { margin: 0; }
 .app-dark ::selection { background: var(--selection); }
 
 /* ========== Seite & Kopfbereich ========== */
-.tasks-page { max-width: 1120px; margin: 0 auto; padding: 28px 40px 80px; }
+.tasks-page { max-width: 1120px; margin: 0 auto; padding: 48px 40px 80px; }
 
 /* ========== Obere Leiste ========== */
 .topbar {
@@ -508,3 +508,113 @@ body { margin: 0; }
   gap: 6px;
 }
 .app-dark svg { flex-shrink: 0; }
+
+
+/* ========== Layout mit Seitenleiste ========== */
+.app-layout { display: flex; }
+.app-main { flex: 1; min-width: 0; }
+
+/* ========== Seitenleiste ========== */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 248px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  transition: width 0.2s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 6px;
+}
+
+.sidebar-section {
+  margin: 32px 10px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-item:hover { background: var(--surface-hover); color: var(--text); }
+.nav-item.active { background: var(--surface-active); color: var(--text); font-weight: 500; }
+.nav-item.active svg { color: var(--accent); }
+
+.nav-count { margin-left: auto; font-size: 12px; color: var(--text-faint); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-row { display: flex; align-items: center; gap: 10px; padding: 8px 6px 0; }
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-active);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.user-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Eingeklappt: nur Icons */
+.sidebar.collapsed { width: 68px; }
+.sidebar.collapsed .sidebar-label { display: none; }
+.sidebar.collapsed .sidebar-header,
+.sidebar.collapsed .user-row { flex-direction: column; gap: 14px; padding-left: 0; padding-right: 0; }
+.sidebar.collapsed .sidebar-nav { margin-top: 32px; }
+.sidebar.collapsed .nav-item { justify-content: center; padding: 10px; }
+
+/* Schmale Bildschirme: Seitenleiste immer eingeklappt */
+@media (max-width: 860px) {
+  .sidebar { width: 68px; }
+  .sidebar .sidebar-label { display: none; }
+  .sidebar .sidebar-header,
+  .sidebar .user-row { flex-direction: column; gap: 14px; }
+  .sidebar .nav-item { justify-content: center; padding: 10px; }
+}

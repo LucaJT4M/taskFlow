@@ -15,6 +15,7 @@ class TaskUpdate(BaseModel):
 
 class TaskResponse(TaskCreate):
     id: int
+    owner_id: int
 
     class Config:
         from_attributes = True
