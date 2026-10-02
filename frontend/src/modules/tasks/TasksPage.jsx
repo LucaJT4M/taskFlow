@@ -48,6 +48,7 @@ function TasksPage() {
         onFilterChange={setFilter}
         counts={counts}
         username={user?.username}
+        isAdmin={user?.username === 'admin'}
         theme={theme}
         onToggleTheme={toggleTheme}
         onLogout={handleLogout}

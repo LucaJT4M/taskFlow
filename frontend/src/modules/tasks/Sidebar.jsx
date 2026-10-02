@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Check, ListTodo, Circle, CircleDot, CircleCheck,
-  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen,
+  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -11,7 +12,7 @@ const NAV_ITEMS = [
   { key: 'done', label: 'Erledigt', icon: CircleCheck },
 ]
 
-function Sidebar({ filter, onFilterChange, counts, username, theme, onToggleTheme, onLogout }) {
+function Sidebar({ filter, onFilterChange, counts, username, isAdmin, theme, onToggleTheme, onLogout }) {
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebar') === 'collapsed')
 
   useEffect(() => {
@@ -48,6 +49,13 @@ function Sidebar({ filter, onFilterChange, counts, username, theme, onToggleThem
             <span className="nav-count sidebar-label">{counts[key]}</span>
           </button>
         ))}
+
+        {isAdmin && (
+          <Link to="/admin" className="nav-item" title={collapsed ? 'Admin' : undefined}>
+            <Shield size={17} strokeWidth={1.75} />
+            <span className="sidebar-label">Admin</span>
+          </Link>
+        )}
       </nav>
 
       <div className="sidebar-footer">
