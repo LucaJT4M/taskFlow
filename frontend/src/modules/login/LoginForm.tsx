@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Check, Eye, EyeOff, Moon, Sun } from "lucide-react";
 import { login } from "../../services/authService";
 import { useTheme } from "../tasks/useTheme";
+import DecorLayer from "../../components/decor/DecorLayer";
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ function LoginForm() {
 
     return (
         <div className="app-dark auth-page" data-theme={theme}>
+            <DecorLayer variant="auth" />
             <button
                 type="button"
                 className="theme-toggle"

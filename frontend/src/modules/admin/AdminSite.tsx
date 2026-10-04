@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../tasks/useTheme";
+import DecorLayer from "../../components/decor/DecorLayer";
 import { TaskItem, UserItem } from "../../classes/AdminClasses";
 import { useUsers } from "./useUsers";
 import { useTasks } from "../tasks/useTasks";
@@ -116,6 +117,7 @@ function AdminSite() {
 
     return (
         <div className="app-dark admin-shell" data-theme={theme}>
+            <DecorLayer variant="app" />
             <div className="admin-page">
                 <header className="admin-header">
                     <div>

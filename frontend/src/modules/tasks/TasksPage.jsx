@@ -9,6 +9,7 @@ import { useTasks } from './useTasks'
 import { useTheme } from './useTheme'
 import { logout } from '../../services/authService'
 import { useCurrentUser } from './useCurrentUser'
+import DecorLayer from '../../components/decor/DecorLayer'
 
 const FILTER_TITLES = {
   all: 'Meine Aufgaben',
@@ -43,6 +44,7 @@ function TasksPage() {
 
   return (
     <div className="app-dark app-layout" data-theme={theme}>
+      <DecorLayer variant="app" />
       <Sidebar
         filter={filter}
         onFilterChange={setFilter}

@@ -1,5 +1,6 @@
 import { STATUSES } from './taskStatus'
 import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import { burstLeaves } from '../../components/decor/leafBurst'
 
 const ORDER = STATUSES.map((s) => s.status)
 
@@ -23,7 +24,11 @@ function TaskCard({ task, onMove, onDelete }) {
             <ChevronLeft size={16} strokeWidth={1.75} />
           </button>
           <button className="icon-btn" title="Weiter" disabled={index === ORDER.length - 1}
-            onClick={() => onMove(task, ORDER[index + 1])}>
+            onClick={(e) => {
+              const next = ORDER[index + 1]
+              if (next === 'done') burstLeaves(e.currentTarget)
+              onMove(task, next)
+            }}>
             <ChevronRight size={16} strokeWidth={1.75} />
           </button>
           <button className="icon-btn delete" title="Löschen"

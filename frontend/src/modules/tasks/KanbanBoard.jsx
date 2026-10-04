@@ -1,5 +1,6 @@
 import TaskCard from './TaskCard'
 import { STATUSES } from './taskStatus'
+import Sprout from '../../components/decor/Sprout'
 
 function KanbanBoard({ tasks, onUpdate, onDelete }) {
   return (
@@ -14,7 +15,12 @@ function KanbanBoard({ tasks, onUpdate, onDelete }) {
               <span className="count">{columnTasks.length}</span>
             </div>
             <div className="column-body">
-              {columnTasks.length === 0 && <div className="column-empty">Keine Aufgaben</div>}
+              {columnTasks.length === 0 && (
+                <div className="column-empty">
+                  <Sprout />
+                  Keine Aufgaben
+                </div>
+              )}
               {columnTasks.map((task) => (
                 <TaskCard
                   key={task.id}

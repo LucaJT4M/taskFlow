@@ -1,9 +1,16 @@
 import { STATUSES } from './taskStatus'
 import { Check, Trash2 } from 'lucide-react'
+import Sprout from '../../components/decor/Sprout'
+import { burstLeaves } from '../../components/decor/leafBurst'
 
 function TaskList({ tasks, onUpdate, onDelete }) {
   if (tasks.length === 0) {
-    return <div className="empty">Noch keine Aufgaben – leg oben deine erste an.</div>
+    return (
+      <div className="empty">
+        <Sprout />
+        Noch keine Aufgaben – leg oben deine erste an.
+      </div>
+    )
   }
 
   return (
@@ -15,7 +22,10 @@ function TaskList({ tasks, onUpdate, onDelete }) {
             <button
               className={`checkbox ${isDone ? 'checked' : ''}`}
               title={isDone ? 'Als offen markieren' : 'Als erledigt markieren'}
-              onClick={() => onUpdate(task, { status: isDone ? 'todo' : 'done' })}
+              onClick={(e) => {
+                if (!isDone) burstLeaves(e.currentTarget)
+                onUpdate(task, { status: isDone ? 'todo' : 'done' })
+              }}
             >
               {isDone && <Check size={12} strokeWidth={3} />}
             </button>
@@ -29,7 +39,10 @@ function TaskList({ tasks, onUpdate, onDelete }) {
             <select
               className="status-select"
               value={task.status}
-              onChange={(e) => onUpdate(task, { status: e.target.value })}
+              onChange={(e) => {
+                if (e.target.value === 'done') burstLeaves(e.currentTarget)
+                onUpdate(task, { status: e.target.value })
+              }}
             >
               {STATUSES.map((s) => (
                 <option key={s.status} value={s.status}>{s.title}</option>
