@@ -1,16 +1,85 @@
-# React + Vite
+# TaskFlow Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for TaskFlow.
 
-Currently, two official plugins are available:
+## Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+From project root:
 
-## React Compiler
+```bash
+npm --prefix frontend install
+npm --prefix frontend run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Default dev URL is usually:
 
-## Expanding the ESLint configuration
+```text
+http://127.0.0.1:5173
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Main Routes
+
+- `/` login
+- `/signup` registration
+- `/dashboard` authenticated task dashboard
+- `/admin` admin-only management area
+
+## Current Feature Set
+
+### Dashboard
+
+- List and board views for tasks
+- Task create/edit/delete
+- Status filtering (`To Do`, `In Progress`, `Done`)
+- Theme toggle
+- Admin menu entry in sidebar (visible only for admin)
+
+### Admin Area
+
+- User list with task filtering by selected user
+- Create user popup
+- Edit user popup (username/password)
+- Delete user confirmation popup
+- Create task popup with assign-to selection
+- Edit task popup (title/status)
+- Delete task confirmation popup
+
+## Admin Modules
+
+Admin UI was split into reusable modules:
+
+- `src/modules/admin/AdminSite.tsx` page container and orchestration
+- `src/modules/admin/AdminPopups.tsx` popup components
+- `src/modules/admin/useUsers.ts` user actions/state
+- `src/classes/AdminClasses.ts` shared user/task domain types
+- `src/classes/AdminPopUpClasses.ts` popup prop/type definitions
+
+## Service/API Layer
+
+- `src/modules/tasks/tasksApi.js`
+  - `getTasks`
+  - `createTask`
+  - `createTaskAsAdmin`
+  - `updateTask`
+  - `deleteTask`
+- `src/modules/tasks/useTasks.js`
+  - `addTask`
+  - `addTaskAsAdmin`
+  - `editTask`
+  - `removeTask`
+
+## Backend Dependency Notes
+
+Frontend expects backend at:
+
+```text
+http://localhost:8000
+```
+
+Admin task creation uses:
+
+```http
+POST /tasks/create_as_admin
+```
+
+with payload including `owner_id`.

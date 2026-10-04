@@ -19,3 +19,9 @@ class TaskResponse(TaskCreate):
 
     class Config:
         from_attributes = True
+
+class TaskAdminCreate(BaseModel):
+    title: str
+    description: str | None = None
+    status: Status = "todo"
+    owner_id: int

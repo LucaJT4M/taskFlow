@@ -180,6 +180,25 @@ POST /tasks
 Content-Type: application/json
 ```
 
+Task als Admin fuer einen anderen User erstellen:
+
+```http
+POST /tasks/create_as_admin
+Content-Type: application/json
+Authorization: Bearer <admin-jwt>
+```
+
+Body:
+
+```json
+{
+  "title": "Review release checklist",
+  "description": "Optional text",
+  "status": "todo",
+  "owner_id": 2
+}
+```
+
 Task updaten:
 
 ```http
@@ -206,3 +225,4 @@ DELETE /tasks/{task_id}
 - `GET /user/{username}` nur admin.
 - `DELETE /user/{username}` nur admin.
 - `PUT /user/{username}` admin oder Benutzer selbst (`sub` im JWT entspricht `{username}`).
+- `POST /tasks/create_as_admin` nur admin.

@@ -1,10 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { getCurrentUser } from "../../services/authService";
 
 function ProtectedRoute() {
     const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+    const hasShownUnauthorizedToast = useRef(false);
 
     useEffect(() => {
         async function checkAuthentication() {
@@ -16,6 +17,13 @@ function ProtectedRoute() {
         checkAuthentication();
     }, []);
 
+    useEffect(() => {
+        if (authenticated === false && !hasShownUnauthorizedToast.current) {
+            toast.error("Unauthorized. Please log in to continue.");
+            hasShownUnauthorizedToast.current = true;
+        }
+    }, [authenticated]);
+
     // Still checking the backend
     if (authenticated === null) {
         return <p>Loading...</p>;
@@ -23,7 +31,6 @@ function ProtectedRoute() {
 
     // Not authenticated
     if (!authenticated) {
-        toast.error("Unauthorized. Please log in to continue.");
         return <Navigate to="/" replace />;
     }
 

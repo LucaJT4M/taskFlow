@@ -1,31 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getTasks, createTask, updateTask, deleteTask } from './tasksApi'
-
-export const normalizeTask = (task = {}) => {
-  const rawStatus = typeof task.status === 'string' ? task.status : ''
-  const status =
-    rawStatus === 'done' || rawStatus === 'Done'
-      ? 'Done'
-      : rawStatus === 'in_progress' || rawStatus === 'In Progress'
-        ? 'In Progress'
-        : 'To Do'
-
-  return {
-    id: Number(task.id ?? 0),
-    title: typeof task.title === 'string' && task.title.trim() ? task.title : 'Untitled task',
-    user:
-      typeof task.user === 'string' && task.user.trim()
-        ? task.user
-        : typeof task.username === 'string' && task.username.trim()
-          ? task.username
-          : 'Unassigned',
-    status,
-    dueDate: typeof task.dueDate === 'string' && task.dueDate.trim() ? task.dueDate : '-',
-  }
-}
-
-export const normalizeTasks = (tasks) =>
-  Array.isArray(tasks) ? tasks.map((task) => normalizeTask(task)) : []
+import { getTasks, createTask, createTaskAsAdmin, updateTask, deleteTask } from './tasksApi'
 
 export function useTasks() {
   const [tasks, setTasks] = useState([])
@@ -53,6 +27,12 @@ export function useTasks() {
       setTasks((prev) => [...prev, created])
     })
 
+  const addTaskAsAdmin = (data) =>
+    run(async () => {
+      const created = await createTaskAsAdmin(data)
+      setTasks((prev) => [...prev, created])
+    })
+
   const editTask = (task, changes) =>
     run(async () => {
       const updated = await updateTask(task.id, changes)
@@ -64,6 +44,6 @@ export function useTasks() {
       await deleteTask(task.id)
       setTasks((prev) => prev.filter((t) => t.id !== task.id))
     })
-
-  return { tasks, error, addTask, editTask, removeTask, normalizeTask, normalizeTasks }
+  
+  return { tasks, error, addTask, addTaskAsAdmin, editTask, removeTask }
 }

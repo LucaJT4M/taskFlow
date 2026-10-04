@@ -133,7 +133,7 @@ Example user update body (partial update):
 
 ```json
 {
-	"password": "newSecret"
+  "password": "newSecret"
 }
 ```
 
@@ -146,6 +146,7 @@ Example user update body (partial update):
 
 - `GET /tasks`
 - `POST /tasks`
+- `POST /tasks/create_as_admin` (admin only, body includes `owner_id`)
 - `PATCH /tasks/{task_id}`
 - `DELETE /tasks/{task_id}`
 
@@ -184,6 +185,24 @@ Example user update body (partial update):
 
 - Root `docker-compose.yml` runs only Postgres.
 - Backend CORS currently allows `http://localhost:5173` and `http://localhost:5174`.
+
+## Frontend Admin Updates (2026-10-04)
+
+The admin dashboard was extended and refactored with reusable modules:
+
+- Admin-only menu button is shown on `/dashboard` for user `admin`.
+- Admin page layout was tightened to use more viewport space.
+- Modal logic was moved to reusable components in `frontend/src/modules/admin/AdminPopups.tsx`.
+- Popup prop/type definitions were moved to `frontend/src/classes/AdminPopUpClasses.ts`.
+- Added user management actions in admin UI:
+  - create user
+  - edit user (username/password)
+  - delete user with confirmation popup
+- Added task management actions in admin UI:
+  - create task for selected user via `POST /tasks/create_as_admin`
+  - edit task (title/status)
+  - delete task with confirmation popup
+- Removed due-date column from admin task table because backend task schema has no due date.
 
 ## Modularisierung: kurze Projektprüfung
 

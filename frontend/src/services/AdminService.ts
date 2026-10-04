@@ -1,5 +1,18 @@
 import { toast } from "react-toastify";
+import { TaskItem } from "../classes/AdminClasses";
 const base_url = "http://localhost:8000";
+
+function normalizeStatus(rawStatus: unknown): TaskItem["status"] {
+    if (rawStatus === "done" || rawStatus === "Done") {
+        return "Done";
+    }
+
+    if (rawStatus === "in_progress" || rawStatus === "In Progress") {
+        return "In Progress";
+    }
+
+    return "To Do";
+}
 
 export async function getUsers() {
     // Gets all the users for the admin dashboard
@@ -72,4 +85,21 @@ export async function addUser(username: string, password: string) {
         console.error(error);
         return [];
     }
+}
+
+export function convertTasksToTaskItems(tasks: unknown[]): TaskItem[] {
+    if (!Array.isArray(tasks)) {
+        return [];
+    }
+
+    return tasks.map((task) => {
+        const rawTask = task as Record<string, unknown>;
+
+        return {
+            id: Number(rawTask.id ?? 0),
+            userId: Number(rawTask.owner_id ?? rawTask.userId ?? 0),
+            title: typeof rawTask.title === "string" && rawTask.title.trim() ? rawTask.title : "Untitled task",
+            status: normalizeStatus(rawTask.status),
+        };
+    });
 }

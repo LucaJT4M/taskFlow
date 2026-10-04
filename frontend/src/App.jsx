@@ -12,7 +12,7 @@ function App () {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="" element={<LoginForm/>}/>
+        <Route path="/" element={<LoginForm/>}/>
         <Route path="/signup" element={<RegisterForm/>}/>
 
         {/* Private Routes */}

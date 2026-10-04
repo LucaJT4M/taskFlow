@@ -1,29 +1,118 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../tasks/useTheme";
-import { UserItem, TaskItem } from "../../classes/AdminClasses";
-
-const demoUsers: UserItem[] = [
-    { id: 1, username: "admin" },
-    { id: 2, username: "emma" },
-    { id: 3, username: "liam" },
-];
-
-const demoTasks: TaskItem[] = [
-    { id: 1, userId: 1, title: "Review project structure", status: "In Progress", dueDate: "2026-10-08" },
-    { id: 2, userId: 2, title: "Write API tests", status: "To Do", dueDate: "2026-10-10" },
-    { id: 3, userId: 2, title: "Fix signup edge case", status: "Done", dueDate: "2026-10-03" },
-    { id: 4, userId: 3, title: "Refine dashboard copy", status: "To Do", dueDate: "2026-10-12" },
-];
+import { TaskItem, UserItem } from "../../classes/AdminClasses";
+import { useUsers } from "./useUsers";
+import { useTasks } from "../tasks/useTasks";
+import { convertTasksToTaskItems } from "../../services/AdminService";
+import { AddUserModal, ConfirmActionModal, CreateTaskModal, EditTaskModal, EditUserModal } from "./AdminPopups";
 
 function AdminSite() {
+    const { users, userError, addUser, editUser, removeUser } = useUsers();
+    const { tasks, error, addTaskAsAdmin, editTask, removeTask } = useTasks()
+
+    const taskList = convertTasksToTaskItems(tasks)
+
     const { theme, toggleTheme } = useTheme();
     const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
+    const [isEditUserOpen, setIsEditUserOpen] = useState(false);
     const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState<number>(demoUsers[0]?.id ?? 0);
+    const [isEditTaskOpen, setIsEditTaskOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<number>(users[0]?.id ?? 0);
+    const [editingUser, setEditingUser] = useState<UserItem | null>(null);
+    const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
+    const [deleteUserCandidate, setDeleteUserCandidate] = useState<UserItem | null>(null);
+    const [deleteTaskCandidate, setDeleteTaskCandidate] = useState<TaskItem | null>(null);
 
-    const selectedUser = demoUsers.find((user) => user.id === selectedUserId) ?? null;
-    const visibleTasks = demoTasks.filter((task) => task.userId === selectedUserId);
+    useEffect(() => {
+        if (users.length === 0) {
+            return;
+        }
+
+        const selectedUserExists = users.some((user) => user.id === selectedUserId);
+        if (!selectedUserExists) {
+            setSelectedUserId(users[0].id);
+        }
+    }, [users, selectedUserId]);
+    
+    const selectedUser = users.find((user) => user.id === selectedUserId) ?? null;
+    const visibleTasks = taskList.filter((task) => Number(task.userId) === Number(selectedUserId));
+
+    async function handleCreateUser(username: string, password: string) {
+        if (!username || !password) {
+            return;
+        }
+
+        await addUser(username, password);
+        setIsCreateUserOpen(false);
+    }
+
+    function openEditUser(user: UserItem) {
+        setEditingUser(user);
+        setIsEditUserOpen(true);
+    }
+
+    async function handleEditUser(username: string, password: string) {
+        if (!editingUser) {
+            return;
+        }
+
+        await editUser(editingUser.username, username, password);
+        setIsEditUserOpen(false);
+        setEditingUser(null);
+    }
+
+    async function handleCreateTask(title: string, description: string, status: "todo" | "in_progress" | "done", owner_id: number) {
+        if (!title) {
+            return;
+        }
+
+        await addTaskAsAdmin({
+            title,
+            description: description || null,
+            status,
+            owner_id,
+        })
+
+        setIsCreateTaskOpen(false);
+    }
+
+    function openEditTask(task: TaskItem) {
+        setEditingTask(task);
+        setIsEditTaskOpen(true);
+    }
+
+    async function handleEditTask(title: string, status: "todo" | "in_progress" | "done") {
+        if (!editingTask || !title) {
+            return;
+        }
+
+        await editTask(editingTask, {
+            title,
+            status,
+        });
+
+        setIsEditTaskOpen(false);
+        setEditingTask(null);
+    }
+
+    async function confirmDeleteUser() {
+        if (!deleteUserCandidate) {
+            return;
+        }
+
+        await removeUser(deleteUserCandidate.username);
+        setDeleteUserCandidate(null);
+    }
+
+    async function confirmDeleteTask() {
+        if (!deleteTaskCandidate) {
+            return;
+        }
+
+        await removeTask(deleteTaskCandidate);
+        setDeleteTaskCandidate(null);
+    }
 
     return (
         <div className="app-dark admin-shell" data-theme={theme}>
@@ -56,8 +145,10 @@ function AdminSite() {
                             </button>
                         </div>
 
+                        {userError && <p className="admin-subtitle">{userError}</p>}
+
                         <ul className="admin-user-list">
-                            {demoUsers.map((user) => {
+                            {users.map((user) => {
                                 const isActive = user.id === selectedUserId;
 
                                 return (
@@ -69,10 +160,10 @@ function AdminSite() {
                                             <button type="button" className="admin-mini-btn" onClick={() => setSelectedUserId(user.id)}>
                                                 Show Tasks
                                             </button>
-                                            <button type="button" className="admin-mini-btn">
+                                            <button type="button" className="admin-mini-btn" onClick={() => openEditUser(user)}>
                                                 Edit
                                             </button>
-                                            <button type="button" className="admin-mini-btn admin-danger-btn">
+                                            <button type="button" className="admin-mini-btn admin-danger-btn" onClick={() => setDeleteUserCandidate(user)}>
                                                 Delete
                                             </button>
                                         </div>
@@ -90,20 +181,21 @@ function AdminSite() {
                             </button>
                         </div>
 
+                        {error && <p className="admin-subtitle">{error}</p>}
+
                         <div className="admin-table-wrap">
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Title</th>
                                         <th>Status</th>
-                                        <th>Due Date</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {visibleTasks.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="admin-empty-cell">No tasks for this user yet.</td>
+                                            <td colSpan={3} className="admin-empty-cell">No tasks for this user yet.</td>
                                         </tr>
                                     )}
                                     {visibleTasks.map((task) => (
@@ -114,11 +206,16 @@ function AdminSite() {
                                                     {task.status}
                                                 </span>
                                             </td>
-                                            <td>{task.dueDate}</td>
                                             <td>
                                                 <div className="admin-actions">
-                                                    <button type="button" className="admin-mini-btn">Edit</button>
-                                                    <button type="button" className="admin-mini-btn admin-danger-btn">Delete</button>
+                                                    <button type="button" className="admin-mini-btn" onClick={() => openEditTask(task)}>Edit</button>
+                                                    <button
+                                                        type="button"
+                                                        className="admin-mini-btn admin-danger-btn"
+                                                        onClick={() => setDeleteTaskCandidate(task)}
+                                                    >
+                                                        Delete
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -130,78 +227,57 @@ function AdminSite() {
                 </main>
             </div>
 
-            {isCreateUserOpen && (
-                <div className="admin-modal-backdrop" role="dialog" aria-modal="true" aria-label="Create user popup" onClick={() => setIsCreateUserOpen(false)}>
-                    <div className="admin-modal" onClick={(event) => event.stopPropagation()}>
-                        <div className="admin-modal-header">
-                            <h3>Create User</h3>
-                            <button type="button" className="admin-modal-close" onClick={() => setIsCreateUserOpen(false)}>x</button>
-                        </div>
-                        <form className="admin-modal-form">
-                            <label htmlFor="new-username">Username</label>
-                            <input id="new-username" type="text" placeholder="Enter username" />
+            <AddUserModal
+                isOpen={isCreateUserOpen}
+                onClose={() => setIsCreateUserOpen(false)}
+                onSubmit={handleCreateUser}
+            />
 
-                            <label htmlFor="new-password">Password</label>
-                            <input id="new-password" type="password" placeholder="Enter password" />
+            <EditUserModal
+                isOpen={isEditUserOpen}
+                onClose={() => {
+                    setIsEditUserOpen(false);
+                    setEditingUser(null);
+                }}
+                user={editingUser}
+                onSubmit={handleEditUser}
+            />
 
-                            <div className="admin-modal-actions">
-                                <button type="button" className="admin-btn admin-btn-secondary" onClick={() => setIsCreateUserOpen(false)}>
-                                    Cancel
-                                </button>
-                                <button type="button" className="admin-btn admin-btn-primary">Create User</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            <CreateTaskModal
+                isOpen={isCreateTaskOpen}
+                onClose={() => setIsCreateTaskOpen(false)}
+                users={users}
+                selectedUserId={selectedUserId}
+                onSubmit={handleCreateTask}
+            />
 
-            {isCreateTaskOpen && (
-                <div className="admin-modal-backdrop" role="dialog" aria-modal="true" aria-label="Create task popup" onClick={() => setIsCreateTaskOpen(false)}>
-                    <div className="admin-modal" onClick={(event) => event.stopPropagation()}>
-                        <div className="admin-modal-header">
-                            <h3>Create Task</h3>
-                            <button type="button" className="admin-modal-close" onClick={() => setIsCreateTaskOpen(false)}>x</button>
-                        </div>
-                        <form className="admin-modal-form">
-                            <label htmlFor="new-task-title">Title</label>
-                            <input id="new-task-title" type="text" placeholder="Task title" />
+            <EditTaskModal
+                isOpen={isEditTaskOpen}
+                onClose={() => {
+                    setIsEditTaskOpen(false);
+                    setEditingTask(null);
+                }}
+                task={editingTask}
+                onSubmit={handleEditTask}
+            />
 
-                            <label htmlFor="new-task-description">Description</label>
-                            <textarea id="new-task-description" rows={3} placeholder="Task description" />
+            <ConfirmActionModal
+                isOpen={deleteUserCandidate !== null}
+                onClose={() => setDeleteUserCandidate(null)}
+                title="Delete user"
+                description={deleteUserCandidate ? `Do you really want to delete ${deleteUserCandidate.username}?` : ""}
+                confirmLabel="Delete User"
+                onConfirm={confirmDeleteUser}
+            />
 
-                            <div className="admin-modal-grid">
-                                <div>
-                                    <label htmlFor="new-task-user">Assign To</label>
-                                    <select id="new-task-user" defaultValue={String(selectedUserId || "")}> 
-                                        {demoUsers.map((user) => (
-                                            <option key={user.id} value={user.id}>{user.username}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="new-task-status">Status</label>
-                                    <select id="new-task-status" defaultValue="To Do">
-                                        <option>To Do</option>
-                                        <option>In Progress</option>
-                                        <option>Done</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="new-task-date">Due Date</label>
-                                    <input id="new-task-date" type="date" />
-                                </div>
-                            </div>
-
-                            <div className="admin-modal-actions">
-                                <button type="button" className="admin-btn admin-btn-secondary" onClick={() => setIsCreateTaskOpen(false)}>
-                                    Cancel
-                                </button>
-                                <button type="button" className="admin-btn admin-btn-primary">Create Task</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            <ConfirmActionModal
+                isOpen={deleteTaskCandidate !== null}
+                onClose={() => setDeleteTaskCandidate(null)}
+                title="Delete task"
+                description={deleteTaskCandidate ? `Do you really want to delete \"${deleteTaskCandidate.title}\"?` : ""}
+                confirmLabel="Delete Task"
+                onConfirm={confirmDeleteTask}
+            />
         </div>
     );
 }

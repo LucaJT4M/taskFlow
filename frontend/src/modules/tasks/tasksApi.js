@@ -27,6 +27,9 @@ export const getTasks = () => request('/tasks')
 export const createTask = (task) =>
   request('/tasks', { method: 'POST', body: JSON.stringify(task) })
 
+export const createTaskAsAdmin = (task) =>
+  request('/tasks/create_as_admin', { method: 'POST', body: JSON.stringify(task) })
+
 export const updateTask = (id, changes) =>
   request(`/tasks/${id}`, { method: 'PATCH', body: JSON.stringify(changes) })
 

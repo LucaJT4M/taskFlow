@@ -1,16 +1,15 @@
-from sqlalchemy.orm import Session
 from be.models.user_model import User
 from be.core.db import get_db
 from passlib.context import CryptContext
 from be.security.password import hash_password, verify_password
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
 from be.core.config import SECRET_KEY, ALGORITHM
-from be.Classes.token import TokenData
+from be.services.task_service import TaskService
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+task_service = TaskService()
 
 class UserService:
     def get_user_by_username(self, db, username: str):
@@ -50,6 +49,11 @@ class UserService:
 
             if not user:
                 raise ValueError("No User found in DB")
+
+            # delete Tasks of user
+            tasks = task_service.get_tasks(db, user)
+            for t in tasks:
+                task_service.delete_task(db, t.id, user)
 
             db.delete(user)
             db.commit()
