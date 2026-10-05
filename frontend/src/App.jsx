@@ -3,6 +3,7 @@ import LoginForm from "./modules/login/LoginForm";
 import RegisterForm from "./modules/login/RegisterForm";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TasksPage from "./modules/tasks/TasksPage";
+import GardenPage from "./modules/garden/GardenPage";
 import ProtectedRoute from "./modules/extraRoutes/ProtectedRoute";
 import AdminRoute from "./modules/extraRoutes/AdminRoute";
 import AdminSite from "./modules/admin/AdminSite";
@@ -20,6 +21,7 @@ function App () {
         {/* Private Routes */}
         <Route element={<ProtectedRoute/>}>
           <Route path="/dashboard" element={<TasksPage/>}/>
+          <Route path="/garden" element={<GardenPage/>}/>
         </Route>
 
         {/* Admin Routes */}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { LayoutList, Kanban } from 'lucide-react'
 import Sidebar from './Sidebar'
 import KanbanBoard from './KanbanBoard'
@@ -10,6 +10,9 @@ import { useTheme } from './useTheme'
 import { logout } from '../../services/authService'
 import { useCurrentUser } from './useCurrentUser'
 import DecorLayer from '../../components/decor/DecorLayer'
+import GrowthToast from '../garden/GrowthToast'
+import { useGarden } from '../garden/useGarden'
+import { describeGrowth } from '../garden/growth'
 
 const FILTER_TITLES = {
   all: 'Meine Aufgaben',
@@ -19,12 +22,23 @@ const FILTER_TITLES = {
 }
 
 function TasksPage() {
-  const { tasks, error, addTask, editTask, removeTask } = useTasks()
+  const { garden, refresh: refreshGarden } = useGarden()
+  const [growth, setGrowth] = useState(null)
+  const { tasks, error, addTask, editTask, removeTask } = useTasks({ onTaskCompleted: handleTaskCompleted })
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const [view, setView] = useState('board') // 'board' | 'list'
-  const [filter, setFilter] = useState('all') // 'all' | 'todo' | 'in_progress' | 'done'
+  const location = useLocation()
+  const [filter, setFilter] = useState(location.state?.filter ?? 'all') // 'all' | 'todo' | 'in_progress' | 'done'
   const navigate = useNavigate()
+
+  // Eine Aufgabe wurde erledigt: Garten neu laden und zeigen, was gewachsen ist
+  async function handleTaskCompleted() {
+    const before = garden
+    const after = await refreshGarden()
+    const info = describeGrowth(before, after)
+    if (info) setGrowth(info)
+  }
 
   function handleLogout() {
     logout()
@@ -84,6 +98,14 @@ function TasksPage() {
             : <TaskList tasks={visibleTasks} onUpdate={editTask} onDelete={removeTask} />}
         </div>
       </main>
+
+      {growth && (
+        <GrowthToast
+          info={growth}
+          onClose={() => setGrowth(null)}
+          onOpenGarden={() => navigate('/garden')}
+        />
+      )}
     </div>
   )
 }

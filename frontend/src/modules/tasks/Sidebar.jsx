@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Check, ListTodo, Circle, CircleDot, CircleCheck,
-  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield,
+  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield, Sprout,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { key: 'done', label: 'Erledigt', icon: CircleCheck },
 ]
 
-function Sidebar({ filter, onFilterChange, counts, username, isAdmin, theme, onToggleTheme, onLogout }) {
+function Sidebar({ filter, onFilterChange, counts, username, isAdmin, gardenActive = false, theme, onToggleTheme, onLogout }) {
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebar') === 'collapsed')
 
   useEffect(() => {
@@ -49,6 +49,15 @@ function Sidebar({ filter, onFilterChange, counts, username, isAdmin, theme, onT
             <span className="nav-count sidebar-label">{counts[key]}</span>
           </button>
         ))}
+
+        <Link
+          to="/garden"
+          className={`nav-item ${gardenActive ? 'active' : ''}`}
+          title={collapsed ? 'Mein Garten' : undefined}
+        >
+          <Sprout size={17} strokeWidth={1.75} />
+          <span className="sidebar-label">Mein Garten</span>
+        </Link>
 
         {isAdmin && (
           <Link to="/admin" className="nav-item" title={collapsed ? 'Admin' : undefined}>

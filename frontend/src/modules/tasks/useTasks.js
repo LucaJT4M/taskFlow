@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { getTasks, createTask, createTaskAsAdmin, updateTask, deleteTask } from './tasksApi'
 
-export function useTasks() {
+/**
+ * onTaskCompleted wird aufgerufen, wenn eine Aufgabe gerade erledigt wurde
+ * (z. B. um danach den Garten neu zu laden).
+ */
+export function useTasks({ onTaskCompleted } = {}) {
   const [tasks, setTasks] = useState([])
   const [error, setError] = useState(null)
 
@@ -37,6 +41,7 @@ export function useTasks() {
     run(async () => {
       const updated = await updateTask(task.id, changes)
       setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)))
+      if (changes.status === 'done' && task.status !== 'done') onTaskCompleted?.(updated)
     })
 
   const removeTask = (task) =>

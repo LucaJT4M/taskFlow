@@ -1,0 +1,233 @@
+/* ===================================================================
+   Garten
+   =================================================================== */
+.app-dark {
+  --crown: rgba(138, 154, 98, 0.26);
+  --bark: #8B7355;
+  --bark-light: #CFC6B4;
+  --ground: rgba(138, 154, 98, 0.10);
+  --ground-back: rgba(138, 154, 98, 0.06);
+  --bloom-pink: #E39AB0;
+  --bloom-gold: #E0B44C;
+  --bloom-coral: #E08A6A;
+}
+.app-dark[data-theme="dark"] {
+  --crown: rgba(143, 184, 163, 0.22);
+  --bark: #A08A6E;
+  --bark-light: #D8D2C4;
+  --ground: rgba(143, 184, 163, 0.08);
+  --ground-back: rgba(143, 184, 163, 0.05);
+  --bloom-pink: #D98FA6;
+  --bloom-gold: #D6AE52;
+  --bloom-coral: #D48A6E;
+}
+
+/* Link in der Seitenleiste wie die anderen Einträge aussehen lassen */
+a.nav-item { text-decoration: none; color: inherit; }
+
+/* ---------- Kennzahlen ---------- */
+.garden-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.stat {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 12px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.stat svg { grid-row: span 2; color: var(--accent); }
+.stat strong { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.stat span { font-size: 13px; color: var(--text-muted); }
+
+/* ---------- Szene ---------- */
+.garden-card {
+  position: relative;
+  margin-bottom: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.garden-scene { display: block; width: 100%; height: auto; }
+.hill { fill: var(--ground); stroke: var(--leaf); stroke-width: 1.4; }
+.hill.back { fill: var(--ground-back); stroke-opacity: 0.4; }
+.garden-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 22px;
+  margin: 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ---------- Pflanze ---------- */
+.plant {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plant-grow 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+.plant .stem,
+.plant .vein,
+.streak-flower .stem {
+  fill: none;
+  stroke: var(--leaf);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.plant .vein { stroke-width: 1.2; opacity: 0.7; }
+.plant .leaf,
+.plant .crown-fill,
+.plant .crown circle,
+.plant .crown ellipse,
+.plant .crown path {
+  fill: var(--crown);
+  stroke: var(--leaf);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+.plant .crown .crown-inner { fill: var(--crown); stroke-width: 1.2; opacity: 0.8; }
+.plant .seed { fill: var(--bark); }
+.plant .trunk { fill: none; stroke: var(--bark); stroke-width: 6; stroke-linecap: round; }
+.plant .trunk.birke { stroke: var(--bark-light); stroke-width: 5; }
+.plant .plant-shadow { fill: var(--leaf); opacity: 0.14; }
+.plant .plant-halo {
+  fill: var(--accent);
+  opacity: 0.08;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: halo-pulse 2.8s ease-in-out infinite;
+}
+
+.plant .sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plant-sway 5s ease-in-out infinite alternate;
+}
+.plant .blossom {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blossom-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  animation-delay: calc(var(--delay, 0s) + 0.6s + var(--b) * 0.07s);
+}
+.streak-flower {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plant-grow 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(0.4s + var(--b) * 0.06s);
+}
+
+@keyframes plant-grow  { from { scale: 0; opacity: 0; } to { scale: 1; opacity: 1; } }
+@keyframes plant-sway  { from { rotate: -1.5deg; } to { rotate: 1.5deg; } }
+@keyframes blossom-pop { from { scale: 0; } to { scale: 1; } }
+@keyframes halo-pulse  { 0%, 100% { scale: 0.9; opacity: 0.06; } 50% { scale: 1.08; opacity: 0.14; } }
+
+/* ---------- Aktuelle Pflanze ---------- */
+.current-plant {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 22px 26px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.current-plant-art { width: 110px; height: 128px; flex-shrink: 0; overflow: visible; }
+.current-plant-info { flex: 1; min-width: 0; }
+.current-plant h2 { margin: 0 0 4px; font-family: var(--font-serif); font-weight: 400; font-size: 28px; }
+
+.growth-bar {
+  position: relative;
+  height: 10px;
+  margin-top: 18px;
+  background: var(--surface-active);
+  border-radius: 999px;
+}
+.growth-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+.growth-mark {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  translate: -50% -50%;
+  background: var(--surface);
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+}
+.growth-mark.reached { border-color: var(--accent); background: var(--accent); }
+.growth-labels { position: relative; height: 20px; margin-top: 8px; }
+.growth-labels span {
+  position: absolute;
+  translate: -50% 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.growth-labels span:first-child { translate: 0 0; }
+.growth-labels span:last-child { translate: -100% 0; }
+
+/* ---------- Meldung nach dem Erledigen ---------- */
+.growth-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 340px;
+  padding: 14px 14px 14px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(35, 37, 30, 0.16);
+  animation: toast-in 0.45s cubic-bezier(0.3, 1.3, 0.5, 1) both;
+}
+.growth-toast-art { width: 64px; height: 74px; flex-shrink: 0; overflow: visible; }
+.growth-toast-text { flex: 1; min-width: 0; }
+.growth-toast-text strong { display: block; font-size: 15px; }
+.growth-toast-text p { margin: 2px 0 6px; font-size: 13px; color: var(--text-muted); }
+.growth-toast .icon-btn { align-self: flex-start; }
+.growth-toast .link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+.growth-toast .link-btn:hover { text-decoration: underline; }
+
+@keyframes toast-in { from { opacity: 0; translate: 0 20px; } to { opacity: 1; translate: 0 0; } }
+
+@media (max-width: 860px) {
+  .garden-stats { grid-template-columns: 1fr; }
+  .current-plant { flex-direction: column; text-align: center; }
+  .growth-toast { left: 16px; right: 16px; width: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plant,
+  .plant *,
+  .streak-flower,
+  .growth-toast {
+    animation: none !important;
+  }
+}
