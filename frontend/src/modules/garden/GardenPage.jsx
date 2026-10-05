@@ -44,7 +44,7 @@ function GardenPage() {
         counts={counts}
         username={user?.username}
         isAdmin={user?.username === 'admin'}
-        gardenActive
+        activePage="garden"
         theme={theme}
         onToggleTheme={toggleTheme}
         onLogout={handleLogout}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Check, ListTodo, Circle, CircleDot, CircleCheck,
-  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield, Sprout,
+  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield, Sprout, History,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { key: 'done', label: 'Erledigt', icon: CircleCheck },
 ]
 
-function Sidebar({ filter, onFilterChange, counts, username, isAdmin, gardenActive = false, theme, onToggleTheme, onLogout }) {
+function Sidebar({ filter, onFilterChange, counts, username, isAdmin, activePage = null, theme, onToggleTheme, onLogout }) {
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebar') === 'collapsed')
 
   useEffect(() => {
@@ -52,11 +52,20 @@ function Sidebar({ filter, onFilterChange, counts, username, isAdmin, gardenActi
 
         <Link
           to="/garden"
-          className={`nav-item ${gardenActive ? 'active' : ''}`}
+          className={`nav-item ${activePage === 'garden' ? 'active' : ''}`}
           title={collapsed ? 'Mein Garten' : undefined}
         >
           <Sprout size={17} strokeWidth={1.75} />
           <span className="sidebar-label">Mein Garten</span>
+        </Link>
+
+        <Link
+          to="/history"
+          className={`nav-item ${activePage === 'history' ? 'active' : ''}`}
+          title={collapsed ? 'Verlauf' : undefined}
+        >
+          <History size={17} strokeWidth={1.75} />
+          <span className="sidebar-label">Verlauf</span>
         </Link>
 
         {isAdmin && (

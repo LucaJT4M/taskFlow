@@ -1,0 +1,116 @@
+/* ===================================================================
+   Verlauf – gelöschte Aufgaben als Zeitleiste
+   =================================================================== */
+.history-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 260px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+}
+.history-search:focus-within { border-color: var(--border-strong); }
+.history-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+.history-search input::placeholder { color: var(--text-faint); }
+
+.history-group { margin-bottom: 26px; }
+.history-day {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.history-timeline {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 34px;
+  list-style: none;
+}
+/* senkrechte Linie */
+.history-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.history-entry {
+  position: relative;
+  margin-bottom: 10px;
+  animation: history-in 0.35s ease-out both;
+}
+.history-entry:nth-child(2) { animation-delay: 0.04s; }
+.history-entry:nth-child(3) { animation-delay: 0.08s; }
+.history-entry:nth-child(n + 4) { animation-delay: 0.12s; }
+
+.history-node {
+  position: absolute;
+  left: -34px;
+  top: 14px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  background: var(--surface);
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--text-muted);
+}
+.history-entry.done .history-node { border-color: var(--done); color: var(--done); }
+.history-entry.in_progress .history-node { border-color: var(--progress); color: var(--progress); }
+
+.history-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s;
+}
+.history-card:hover { border-color: var(--border-strong); }
+.history-main { min-width: 0; }
+.history-title { font-weight: 600; overflow-wrap: anywhere; }
+.history-desc { margin: 4px 0 0; font-size: 13px; color: var(--text-muted); overflow-wrap: anywhere; }
+.history-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+@keyframes history-in { from { opacity: 0; translate: 0 6px; } }
+
+@media (max-width: 860px) {
+  .history-search { width: 100%; }
+  .history-card { flex-direction: column; }
+  .history-meta { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .history-entry { animation: none; }
+}

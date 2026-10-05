@@ -10,3 +10,4 @@ class History_Task(Base):
     status = Column(String(20), nullable=False, default="todo")
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     deleted_date = Column(DateTime, nullable=False)
+    deleted_id = Column(Integer, nullable=True)  # id der gelöschten Aufgabe

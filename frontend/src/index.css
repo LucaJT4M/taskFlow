@@ -618,3 +618,30 @@ body { margin: 0; }
   .sidebar .user-row { flex-direction: column; gap: 14px; }
   .sidebar .nav-item { justify-content: center; padding: 10px; }
 }
+
+.card-edit { display: flex; flex-direction: column; gap: 8px; }
+.card-edit input,
+.card-edit textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+.card-edit input:focus,
+.card-edit textarea:focus { outline: none; border-color: var(--accent); }
+.edit-title { font-weight: 600; }
+.edit-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.btn-save {
+  padding: 6px 14px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-save:hover { background: var(--accent-hover); }
