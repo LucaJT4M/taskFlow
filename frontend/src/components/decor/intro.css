@@ -1,0 +1,154 @@
+/* ===================================================================
+   Intro: Samen -> Sprössling -> Logo (ca. 1,9 s)
+   =================================================================== */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  cursor: pointer;
+  animation: intro-out 0.45s ease forwards 1.9s;
+}
+
+.intro-center { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+.intro-svg { width: 160px; height: 160px; overflow: visible; }
+
+/* Erde */
+.intro-ground {
+  fill: none;
+  stroke: var(--leaf);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 0.4s ease-out forwards 0.25s, fade-away 0.3s ease forwards 1.1s;
+}
+
+/* Samen fällt */
+.intro-seed {
+  fill: var(--leaf);
+  animation: seed-drop 0.45s cubic-bezier(0.5, 0, 0.75, 1.4) both;
+}
+
+/* Stiel wächst */
+.intro-stem {
+  fill: none;
+  stroke: var(--leaf);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 0.5s ease-out forwards 0.45s;
+}
+
+/* Blätter öffnen sich */
+.intro-leaf {
+  transform-box: fill-box;
+  scale: 0;
+  animation: leaf-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+}
+.intro-leaf.left  { transform-origin: 100% 100%; animation-delay: 0.7s; }
+.intro-leaf.right { transform-origin: 0% 100%;  animation-delay: 0.82s; }
+.intro-leaf path {
+  fill: var(--leaf-fill);
+  stroke: var(--leaf);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/* Sprössling verschwindet, Logo erscheint */
+.intro-sprout {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: fade-away 0.3s ease forwards 1.1s;
+}
+.intro-logo {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  opacity: 0;
+  scale: 0.6;
+  animation: logo-in 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) forwards 1.1s;
+}
+.intro-mark { fill: var(--accent); }
+.intro-check {
+  fill: none;
+  stroke: var(--on-accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 0.35s ease-out forwards 1.3s;
+}
+
+/* Schriftzug Buchstabe für Buchstabe */
+.intro-word {
+  display: flex;
+  font-family: var(--font-serif);
+  font-size: 34px;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+.intro-word span {
+  opacity: 0;
+  translate: 0 8px;
+  animation: letter-in 0.35s ease-out forwards;
+  animation-delay: calc(1.3s + var(--l) * 0.045s);
+}
+
+@keyframes draw       { to { stroke-dashoffset: 0; } }
+@keyframes fade-away  { to { opacity: 0; } }
+@keyframes seed-drop  {
+  from { translate: 0 -70px; opacity: 0; }
+  60%  { opacity: 1; }
+  to   { translate: 0 0; opacity: 1; }
+}
+@keyframes leaf-pop   { to { scale: 1; } }
+@keyframes logo-in    { to { opacity: 1; scale: 1; } }
+@keyframes letter-in  { to { opacity: 1; translate: 0 0; } }
+@keyframes intro-out  { to { opacity: 0; visibility: hidden; } }
+
+/* ===================================================================
+   Login-Seite: Inhalte erscheinen nacheinander
+   --enter-delay kommt von AuthLayout (1.9s nach Intro, sonst 0s)
+   =================================================================== */
+.auth-page .theme-toggle,
+.auth-page .auth-brand,
+.auth-page .auth-shell > * {
+  animation: rise-in 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: calc(var(--enter-delay, 0s) + var(--step, 0) * 0.08s);
+}
+.auth-page .auth-brand                    { --step: 0; }
+.auth-page .auth-shell > :nth-child(1)    { --step: 1; }
+.auth-page .auth-shell > :nth-child(2)    { --step: 2; }
+.auth-page .auth-shell > :nth-child(3)    { --step: 3; }
+.auth-page .auth-shell > :nth-child(4)    { --step: 4; }
+.auth-page .theme-toggle                  { --step: 5; }
+
+@keyframes rise-in {
+  from { opacity: 0; translate: 0 16px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+/* Abschied nach erfolgreichem Login */
+.auth-page.leaving .auth-brand,
+.auth-page.leaving .auth-shell {
+  animation: float-out 0.5s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+@keyframes float-out {
+  to { opacity: 0; translate: 0 -24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  .intro *,
+  .auth-page .theme-toggle,
+  .auth-page .auth-brand,
+  .auth-page .auth-shell > * {
+    animation: none !important;
+  }
+}

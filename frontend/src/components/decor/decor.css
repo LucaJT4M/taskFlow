@@ -209,3 +209,41 @@
     transition: none !important;
   }
 }
+
+/* ---------- Zweige wachsen beim Laden (nur mit .grow) ---------- */
+.decor-layer.grow .branch-stem {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: stem-grow 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--enter-delay, 0s) + var(--b, 0) * 0.15s);
+}
+.leaf-grow {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+.decor-layer.grow .leaf-grow {
+  scale: 0;
+  animation: leaf-unfold 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+  animation-delay: calc(var(--enter-delay, 0s) + var(--b, 0) * 0.15s + 0.2s + var(--i) * 0.07s);
+}
+@keyframes stem-grow   { to { stroke-dashoffset: 0; } }
+@keyframes leaf-unfold { to { scale: 1; } }
+
+/* ---------- Wind nach dem Login: Blätter fliegen davon ---------- */
+.decor-layer.blow .branch-leaf {
+  animation: leaf-blow 0.6s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+  animation-delay: calc(var(--i) * 30ms);
+}
+@keyframes leaf-blow {
+  to { translate: 120px -45px; rotate: 160deg; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decor-layer.grow .branch-stem,
+  .decor-layer.grow .leaf-grow,
+  .decor-layer.blow .branch-leaf {
+    animation: none !important;
+    stroke-dashoffset: 0;
+    scale: 1;
+  }
+}

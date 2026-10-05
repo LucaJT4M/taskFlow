@@ -1,5 +1,6 @@
 // Eine gezeichnete Zweig-Illustration (Linienstil passend zu den Lucide-Icons).
-// Jedes Blatt ist eine eigene Gruppe, damit es einzeln schwingen kann.
+// Jedes Blatt ist eine eigene Gruppe, damit es einzeln schwingen
+// (branch-leaf) und beim Laden "wachsen" kann (leaf-grow).
 
 const STEM = 'M 20 300 C 40 240, 52 190, 95 140 C 138 92, 175 70, 215 22'
 const LEAF = 'M0 0 C 10 -11, 28 -12, 40 0 C 28 12, 10 11, 0 0 Z'
@@ -21,12 +22,14 @@ const LEAVES = [
 function Branch() {
   return (
     <svg className="branch-svg" viewBox="0 0 240 310" aria-hidden="true" focusable="false">
-      <path className="branch-stem" d={STEM} />
+      <path className="branch-stem" d={STEM} pathLength="1" />
       {LEAVES.map((leaf, i) => (
         <g key={i} transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.r}) scale(${leaf.s})`}>
           <g className="branch-leaf" style={{ '--i': i }}>
-            <path className="leaf-body" d={LEAF} />
-            <path className="leaf-rib" d={RIB} />
+            <g className="leaf-grow">
+              <path className="leaf-body" d={LEAF} />
+              <path className="leaf-rib" d={RIB} />
+            </g>
           </g>
         </g>
       ))}

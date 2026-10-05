@@ -15,7 +15,11 @@ const LAYOUTS = {
   ],
 }
 
-function DecorLayer({ variant = 'app' }) {
+/**
+ * Dekor-Ebene mit Zweigen.
+ * grow = Zweige wachsen beim Laden (Stiel zeichnet sich, Blätter öffnen sich).
+ */
+function DecorLayer({ variant = 'app', grow = false }) {
   const layerRef = useRef(null)
 
   useEffect(() => {
@@ -73,12 +77,12 @@ function DecorLayer({ variant = 'app' }) {
   }, [variant])
 
   return (
-    <div ref={layerRef} className="decor-layer" aria-hidden="true">
+    <div ref={layerRef} className={`decor-layer ${grow ? 'grow' : ''}`} aria-hidden="true">
       {LAYOUTS[variant].map((b, i) => (
         <div
           key={i}
           className={`decor-branch pos-${b.pos}`}
-          style={{ '--size': `${b.size}px`, '--depth': b.depth }}
+          style={{ '--size': `${b.size}px`, '--depth': b.depth, '--b': i }}
         >
           <Branch />
         </div>
