@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import Plant from './Plant'
+import GardenDefs from './GardenDefs'
 
 /**
  * Kleine Meldung unten rechts, wenn eine erledigte Aufgabe
@@ -14,8 +15,9 @@ function GrowthToast({ info, onClose, onOpenGarden }) {
 
   return (
     <div className="growth-toast" role="status">
-      <svg className="growth-toast-art" viewBox="-60 -130 120 140" aria-hidden="true">
-        <Plant kind={info.plant.kind} stage={info.plant.stage} />
+      <svg className="growth-toast-art" viewBox="-62 -142 124 150" aria-hidden="true">
+        <GardenDefs />
+        <Plant kind={info.plant.kind} stage={info.plant.stage} seed={info.plant.index} />
       </svg>
       <div className="growth-toast-text">
         <strong>{info.title}</strong>

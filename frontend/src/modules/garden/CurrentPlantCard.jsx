@@ -1,4 +1,5 @@
 import Plant from './Plant'
+import GardenDefs from './GardenDefs'
 import { KIND_NAMES } from './plantKinds'
 
 function CurrentPlantCard({ garden }) {
@@ -7,8 +8,9 @@ function CurrentPlantCard({ garden }) {
 
   return (
     <section className="current-plant">
-      <svg className="current-plant-art" viewBox="-60 -130 120 140" aria-hidden="true">
-        <Plant kind={plant.kind} stage={plant.stage} />
+      <svg className="current-plant-art" viewBox="-62 -142 124 150" aria-hidden="true">
+        <GardenDefs />
+        <Plant kind={plant.kind} stage={plant.stage} seed={plant.index} />
       </svg>
 
       <div className="current-plant-info">

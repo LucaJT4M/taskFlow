@@ -84,7 +84,7 @@ function GardenPage() {
                 </div>
               </div>
 
-              <GardenScene garden={garden} />
+              <GardenScene garden={garden} theme={theme} />
               <CurrentPlantCard garden={garden} />
             </>
           )}

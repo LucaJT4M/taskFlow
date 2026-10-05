@@ -1,31 +1,78 @@
 /* ===================================================================
-   Garten
+   Garten – alles als SVG gezeichnet, Farben über CSS-Variablen
    =================================================================== */
 .app-dark {
-  --crown: rgba(138, 154, 98, 0.26);
-  --bark: #8B7355;
-  --bark-light: #CFC6B4;
-  --ground: rgba(138, 154, 98, 0.10);
-  --ground-back: rgba(138, 154, 98, 0.06);
-  --bloom-pink: #E39AB0;
-  --bloom-gold: #E0B44C;
-  --bloom-coral: #E08A6A;
+  /* Pflanzen */
+  --crown-light: #D6DFB4;
+  --crown-mid: #B2C28A;
+  --crown-dark: #889B62;
+  --cherry-light: #D3DFBF;
+  --cherry-mid: #ABC092;
+  --cherry-dark: #7F9A6C;
+  --birch-light: #E4E7B8;
+  --birch-mid: #C8D192;
+  --birch-dark: #A3AF6D;
+  --fir-light: #A9BE96;
+  --fir-dark: #6A8560;
+  --crown-line: #6C7D45;
+  --bark: #A08262;
+  --bark-dark: #735A41;
+  --birch-bark: #F1ECE0;
+  --birch-bark-dark: #CFC7B5;
+  --soil: #BCA585;
+  --bloom-pink: #E594AE;
+  --bloom-gold: #E2B347;
+  --bloom-coral: #E5876A;
+
+  /* Landschaft */
+  --hill-far: #CFD9B9;
+  --hill-mid: #C0CDA2;
+  --meadow-back: #BBC99A;
+  --meadow: #B8C795;
+  --meadow-front: #A7B983;
+  --grass-line: #7D9154;
+  --stone: #D4D0C1;
 }
 .app-dark[data-theme="dark"] {
-  --crown: rgba(143, 184, 163, 0.22);
-  --bark: #A08A6E;
-  --bark-light: #D8D2C4;
-  --ground: rgba(143, 184, 163, 0.08);
-  --ground-back: rgba(143, 184, 163, 0.05);
-  --bloom-pink: #D98FA6;
-  --bloom-gold: #D6AE52;
-  --bloom-coral: #D48A6E;
+  --crown-light: #78977F;
+  --crown-mid: #5A7A67;
+  --crown-dark: #405B4D;
+  --cherry-light: #739591;
+  --cherry-mid: #567773;
+  --cherry-dark: #3E5956;
+  --birch-light: #899E7A;
+  --birch-mid: #6A8262;
+  --birch-dark: #4E654B;
+  --fir-light: #628574;
+  --fir-dark: #3A5547;
+  --crown-line: #9DC2AE;
+  --bark: #8C7660;
+  --bark-dark: #5F4F3F;
+  --birch-bark: #D9D3C4;
+  --birch-bark-dark: #A9A293;
+  --soil: #5A4E40;
+  --bloom-pink: #DA8FA7;
+  --bloom-gold: #D8AE52;
+  --bloom-coral: #D68B70;
+
+  --hill-far: #27322F;
+  --hill-mid: #2C3A35;
+  --meadow-back: #32433B;
+  --meadow: #374A40;
+  --meadow-front: #3D5246;
+  --grass-line: #6E9583;
+  --stone: #4C5550;
 }
 
-/* Link in der Seitenleiste wie die anderen Einträge aussehen lassen */
-a.nav-item { text-decoration: none; color: inherit; }
+/* Tageszeiten */
+.phase-morning { --sky-top: #F0D9C6; --sky-bottom: #FAF5EC; --sun: #F2B37C; --cloud: #FFFFFF; --tint: #F3BE8E; --tint-o: 0.07; --mist: #FAF3E8; }
+.phase-day     { --sky-top: #CDE1E3; --sky-bottom: #F7F5EC; --sun: #F3CF6E; --cloud: #FFFFFF; --tint: #FFFFFF; --tint-o: 0;    --mist: #F3F4EA; }
+.phase-evening { --sky-top: #D7A595; --sky-bottom: #F6DFC4; --sun: #EC955A; --cloud: #FBE6D8; --tint: #E9884C; --tint-o: 0.1;  --mist: #F5DEC8; }
+.phase-night   { --sky-top: #121A19; --sky-bottom: #2A3633; --sun: #ECE6CF; --cloud: #33403D; --tint: #0B1514; --tint-o: 0.12; --mist: #2A3633; }
 
 /* ---------- Kennzahlen ---------- */
+a.nav-item { text-decoration: none; color: inherit; }
+
 .garden-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -51,15 +98,48 @@ a.nav-item { text-decoration: none; color: inherit; }
 .garden-card {
   position: relative;
   margin-bottom: 20px;
-  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 14px;
   box-shadow: var(--shadow);
   overflow: hidden;
+  background: var(--surface);
 }
 .garden-scene { display: block; width: 100%; height: auto; }
-.hill { fill: var(--ground); stroke: var(--leaf); stroke-width: 1.4; }
-.hill.back { fill: var(--ground-back); stroke-opacity: 0.4; }
+
+.sun  { fill: var(--sun); }
+.moon { fill: var(--sun); }
+.star { fill: #F4EFD8; opacity: 0.8; }
+.star.twinkle { animation: twinkle 3.5s ease-in-out infinite; animation-delay: calc(var(--i) * -1s); }
+.cloud { fill: var(--cloud); opacity: 0.85; animation: drift var(--dur) linear infinite; animation-delay: calc(var(--dur) * -0.5); }
+.phase-night .cloud { opacity: 0.5; }
+.birds path { fill: none; stroke: #6E4B44; stroke-width: 1.4; stroke-linecap: round; opacity: 0.55; }
+.birds { animation: birds 40s linear infinite; }
+
+.band.far { fill: var(--hill-far); }
+.band.mid { fill: var(--hill-mid); }
+.edge { fill: none; stroke: var(--grass-line); stroke-width: 1.4; }
+.edge.soft { stroke-opacity: 0.45; }
+.app-dark[data-theme="dark"] .edge { stroke-opacity: 0.45; }
+.app-dark[data-theme="dark"] .edge.soft { stroke-opacity: 0.22; }
+.hatch line { stroke: var(--grass-line); stroke-width: 0.6; }
+.hatch { opacity: 0.12; }
+.hatch.strong { opacity: 0.16; }
+.tufts path,
+.foreground-grass {
+  fill: none;
+  stroke: var(--grass-line);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+.foreground-grass { stroke-width: 1.5; opacity: 0.9; }
+.stone ellipse { fill: var(--stone); stroke: var(--grass-line); stroke-width: 0.8; }
+.stone path { fill: none; stroke: #fff; stroke-opacity: 0.5; stroke-width: 1; stroke-linecap: round; }
+.far-row { opacity: 0.94; }
+
+.tint { fill: var(--tint); opacity: var(--tint-o); mix-blend-mode: multiply; }
+.grain { opacity: 0.09; mix-blend-mode: multiply; }
+.phase-night .grain { opacity: 0.07; mix-blend-mode: screen; }
+
 .garden-hint {
   position: absolute;
   left: 0;
@@ -70,6 +150,27 @@ a.nav-item { text-decoration: none; color: inherit; }
   color: var(--text-muted);
 }
 
+/* Tooltip über einer Pflanze */
+.garden-tooltip {
+  position: absolute;
+  z-index: 2;
+  translate: -50% calc(-100% - 10px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgba(35, 37, 30, 0.16);
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: tip-in 0.18s ease-out both;
+}
+.garden-tooltip strong { font-size: 13px; color: var(--text); }
+
 /* ---------- Pflanze ---------- */
 .plant {
   transform-box: fill-box;
@@ -77,42 +178,69 @@ a.nav-item { text-decoration: none; color: inherit; }
   animation: plant-grow 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) both;
   animation-delay: var(--delay, 0s);
 }
-.plant .stem,
-.plant .vein,
-.streak-flower .stem {
+.plant.interactive { cursor: pointer; }
+
+.plant .crown-outline circle { fill: var(--crown-line); stroke: var(--crown-line); stroke-width: 3.4; }
+.plant .crown-fill circle { stroke: none; }
+.plant .crown-marks circle { fill: var(--crown-line); opacity: 0.35; }
+.plant .needles {
   fill: none;
-  stroke: var(--leaf);
-  stroke-width: 2;
+  stroke: var(--crown-line);
+  stroke-width: 1;
   stroke-linecap: round;
-}
-.plant .vein { stroke-width: 1.2; opacity: 0.7; }
-.plant .leaf,
-.plant .crown-fill,
-.plant .crown circle,
-.plant .crown ellipse,
-.plant .crown path {
-  fill: var(--crown);
-  stroke: var(--leaf);
-  stroke-width: 1.8;
   stroke-linejoin: round;
+  opacity: 0.45;
 }
-.plant .crown .crown-inner { fill: var(--crown); stroke-width: 1.2; opacity: 0.8; }
-.plant .seed { fill: var(--bark); }
-.plant .trunk { fill: none; stroke: var(--bark); stroke-width: 6; stroke-linecap: round; }
-.plant .trunk.birke { stroke: var(--bark-light); stroke-width: 5; }
-.plant .plant-shadow { fill: var(--leaf); opacity: 0.14; }
-.plant .plant-halo {
-  fill: var(--accent);
-  opacity: 0.08;
+.plant .crown-light path { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; opacity: 0.45; }
+.app-dark[data-theme="dark"] .plant .crown-light path { opacity: 0.14; }
+.plant .edge-leaf {
+  fill: var(--crown-mid);
+  stroke: var(--crown-line);
+  stroke-width: 1;
   transform-box: fill-box;
-  transform-origin: center;
-  animation: halo-pulse 2.8s ease-in-out infinite;
+  transform-origin: 0% 50%;
+  animation: flutter 2.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.45s);
 }
+.plant .fir-tier { fill: url(#gd-fir); stroke: var(--crown-line); stroke-width: 1.6; stroke-linejoin: round; }
+
+.plant .stem,
+.streak-flower .stem { fill: none; stroke: var(--grass-line); stroke-width: 2; stroke-linecap: round; }
+.plant .leaf,
+.streak-flower .leaf { fill: url(#gd-leaf); stroke: var(--crown-line); stroke-width: 1.3; stroke-linejoin: round; }
+.plant .leaf-vein { fill: none; stroke: var(--crown-line); stroke-width: 0.8; opacity: 0.6; }
+.plant .seed { fill: var(--bark); stroke: var(--bark-dark); stroke-width: 1; }
+.plant .seed-line { fill: none; stroke: var(--bark-dark); stroke-width: 0.8; opacity: 0.7; }
+.plant .soil path { fill: var(--soil); }
+.plant .pebble { fill: var(--bark-dark); opacity: 0.5; }
+
+.plant .trunk-body { stroke: var(--bark-dark); stroke-width: 1; }
+.plant .trunk.birch .trunk-body { stroke: var(--birch-bark-dark); }
+.plant .branch, .plant .root { fill: none; stroke: var(--bark-dark); stroke-width: 2.4; stroke-linecap: round; }
+.plant .bark { fill: none; stroke: var(--bark-dark); stroke-width: 0.9; stroke-linecap: round; opacity: 0.6; }
+.plant .birch-mark { stroke: #3D3A34; stroke-width: 1.5; stroke-linecap: round; }
+.plant .plant-shadow { fill: var(--grass-line); opacity: 0.22; }
+/* Ring am Boden markiert die Pflanze, die gerade wächst */
+.plant .plant-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 5;
+  opacity: 0.8;
+  animation: ring-turn 6s linear infinite, ring-pulse 2.8s ease-in-out infinite;
+}
+.blossom-center { fill: #FFF6DA; }
 
 .plant .sway {
   transform-box: fill-box;
   transform-origin: 50% 100%;
   animation: plant-sway 5s ease-in-out infinite alternate;
+}
+.plant.interactive:hover .crown,
+.plant.interactive:hover .sway > .leaf {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: rustle 0.7s ease-in-out;
 }
 .plant .blossom {
   transform-box: fill-box;
@@ -120,6 +248,14 @@ a.nav-item { text-decoration: none; color: inherit; }
   animation: blossom-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
   animation-delay: calc(var(--delay, 0s) + 0.6s + var(--b) * 0.07s);
 }
+.plant .petal-fall {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: petal-fall 7s ease-in infinite;
+  animation-delay: calc(var(--delay, 0s) + 1.5s + var(--i) * 2.4s);
+}
+
 .streak-flower {
   transform-box: fill-box;
   transform-origin: 50% 100%;
@@ -127,10 +263,47 @@ a.nav-item { text-decoration: none; color: inherit; }
   animation-delay: calc(0.4s + var(--b) * 0.06s);
 }
 
+/* Tiere */
+.firefly circle { fill: #F2E6A0; }
+.firefly .core { fill: #FFF8D6; }
+.firefly { animation: firefly 6s ease-in-out infinite; animation-delay: calc(var(--i) * -1s); }
+.butterfly-path { animation: flight 26s ease-in-out infinite; animation-delay: calc(var(--i) * -11s); }
+.butterfly .wing { stroke: var(--crown-line); stroke-width: 0.6; transform-box: fill-box; transform-origin: 100% 50%; animation: flap 0.28s ease-in-out infinite alternate; }
+.butterfly .wing.right { transform-origin: 0% 50%; }
+.butterfly .body { stroke: #4A443A; stroke-width: 1.4; stroke-linecap: round; }
+
 @keyframes plant-grow  { from { scale: 0; opacity: 0; } to { scale: 1; opacity: 1; } }
-@keyframes plant-sway  { from { rotate: -1.5deg; } to { rotate: 1.5deg; } }
+@keyframes plant-sway  { from { rotate: -1.2deg; } to { rotate: 1.2deg; } }
+@keyframes flutter     { from { rotate: -10deg; } to { rotate: 12deg; } }
+@keyframes rustle      { 0%, 100% { rotate: 0deg; } 20% { rotate: -3deg; } 45% { rotate: 2.5deg; } 70% { rotate: -1.5deg; } }
 @keyframes blossom-pop { from { scale: 0; } to { scale: 1; } }
-@keyframes halo-pulse  { 0%, 100% { scale: 0.9; opacity: 0.06; } 50% { scale: 1.08; opacity: 0.14; } }
+@keyframes ring-turn   { to { stroke-dashoffset: -60; } }
+@keyframes ring-pulse  { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.95; } }
+@keyframes petal-fall {
+  0%   { opacity: 0; translate: 0 0; rotate: 0deg; }
+  8%   { opacity: 1; }
+  85%  { opacity: 0.9; }
+  100% { opacity: 0; translate: var(--dx) var(--fall); rotate: 300deg; }
+}
+@keyframes drift   { from { translate: calc(-1 * var(--x0) - 160px) 0; } to { translate: calc(1060px - var(--x0)) 0; } }
+@keyframes birds   { from { translate: -80px 90px; } to { translate: 1080px 40px; } }
+@keyframes twinkle { 0%, 100% { opacity: 0.85; } 50% { opacity: 0.2; } }
+@keyframes firefly {
+  0%, 100% { translate: 0 0; opacity: 0.2; }
+  30% { opacity: 1; }
+  50% { translate: var(--dx) var(--dy); opacity: 0.9; }
+  70% { opacity: 0.15; }
+}
+@keyframes flight {
+  0%   { translate: 0 0; }
+  20%  { translate: 120px -40px; }
+  40%  { translate: 220px 10px; }
+  60%  { translate: 110px -60px; }
+  80%  { translate: -60px -20px; }
+  100% { translate: 0 0; }
+}
+@keyframes flap   { from { scale: 1 1; } to { scale: 0.25 1; } }
+@keyframes tip-in { from { opacity: 0; translate: -50% calc(-100% - 4px); } }
 
 /* ---------- Aktuelle Pflanze ---------- */
 .current-plant {
@@ -143,7 +316,7 @@ a.nav-item { text-decoration: none; color: inherit; }
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.current-plant-art { width: 110px; height: 128px; flex-shrink: 0; overflow: visible; }
+.current-plant-art { width: 120px; height: 145px; flex-shrink: 0; overflow: visible; }
 .current-plant-info { flex: 1; min-width: 0; }
 .current-plant h2 { margin: 0 0 4px; font-family: var(--font-serif); font-weight: 400; font-size: 28px; }
 
@@ -199,7 +372,7 @@ a.nav-item { text-decoration: none; color: inherit; }
   box-shadow: 0 12px 32px rgba(35, 37, 30, 0.16);
   animation: toast-in 0.45s cubic-bezier(0.3, 1.3, 0.5, 1) both;
 }
-.growth-toast-art { width: 64px; height: 74px; flex-shrink: 0; overflow: visible; }
+.growth-toast-art { width: 66px; height: 80px; flex-shrink: 0; overflow: visible; }
 .growth-toast-text { flex: 1; min-width: 0; }
 .growth-toast-text strong { display: block; font-size: 15px; }
 .growth-toast-text p { margin: 2px 0 6px; font-size: 13px; color: var(--text-muted); }
@@ -224,10 +397,11 @@ a.nav-item { text-decoration: none; color: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .garden-scene *,
   .plant,
   .plant *,
-  .streak-flower,
-  .growth-toast {
+  .growth-toast,
+  .garden-tooltip {
     animation: none !important;
   }
 }
