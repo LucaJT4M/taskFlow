@@ -9,6 +9,7 @@ class HistoryCreate(BaseModel):
     title: str
     description: str | None = None
     status: Status = "todo"
+    deleted_id: int | None = None  # id der gelöschten Aufgabe
 
 class HistoryResponse(HistoryCreate):
     id: int

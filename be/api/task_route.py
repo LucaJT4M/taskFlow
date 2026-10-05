@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+import requests
 
 from be.core.db import get_db
 from be.models.user_model import User
@@ -7,12 +8,11 @@ from be.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse, TaskAdm
 from be.security.current_user import get_current_user
 from be.services.task_service import TaskService, TaskNotFoundError
 from be.services.user_service import UserService
-from be.services.history_service import HistoryService
+from be.core.config import BE_URL
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 task_service = TaskService()
 user_service = UserService()
-history_service = HistoryService()
 
 @router.get("", response_model=list[TaskResponse])
 def get_tasks(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -40,14 +40,37 @@ def update_task(task_id: int, data: TaskUpdate, db: Session = Depends(get_db), u
 @router.delete("/{task_id}", status_code=204)
 def delete_task(
     task_id: int,
+    request: Request,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
     try:
-        # Aufgabe zuerst in den Verlauf kopieren, dann löschen.
-        # Direkt über den Service – kein HTTP-Aufruf an das eigene Backend nötig.
+        # put taskItem into history (über die REST-API des History-Moduls)
         to_delete_task = task_service.get_task(db, task_id, user)
-        history_service.add_deleted_task(db, to_delete_task)
+
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            raise HTTPException(status_code=401, detail="Missing Authorization header")
+
+        # owner_id wird nicht mitgeschickt: /history nimmt den Benutzer aus dem Token
+        history_response = requests.post(
+            f"{BE_URL.rstrip('/')}/history",
+            json={
+                "title": to_delete_task.title,
+                "description": to_delete_task.description,
+                "status": to_delete_task.status,
+                "deleted_id": to_delete_task.id,
+            },
+            headers={"Authorization": auth_header},
+            timeout=10,
+        )
+
+        if history_response.status_code >= 400:
+            detail = history_response.text or "Failed to create history entry"
+            raise HTTPException(status_code=history_response.status_code, detail=detail)
+
         task_service.delete_task(db, task_id, user)
+    except requests.RequestException as e:
+        raise HTTPException(status_code=502, detail=f"History API request failed: {str(e)}")
     except TaskNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
