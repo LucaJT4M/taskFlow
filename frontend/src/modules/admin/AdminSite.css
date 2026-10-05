@@ -92,9 +92,9 @@
   cursor: pointer;
 }
 
-.admin-btn-primary {
+.admin-btn.admin-btn-primary {
   background: var(--accent);
-  color: var(--on-accent);
+  color: #FFFFFF;
   font-weight: 600;
 }
 
