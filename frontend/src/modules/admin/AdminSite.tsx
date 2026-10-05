@@ -123,7 +123,6 @@ function AdminSite() {
                     <div>
                         <p className="admin-overline">Admin</p>
                         <h1>User and Task Management</h1>
-                        <p className="admin-subtitle">UI-only scaffold: wire your own logic for CRUD actions.</p>
                     </div>
                     <div className="admin-header-actions">
                         <button
