@@ -2,7 +2,7 @@ import TaskCard from './TaskCard'
 import { STATUSES } from './taskStatus'
 import Sprout from '../../components/decor/Sprout'
 
-function KanbanBoard({ tasks, onUpdate, onDelete }) {
+function KanbanBoard({ tasks, onUpdate, onDelete, onEdit }) {
   return (
     <div className="board">
       {STATUSES.map((col) => {
@@ -27,6 +27,7 @@ function KanbanBoard({ tasks, onUpdate, onDelete }) {
                   task={task}
                   onMove={(t, newStatus) => onUpdate(t, { status: newStatus })}
                   onDelete={onDelete}
+                  onEdit={onEdit}
                 />
               ))}
             </div>
