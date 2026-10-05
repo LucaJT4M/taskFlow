@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 const ORDER = STATUSES.map((s) => s.status)
 
+
 function TaskCard({ task, onMove, onDelete, onEdit }) {
   const index = ORDER.indexOf(task.status)
   const statusTitle = STATUSES[index]?.title
@@ -13,11 +14,28 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
   const [title, setTitel] = useState(task.title)
   const [description, setDescription] = useState(task.description ?? '')
 
+  function handleSave() {
+  const newTitle = title.trim()
+  if (!newTitle) return
+
+  onEdit(task, {
+    title: newTitle,
+    description: description.trim() || null,
+  })
+  setIsEditing(false)
+}
+
+function handleCancel() {
+  setTitel(task.title)
+  setDescription(task.description ?? '')
+  setIsEditing(false)
+}
+
 
   if (isEditing) {
     return (
-      <article className={`card ${task.status}`}>
-      <input className="edit-tittle"
+      <article className={`card card-edit ${task.status}`}>
+      <input className="edit-title"
       value={title}
       onChange={(e) => setTitel(e.target.value)}
       placeholder="Tittle"
@@ -31,10 +49,10 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
         rows={3}
       />
       <div className="edit-actions">
-        <button className="btn-ghost" onClick={() => setIsEditing(false)}>
+        <button className="btn-ghost" onClick={handleCancel}>
           Abbrechen
         </button>
-        <button className="btn-save" onClick={() => setIsEditing(false)}>
+        <button className="btn-save" onClick={() => handleSave()}>
           Speichern
         </button>
       </div> 
