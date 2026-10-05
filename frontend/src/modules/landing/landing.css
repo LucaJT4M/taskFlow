@@ -1,0 +1,218 @@
+/* ===================================================================
+   Startseite
+   =================================================================== */
+.landing {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px 120px;
+  overflow: hidden;
+}
+
+.landing-theme { position: absolute; top: 24px; right: 24px; }
+
+.landing-hero {
+  max-width: 820px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-brand { margin-bottom: 36px; }
+
+.landing-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(42px, 6.5vw, 76px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.landing-title span { color: var(--accent); }
+
+.landing-text {
+  max-width: 480px;
+  margin: 24px 0 40px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ---------- Button ---------- */
+.landing-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(35, 37, 30, 0.12);
+  transition: background 0.2s, translate 0.2s, box-shadow 0.2s;
+}
+.landing-cta:hover { background: var(--accent-hover); translate: 0 -2px; box-shadow: 0 10px 26px rgba(35, 37, 30, 0.16); }
+.landing-cta > svg { transition: translate 0.2s; }
+.landing-cta:hover > svg { translate: 4px 0; }
+.landing-cta:disabled { cursor: default; }
+
+/* Kleiner Spross, der beim Überfahren aus dem Button wächst */
+.cta-sprout {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 4px);
+  width: 30px;
+  height: 30px;
+  translate: -50% 0;
+  pointer-events: none;
+}
+.cta-sprout svg { width: 100%; height: 100%; overflow: visible; }
+.cta-stem,
+.cta-leaf {
+  stroke: var(--leaf);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cta-stem { fill: none; }
+.cta-leaf { fill: var(--leaf-fill); }
+.cta-sprout svg {
+  transform-origin: 50% 100%;
+  scale: 1 0;
+  transition: scale 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.landing-cta:hover .cta-sprout svg,
+.landing-cta:focus-visible .cta-sprout svg { scale: 1 1; }
+
+.landing-note { margin: 22px 0 0; font-size: 14px; color: var(--text-muted); }
+.landing-note a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.landing-note a:hover { text-decoration: underline; }
+
+/* ---------- Gras ---------- */
+.grass {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 72px;
+  z-index: -1;
+  pointer-events: none;
+  overflow: visible;
+}
+.blade,
+.ground {
+  fill: none;
+  stroke: var(--leaf);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.ground { opacity: 0.5; }
+.blade {
+  opacity: 0.75;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: blade-sway 4.5s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.23s);
+}
+@keyframes blade-sway {
+  from { rotate: -4deg; }
+  to   { rotate: 5deg; }
+}
+
+/* ---------- Fallende Blätter ---------- */
+.falling-leaves {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.falling-leaf {
+  position: absolute;
+  top: -40px;
+  width: var(--size);
+  height: var(--size);
+  color: var(--leaf);
+  opacity: 0.55;
+  animation: leaf-fall var(--dur) linear infinite;
+  animation-delay: var(--delay);
+}
+.falling-leaf svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: leaf-drift 4s ease-in-out infinite alternate;
+}
+.falling-leaf path {
+  fill: currentColor;
+  fill-opacity: 0.25;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+@keyframes leaf-fall {
+  from { translate: 0 0; rotate: 0deg; }
+  to   { translate: 0 calc(100vh + 80px); rotate: 300deg; }
+}
+@keyframes leaf-drift {
+  from { translate: -28px 0; }
+  to   { translate: 28px 0; }
+}
+
+/* ---------- Ein- und Ausblenden ---------- */
+.landing-hero > *,
+.landing-theme {
+  animation: landing-rise 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.landing-brand          { animation-delay: 0.1s !important; }
+.landing-title          { animation-delay: 0.2s !important; }
+.landing-text           { animation-delay: 0.32s !important; }
+.landing-cta            { animation-delay: 0.44s !important; }
+.landing-note           { animation-delay: 0.52s !important; }
+.landing-theme          { animation-delay: 0.6s !important; }
+
+@keyframes landing-rise {
+  from { opacity: 0; translate: 0 18px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+/* Nach dem Klick: alles sinkt "in die Erde" */
+.landing:not(.phase-idle) .landing-hero > *,
+.landing:not(.phase-idle) .landing-theme {
+  animation: landing-sink 0.5s cubic-bezier(0.5, 0, 0.75, 0) forwards !important;
+}
+.landing:not(.phase-idle) .landing-title { animation-delay: 0.05s !important; }
+.landing:not(.phase-idle) .landing-text  { animation-delay: 0.1s !important; }
+.landing:not(.phase-idle) .landing-cta   { animation-delay: 0.15s !important; }
+.landing:not(.phase-idle) .landing-note  { animation-delay: 0.15s !important; }
+
+.landing .decor-layer,
+.landing .grass,
+.landing .falling-leaves { transition: opacity 0.5s ease; }
+.landing:not(.phase-idle) .decor-layer,
+.landing:not(.phase-idle) .grass,
+.landing:not(.phase-idle) .falling-leaves { opacity: 0; }
+
+@keyframes landing-sink {
+  to { opacity: 0; translate: 0 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blade,
+  .falling-leaf,
+  .falling-leaf svg,
+  .landing-hero > *,
+  .landing-theme {
+    animation: none !important;
+  }
+  .falling-leaves { display: none; }
+}

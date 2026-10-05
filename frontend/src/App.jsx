@@ -1,3 +1,4 @@
+import LandingPage from "./modules/landing/LandingPage";
 import LoginForm from "./modules/login/LoginForm";
 import RegisterForm from "./modules/login/RegisterForm";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -12,7 +13,8 @@ function App () {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LoginForm/>}/>
+        <Route path="/" element={<LandingPage/>}/>
+        <Route path="/login" element={<LoginForm/>}/>
         <Route path="/signup" element={<RegisterForm/>}/>
 
         {/* Private Routes */}

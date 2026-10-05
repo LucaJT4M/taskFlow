@@ -31,7 +31,7 @@ function ProtectedRoute() {
 
     // Not authenticated
     if (!authenticated) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     // Authenticated

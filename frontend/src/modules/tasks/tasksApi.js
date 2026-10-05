@@ -14,7 +14,7 @@ async function request(path, options = {}) {
   // Token abgelaufen oder ungültig → zurück zum Login
   if (res.status === 401) {
     localStorage.removeItem('access_token')
-    window.location.href = '/'
+    window.location.href = '/login'
     throw new Error('Sitzung abgelaufen')
   }
 

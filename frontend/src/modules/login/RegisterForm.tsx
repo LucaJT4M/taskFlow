@@ -89,7 +89,7 @@ function RegisterForm() {
 
             <p className="auth-switch-text">
                 Schon ein Konto?{" "}
-                <Link className="auth-switch-link" to="/">Zur Anmeldung</Link>
+                <Link className="auth-switch-link" to="/login">Zur Anmeldung</Link>
             </p>
         </AuthLayout>
     );
