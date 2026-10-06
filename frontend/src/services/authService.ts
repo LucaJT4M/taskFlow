@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_URL } from "../config";
 
 export async function getCurrentUser() {
     const token = localStorage.getItem("access_token");
@@ -8,7 +9,7 @@ export async function getCurrentUser() {
         return null;
     }
 
-    const response = await fetch("http://localhost:8000/auth/me", {
+    const response = await fetch(`${API_URL}/auth/me`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -33,7 +34,7 @@ export async function login(username: string, password: string) {
             body.append("username", username);
             body.append("password", password);
 
-            const response = await fetch("http://localhost:8000/auth/token", {
+            const response = await fetch(`${API_URL}/auth/token`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -67,7 +68,7 @@ export async function sign_up(username: string, password: string, confirmPasswor
                 throw new Error("Password and confirm password not same");
             }
 
-            const response = await fetch("http://localhost:8000/user", {
+            const response = await fetch(`${API_URL}/user`, {
                 method: "POST",
                 headers: {
 					"Content-Type": "application/json",
