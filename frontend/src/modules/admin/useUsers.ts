@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserItem } from "../../classes/AdminClasses";
 
-const API_URL = 'http://localhost:8000'
+import { API_URL } from '../../config'
 
 async function getUsers() {
     const token = localStorage.getItem("access_token");
