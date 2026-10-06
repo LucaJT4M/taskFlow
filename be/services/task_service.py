@@ -31,10 +31,11 @@ class TaskService:
     def create_task(self, db: Session, data: TaskCreate, user: User) -> Task:
         task = Task(**data.model_dump(), owner_id=user.id)
         db.add(task)
-        db.refresh(task)
+        db.flush()  # schreibt die Aufgabe in die DB (ohne commit), damit task.id existiert
         if task.status == "done":
             garden_service.reward_task(db, task)
-        db.commit()
+        db.commit()  # ein einziger commit für Aufgabe + Belohnung
+        db.refresh(task)
         return task
 
     def update_task(self, db: Session, task_id: int, data: TaskUpdate, user: User) -> Task:

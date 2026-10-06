@@ -645,3 +645,57 @@ body { margin: 0; }
   cursor: pointer;
 }
 .btn-save:hover { background: var(--accent-hover); }
+
+/* ========== Fälligkeitsdatum ========== */
+.task-form .date-input {
+  flex: 0 0 158px;
+  border-left: 1px solid var(--border);
+  color: var(--text-faint);
+  font: inherit;
+  cursor: pointer;
+}
+.task-form .date-input.filled { color: var(--text); }
+.app-dark[data-theme="dark"] input[type="date"] { color-scheme: dark; }
+
+.due-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--surface-active);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.due-badge.today { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.due-badge.soon { background: color-mix(in srgb, var(--progress) 14%, transparent); color: var(--progress); }
+.due-badge.overdue { background: color-mix(in srgb, var(--urgent) 14%, transparent); color: var(--urgent); }
+.due-badge.done { opacity: 0.6; }
+.task-row .due-badge { margin-top: 0; flex-shrink: 0; }
+.card.overdue { border-color: color-mix(in srgb, var(--urgent) 40%, var(--border)); }
+
+.edit-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.card-edit .edit-date input { width: auto; flex: 1; padding: 6px 8px; }
+.link-clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  font-size: 12px;
+  cursor: pointer;
+}
+.link-clear:hover { color: var(--urgent); text-decoration: underline; }
+
+@media (max-width: 860px) {
+  .task-form .date-input { flex: 1 1 auto; border-left: 0; border-top: 1px solid var(--border); }
+  .task-row .due-badge { display: none; }
+}

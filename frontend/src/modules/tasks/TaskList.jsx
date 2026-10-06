@@ -2,6 +2,7 @@ import { STATUSES } from './taskStatus'
 import { Check, Trash2 } from 'lucide-react'
 import Sprout from '../../components/decor/Sprout'
 import { burstLeaves } from '../../components/decor/leafBurst'
+import DueBadge from './DueBadge'
 
 function TaskList({ tasks, onUpdate, onDelete }) {
   if (tasks.length === 0) {
@@ -34,6 +35,8 @@ function TaskList({ tasks, onUpdate, onDelete }) {
               <div className="task-title">{task.title}</div>
               {task.description && <div className="task-desc">{task.description}</div>}
             </div>
+
+            <DueBadge task={task} />
 
             <span className={`dot ${task.status}`} />
             <select
