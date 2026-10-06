@@ -7,12 +7,10 @@ from be.models.user_model import User
 from be.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse, TaskAdminCreate
 from be.security.current_user import get_current_user
 from be.services.task_service import TaskService, TaskNotFoundError
-from be.services.user_service import UserService
 from be.core.config import BE_URL
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 task_service = TaskService()
-user_service = UserService()
 
 @router.get("", response_model=list[TaskResponse])
 def get_tasks(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -25,7 +23,15 @@ def create_task(data: TaskCreate, db: Session = Depends(get_db), user: User = De
 @router.post("/create_as_admin", response_model=TaskResponse)
 def create_task_as_admin(data: TaskAdminCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     if user.username == "admin":
-        creating_user = user_service.get_user_by_id(db, data.owner_id)
+        user_response = requests.get(f"{BE_URL.rstrip("/")}/user/id/{data.owner_id}")
+
+        if user_response.status_code >= 400:
+            detail = user_response.text or "Failed to get user by id"
+            raise HTTPException(status_code=user_response.status_code, detail=detail)
+
+        creating_user = User()
+        creating_user.id = user_response.json()["id"]
+
         task_create = TaskCreate(**data.model_dump(exclude={"owner_id"}))
 
         return task_service.create_task(db, task_create, creating_user)
