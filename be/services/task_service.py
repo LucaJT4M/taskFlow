@@ -8,10 +8,8 @@ from be.services.garden_service import GardenService
 ADMIN_USERNAME = "admin"
 garden_service = GardenService()
 
-
 class TaskNotFoundError(Exception):
     """Wird geworfen, wenn die Aufgabe nicht existiert oder dem Benutzer nicht gehört."""
-
 
 class TaskService:
     def _query_for(self, db: Session, user: User):
@@ -33,11 +31,10 @@ class TaskService:
     def create_task(self, db: Session, data: TaskCreate, user: User) -> Task:
         task = Task(**data.model_dump(), owner_id=user.id)
         db.add(task)
-        db.commit()
         db.refresh(task)
         if task.status == "done":
             garden_service.reward_task(db, task)
-            db.commit()
+        db.commit()
         return task
 
     def update_task(self, db: Session, task_id: int, data: TaskUpdate, user: User) -> Task:
