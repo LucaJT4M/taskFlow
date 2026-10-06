@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import { TaskItem } from "../classes/AdminClasses";
-const base_url = "http://localhost:8000";
+import { API_URL } from "../config";
+const base_url = API_URL;
 
 function normalizeStatus(rawStatus: unknown): TaskItem["status"] {
     if (rawStatus === "done" || rawStatus === "Done") {

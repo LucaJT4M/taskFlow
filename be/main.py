@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from be.api import health, user_route, task_route, auth, garden_route, history_route
 from be.core.db import init_db
+from be.core.config import FRONTEND_URLS
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174"],
+    allow_origins=FRONTEND_URLS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
