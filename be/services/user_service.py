@@ -25,6 +25,7 @@ class UserService:
         return user
 
     def create_user(self, db, username, password):
+        username = username.replace(" ", "") # username has to be without space
         existing = self.get_user_by_username(db, username)
 
         if existing:
@@ -66,6 +67,30 @@ class UserService:
 
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
+
+    def delete_user_by_id(self, db, id: int):
+            try:
+                user = self.get_user_by_id(db, id)
+    
+                if not user:
+                    raise ValueError("No User found in DB")
+    
+                # delete Tasks of user
+                tasks = task_service.get_tasks(db, user)
+                for t in tasks:
+                    task_service.delete_task(db, t.id, user)
+    
+                db.query(History_Task).filter(
+                    History_Task.owner_id == user.id
+                ).delete(synchronize_session=False)
+        
+                db.delete(user)
+                db.commit()
+    
+                return {"msg": "User deleted successfully"}
+    
+            except ValueError as e:
+                raise HTTPException(status_code=400, detail=str(e))
 
     def update_user(self, db, target_username: str, user_update):
         user = self.get_user_by_username(db, target_username)

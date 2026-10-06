@@ -41,6 +41,18 @@ def delete_user(username: str, db: Session = Depends(get_db), current_user: str 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.delete("/id/{id}")
+def delete_user_by_id(id: int, db: Session = Depends(get_db), current_user: str = Depends(get_current_username)):
+    """user delete kann nur von admin ausgeführt werden"""
+    try:
+        if current_user == "admin":
+            return service.delete_user_by_id(db, id)
+
+        raise HTTPException(status_code=403, detail="Not authorized for user output")
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.put("/{username}", response_model=UserResponse)
 def update_user(username: str, user: UserUpdate, db: Session = Depends(get_db), current_user: str = Depends(get_current_username)):
     """Admin oder User selbst kann user updaten"""
