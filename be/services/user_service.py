@@ -4,8 +4,8 @@ from passlib.context import CryptContext
 from be.security.password import hash_password, verify_password
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from be.core.config import SECRET_KEY, ALGORITHM
 from be.services.task_service import TaskService
+from be.models.history_model import History_Task
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -55,6 +55,10 @@ class UserService:
             for t in tasks:
                 task_service.delete_task(db, t.id, user)
 
+            db.query(History_Task).filter(
+                History_Task.owner_id == user.id
+            ).delete(synchronize_session=False)
+    
             db.delete(user)
             db.commit()
 
