@@ -24,7 +24,7 @@ def create_task(data: TaskCreate, db: Session = Depends(get_db), user: User = De
 
 @router.post("/create_as_admin", response_model=TaskResponse)
 def create_task_as_admin(data: TaskAdminCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    if user.username == "admin":
+    if user.role == UserRole.ADMIN.value:
         creating_user = user_service.get_user_by_id(db, data.owner_id)
         task_create = TaskCreate(**data.model_dump(exclude={"owner_id"}))
 
