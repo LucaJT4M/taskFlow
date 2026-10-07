@@ -1,6 +1,6 @@
 from typing import Literal
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 Status = Literal["todo", "in_progress", "done"]
 
@@ -17,5 +17,4 @@ class HistoryResponse(HistoryCreate):
     deleted_date: datetime
     deleted_id: int | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

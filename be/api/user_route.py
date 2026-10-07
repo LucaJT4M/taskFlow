@@ -7,7 +7,7 @@ from be.security.authorization import require_roles
 from be.services.user_service import UserService
 from be.schemas.user_schema import UserResponse, UserCreate, UserUpdate
 from be.core.roles import UserRole
-from be.security.jwt_auth import get_current_username
+from be.security.jwt_auth import get_current_user
 
 router = APIRouter(prefix="/user", tags=["Users"])
 service = UserService()
@@ -48,7 +48,7 @@ def delete_user_by_id(id: int, db: Session = Depends(get_db), user: User = Depen
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.put("/{username}", response_model=UserResponse)
-def update_user(username: str, user_update: UserUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_username)):
+def update_user(username: str, user_update: UserUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Admin oder User selbst kann user updaten"""
     try:
         target_user = service.get_user_by_username(db, username)

@@ -7,7 +7,7 @@ from be.Classes.token import Token
 from be.services.user_service import UserService
 from be.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from be.core.db import get_db
-from be.security.jwt_auth import get_current_username, create_access_token
+from be.security.jwt_auth import get_current_user, create_access_token
 
 user_service = UserService()
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -29,5 +29,5 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me")
-async def read_users_me(current_username: str = Depends(get_current_username)):
-    return {"username": current_username}
+async def read_users_me(current_user = Depends(get_current_user)):
+    return {"username": current_user.username}

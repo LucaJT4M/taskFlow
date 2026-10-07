@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from be.core.db import get_db
+from be.core.roles import UserRole
 from be.models.user_model import User
 from be.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse, TaskAdminCreate
-from be.security.current_user import get_current_user
+from be.security.jwt_auth import get_current_user
 from be.services.task_service import TaskService, TaskNotFoundError
 from be.services.user_service import UserService
 from be.services.history_service import HistoryService, HistoryCreate
