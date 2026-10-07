@@ -82,6 +82,25 @@ Backend URLs:
 - API base: `http://127.0.0.1:8000`
 - Swagger docs: `http://127.0.0.1:8000/docs`
 
+## Backend Tests
+
+Backend tests are located in the root `tests/` folder. They cover:
+
+- user update authorization
+- task creation, updates, deletion, and ownership checks
+- garden rewards, plant growth, and completion streaks
+- deleted-task history creation
+- JWT token validation
+
+Install the test dependency with the backend requirements, then run the suite from the project root:
+
+```powershell
+pip install -r .\be\requirements.txt
+python -m pytest tests -q
+```
+
+The tests use mocks and do not require a running PostgreSQL database.
+
 ## Frontend Setup
 
 From project root:

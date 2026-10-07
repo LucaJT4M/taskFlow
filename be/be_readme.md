@@ -30,6 +30,26 @@ docker compose up
 uvicorn be.main:app --reload
 ```
 
+## Tests
+
+Die Backend-Tests liegen im Root-Ordner `tests/` des Projekts. Getestet werden unter anderem:
+
+- Berechtigungen beim Aktualisieren von Benutzern
+- Erstellen, Aktualisieren und Löschen von Tasks
+- Aufgabenbesitz und nicht gefundene Tasks
+- Garten-Belohnungen, Pflanzenwachstum und Aufgabenserien
+- Erstellen von History-Einträgen gelöschter Tasks
+- JWT-Token-Validierung
+
+Die Testabhängigkeit ist in `be/requirements.txt` enthalten. Tests aus dem Projekt-Root ausführen:
+
+```powershell
+pip install -r .\be\requirements.txt
+python -m pytest tests -q
+```
+
+Die Unit-Tests verwenden Mocks und benötigen keine laufende PostgreSQL-Datenbank.
+
 Swagger Docs:
 
 ```text
