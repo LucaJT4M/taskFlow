@@ -15,7 +15,7 @@ function AdminRoute() {
                 setAuthenticated(false);
                 return;
             } else {
-                if (user.username === "admin") {
+                if (user.role === "admin") {
                     setAuthenticated(user !== null);
                 } else {
                     setAuthenticated(false);

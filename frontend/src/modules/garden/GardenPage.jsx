@@ -43,7 +43,7 @@ function GardenPage() {
         onFilterChange={openFilter}
         counts={counts}
         username={user?.username}
-        isAdmin={user?.username === 'admin'}
+        isAdmin={user?.role === 'admin'}
         activePage="garden"
         theme={theme}
         onToggleTheme={toggleTheme}

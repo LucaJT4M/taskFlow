@@ -1,17 +1,31 @@
 from be.models.user_model import User
-from be.core.db import get_db
+from be.schemas.user_schema import UserUpdate
 from passlib.context import CryptContext
 from be.security.password import hash_password, verify_password
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from be.services.task_service import TaskService
 from be.models.history_model import History_Task
+from be.core.roles import UserRole
+from sqlalchemy.orm import Session
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 task_service = TaskService()
 
 class UserService:
+    def check_for_admin(self, db):
+        users = self.get_users(db)
+        admin_is_there = any(u.role == UserRole.ADMIN for u in users)
+        print("printing users:")
+        print(users)
+
+        if not admin_is_there:
+            new_admin = users[0]
+            user_update = UserUpdate(username=new_admin.username, role=UserRole.ADMIN)
+
+            self.update_user(db, new_admin.username, user_update)
+
     def get_user_by_username(self, db, username: str):
         return db.query(User).filter(User.username == username).first()
 
@@ -41,7 +55,7 @@ class UserService:
         db.refresh(user)
         return user
 
-    def get_users(self, db):
+    def  get_users(self, db: Session) -> list[User]:
         return db.query(User)
 
     def delete_user(self, db, username):
@@ -109,6 +123,9 @@ class UserService:
 
         if user_update.password:
             user.hashed_password = hash_password(user_update.password)
+
+        if user_update.role is not None:
+            user.role = user_update.role
 
         db.commit()
         db.refresh(user)

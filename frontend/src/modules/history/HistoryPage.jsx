@@ -48,7 +48,7 @@ function HistoryPage() {
         onFilterChange={(filter) => navigate('/dashboard', { state: { filter } })}
         counts={counts}
         username={user?.username}
-        isAdmin={user?.username === 'admin'}
+        isAdmin={user?.role === 'admin'}
         activePage="history"
         theme={theme}
         onToggleTheme={toggleTheme}

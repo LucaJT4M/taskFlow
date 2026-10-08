@@ -15,6 +15,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 # deshalb ergänzen wir sie hier einmalig per ALTER TABLE.
 NEW_COLUMNS = {
     "tasks": {"due_date": "DATE"},
+    "users": {"role": "VARCHAR(20) NOT NULL DEFAULT 'user'"},
 }
 
 def _add_missing_columns():
