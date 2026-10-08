@@ -67,16 +67,22 @@ function Canopy({ kind, R, rand, bloom }) {
   )
 }
 
+/** Radius der Pflanze (für Kollision und Abstand beim Gießen) */
+export function plantRadius(plant) {
+  if (plant.stage === 'tree' || plant.stage === 'bloom') return RADIUS[plant.kind]
+  return plant.stage === 'bush' ? 28 : 16
+}
+
 /** Eine Pflanze im Gartenmodus "von oben" */
-function WorldPlant({ plant, x, y, current, onHover, onLeave, onClick }) {
+function WorldPlant({ plant, x, y, current, near, happy, watered, onHover, onLeave, onClick }) {
   const rand = seededRandom(plant.index * 13 + 5)
   const { stage, kind } = plant
   const tree = stage === 'tree' || stage === 'bloom'
-  const R = tree ? RADIUS[kind] : stage === 'bush' ? 28 : 16
+  const R = plantRadius(plant)
 
   return (
     <g
-      className="world-plant"
+      className={`world-plant ${near ? 'near' : ''} ${happy ? 'happy' : ''} ${watered ? 'watered' : ''}`}
       transform={`translate(${x} ${y})`}
       style={{ '--i': plant.index % 7 }}
       onPointerEnter={onHover}
@@ -84,6 +90,8 @@ function WorldPlant({ plant, x, y, current, onHover, onLeave, onClick }) {
       onClick={onClick}
     >
       {current && <circle className="wp-ring" r={R + 16} />}
+      {near && <circle className="wp-near" r={R + 10} />}
+      {watered && <circle className="wp-wet" r={R * 0.9} />}
       <ellipse className="wp-shadow" cx={R * 0.22} cy={R * 0.28} rx={R * 1.02} ry={R * 0.92} />
 
       {(stage === 'seed' || stage === 'sprout') && <circle r={R} fill="var(--soil)" opacity=".9" />}

@@ -195,3 +195,144 @@
   .garden-world * { animation: none !important; }
   .world-layer.animate { transition: none; }
 }
+
+/* ===================================================================
+   Spielfigur (Gärtner)
+   =================================================================== */
+.gardener { pointer-events: none; }
+.g-shadow { fill: #1E3020; opacity: .22; }
+.g-foot { fill: #6B4F36; stroke: #4C3826; stroke-width: 1.5; transition: translate 0.1s; }
+.g-shoulders { fill: #5F86A8; stroke: #44647F; stroke-width: 2; }
+.g-hand { fill: #F0C9A6; stroke: #C99C78; stroke-width: 1.5; }
+.g-hat-brim { fill: #E9CF8E; stroke: #B8995A; stroke-width: 2.5; }
+.g-hat-band { fill: none; stroke: #C2554B; stroke-width: 3; }
+.g-hat-top { fill: #F1DCA2; stroke: #C9AB6B; stroke-width: 1.5; }
+
+.gardener .g-body { animation: g-idle 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.gardener.walking .g-foot.l { animation: g-step 0.36s ease-in-out infinite alternate; }
+.gardener.walking .g-foot.r { animation: g-step 0.36s ease-in-out infinite alternate-reverse; }
+.gardener.walking .g-hand { animation: g-swing 0.36s ease-in-out infinite alternate; }
+@keyframes g-idle { 0%, 100% { scale: 1; } 50% { scale: 1.03; } }
+@keyframes g-step { from { translate: 0 -7px; } to { translate: 0 7px; } }
+@keyframes g-swing { from { translate: 0 4px; } to { translate: 0 -4px; } }
+
+.footstep { fill: #6E7F4C; opacity: 0; animation: footstep 2.8s ease-out forwards; }
+@keyframes footstep { 0% { opacity: .35; } 100% { opacity: 0; } }
+
+.walk-marker {
+  fill: none;
+  stroke: #FFF8E0;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: walk-marker 0.7s ease-out forwards;
+}
+@keyframes walk-marker { from { scale: 0.3; opacity: 1; } to { scale: 1.6; opacity: 0; } }
+
+/* Pflanze in Reichweite / gegossen / freut sich */
+.wp-near {
+  fill: rgba(255, 248, 224, 0.18);
+  stroke: #FFF8E0;
+  stroke-width: 3;
+  animation: wp-near 1.4s ease-in-out infinite;
+}
+@keyframes wp-near { 0%, 100% { stroke-opacity: .5; } 50% { stroke-opacity: 1; } }
+.wp-wet { fill: #6FA6C4; opacity: .16; }
+.world-plant.happy .wp-canopy { animation: wp-happy 0.9s ease-in-out 2; }
+@keyframes wp-happy {
+  0%, 100% { scale: 1; rotate: 0deg; }
+  25% { scale: 1.08; rotate: -5deg; }
+  60% { scale: 1.04; rotate: 4deg; }
+}
+
+/* Gieß-Effekt */
+.we-can { animation: we-can 1.6s ease-in-out both; transform-box: fill-box; transform-origin: 20% 80%; }
+@keyframes we-can {
+  0% { opacity: 0; rotate: 0deg; translate: 0 10px; }
+  15% { opacity: 1; translate: 0 0; }
+  30%, 75% { rotate: 30deg; }
+  100% { opacity: 0; rotate: 0deg; }
+}
+.we-drop { fill: #7DB6D6; opacity: 0; animation: we-drop 0.8s ease-in infinite; animation-delay: calc(0.35s + var(--i) * 0.09s); }
+@keyframes we-drop { 0% { opacity: 1; translate: 0 0; } 100% { opacity: 0; translate: -10px 46px; } }
+.we-float { font-size: 20px; text-anchor: middle; opacity: 0; animation: we-float 1.6s ease-out forwards; animation-delay: calc(0.5s + var(--i) * 0.15s); }
+@keyframes we-float { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 100% { opacity: 0; translate: 0 -46px; } }
+.we-petal { fill: var(--bloom-pink); opacity: 0; animation: we-petal 1.6s ease-in forwards; animation-delay: calc(0.4s + var(--i) * 0.06s); }
+@keyframes we-petal { 0% { opacity: 1; translate: 0 0; rotate: 0deg; } 100% { opacity: 0; translate: calc((var(--i) - 5) * 6px) 70px; rotate: 220deg; } }
+
+/* Aktions-Leiste unten */
+.world-action,
+.world-toast {
+  background: rgba(250, 248, 240, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 24px rgba(30, 40, 20, 0.2);
+}
+.world-action {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 10;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 10px 10px 18px;
+  border-radius: 16px;
+  animation: world-pop 0.25s ease-out both;
+}
+.world-action > div { display: flex; flex-direction: column; gap: 2px; }
+.world-action strong { font-size: 15px; color: #2A2E22; }
+.world-action span { font-size: 12px; color: #5A6248; }
+.world-water {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #4F8FB0;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, translate 0.15s;
+}
+.world-water:hover { background: #3F7E9F; translate: 0 -1px; }
+.world-water kbd {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.25);
+  font: inherit;
+  font-size: 11px;
+}
+.world-done { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; color: #4F8FB0 !important; font-weight: 600; font-size: 13px !important; }
+.world-toast {
+  position: absolute;
+  left: 50%;
+  top: 22px;
+  z-index: 11;
+  translate: -50% 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2A2E22;
+  animation: world-toast 2.6s ease both;
+}
+@keyframes world-pop { from { opacity: 0; translate: -50% 10px; } }
+@keyframes world-toast {
+  0% { opacity: 0; translate: -50% -10px; }
+  10%, 85% { opacity: 1; translate: -50% 0; }
+  100% { opacity: 0; translate: -50% -10px; }
+}
+.garden-world[data-theme="dark"] .world-action,
+.garden-world[data-theme="dark"] .world-toast { background: rgba(26, 34, 32, 0.86); border-color: rgba(255, 255, 255, 0.08); color: #E8EEE8; }
+.garden-world[data-theme="dark"] .world-action strong { color: #F1F3EC; }
+.garden-world[data-theme="dark"] .world-action span { color: #AFC0B4; }
+
+@media (max-width: 600px) {
+  .world-action { left: 12px; right: 12px; translate: none; justify-content: space-between; }
+  @keyframes world-pop { from { opacity: 0; } }
+}
