@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Check, Moon, Sun } from 'lucide-react'
+import { ArrowRight, Moon, Sun } from 'lucide-react'
 import { useTheme } from '../tasks/useTheme'
 import { getCurrentUser } from '../../services/authService'
 import DecorLayer from '../../components/decor/DecorLayer'
@@ -8,6 +8,7 @@ import IntroSplash from '../../components/decor/IntroSplash'
 import Grass from './Grass'
 import FallingLeaves from './FallingLeaves'
 import './landing.css'
+import BrandIcon from '../../components/BrandIcon'
 
 const LEAVE_MS = 550 // so lange sinkt der Inhalt "in die Erde"
 
@@ -57,7 +58,7 @@ function LandingPage() {
 
       <main className="landing-hero">
         <div className="brand landing-brand">
-          <span className="brand-mark"><Check size={15} strokeWidth={3} /></span>
+          <BrandIcon />
           TaskFlow
         </div>
 

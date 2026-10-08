@@ -14,12 +14,12 @@ import GrowthToast from '../garden/GrowthToast'
 import { useGarden } from '../garden/useGarden'
 import { describeGrowth } from '../garden/growth'
 
-const FILTER_TITLES = {
-  all: 'Meine Aufgaben',
-  todo: 'To Do',
-  in_progress: 'In Arbeit',
-  done: 'Erledigt',
-}
+const FILTERS = [
+  { key: 'all', label: 'Alle' },
+  { key: 'todo', label: 'To Do' },
+  { key: 'in_progress', label: 'In Arbeit' },
+  { key: 'done', label: 'Erledigt' },
+]
 
 function TasksPage() {
   const { garden, refresh: refreshGarden } = useGarden()
@@ -60,9 +60,8 @@ function TasksPage() {
     <div className="app-dark app-layout" data-theme={theme}>
       <DecorLayer variant="app" />
       <Sidebar
-        filter={filter}
-        onFilterChange={setFilter}
-        counts={counts}
+        activePage="tasks"
+        openCount={counts.all - counts.done}
         username={user?.username}
         isAdmin={user?.role === 'admin'}
         theme={theme}
@@ -75,9 +74,32 @@ function TasksPage() {
           <header className="tasks-header">
             <div>
               <p className="eyebrow">{today}</p>
-              <h1>{FILTER_TITLES[filter]}</h1>
+              <h1>Meine Aufgaben</h1>
               <p className="subtitle">{counts.all - counts.done} offen · {counts.done} erledigt</p>
             </div>
+          </header>
+
+          {error && <p className="error">Fehler: {error}</p>}
+          <TaskForm onCreate={addTask} />
+
+          {/* Filter nach Status + Ansicht wechseln */}
+          <div className="task-toolbar">
+            <div className="filter-tabs" role="tablist" aria-label="Aufgaben filtern">
+              {FILTERS.map(({ key, label }) => (
+                <button
+                  key={key}
+                  role="tab"
+                  aria-selected={filter === key}
+                  className={`filter-tab ${filter === key ? 'active' : ''}`}
+                  onClick={() => setFilter(key)}
+                >
+                  {key !== 'all' && <span className={`dot ${key}`} />}
+                  {label}
+                  <span className="filter-count">{counts[key]}</span>
+                </button>
+              ))}
+            </div>
+
             <div className="view-switch">
               <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
                 <LayoutList size={15} strokeWidth={1.75} />
@@ -88,10 +110,7 @@ function TasksPage() {
                 Board
               </button>
             </div>
-          </header>
-
-          {error && <p className="error">Fehler: {error}</p>}
-          <TaskForm onCreate={addTask} />
+          </div>
 
           {view === 'board'
             ? <KanbanBoard tasks={visibleTasks} onUpdate={editTask} onDelete={removeTask} />

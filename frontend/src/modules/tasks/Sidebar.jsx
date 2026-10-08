@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Check, ListTodo, Circle, CircleDot, CircleCheck,
-  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield, Sprout, History,
+  LayoutDashboard, CalendarDays, Sprout, History, Shield,
+  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
+import BrandIcon from '../../components/BrandIcon'
 
-const NAV_ITEMS = [
-  { key: 'all', label: 'Alle Aufgaben', icon: ListTodo },
-  { key: 'todo', label: 'To Do', icon: Circle },
-  { key: 'in_progress', label: 'In Arbeit', icon: CircleDot },
-  { key: 'done', label: 'Erledigt', icon: CircleCheck },
+// Hauptseiten der App (Filter wie "To Do" sind jetzt direkt auf dem Dashboard)
+const PAGES = [
+  { key: 'tasks', to: '/dashboard', label: 'Aufgaben', icon: LayoutDashboard },
+  { key: 'calendar', to: '/calendar', label: 'Kalender', icon: CalendarDays },
+  { key: 'garden', to: '/garden', label: 'Mein Garten', icon: Sprout },
+  { key: 'history', to: '/history', label: 'Verlauf', icon: History },
 ]
 
-function Sidebar({ filter, onFilterChange, counts, username, isAdmin, activePage = null, theme, onToggleTheme, onLogout }) {
+function Sidebar({ username, isAdmin, activePage = null, openCount, theme, onToggleTheme, onLogout }) {
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebar') === 'collapsed')
 
   useEffect(() => {
@@ -23,7 +25,7 @@ function Sidebar({ filter, onFilterChange, counts, username, isAdmin, activePage
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <div className="brand">
-          <span className="brand-mark"><Check size={15} strokeWidth={3} /></span>
+          <BrandIcon />
           <span className="sidebar-label">TaskFlow</span>
         </div>
         <button
@@ -35,38 +37,21 @@ function Sidebar({ filter, onFilterChange, counts, username, isAdmin, activePage
         </button>
       </div>
 
-      <p className="sidebar-section sidebar-label">Aufgaben</p>
       <nav className="sidebar-nav">
-        {NAV_ITEMS.map(({ key, label, icon: Icon }) => (
-          <button
+        {PAGES.map(({ key, to, label, icon: Icon }) => (
+          <Link
             key={key}
-            className={`nav-item ${filter === key ? 'active' : ''}`}
-            onClick={() => onFilterChange(key)}
+            to={to}
+            className={`nav-item ${activePage === key ? 'active' : ''}`}
             title={collapsed ? label : undefined}
           >
             <Icon size={17} strokeWidth={1.75} />
             <span className="sidebar-label">{label}</span>
-            <span className="nav-count sidebar-label">{counts[key]}</span>
-          </button>
+            {key === 'tasks' && openCount > 0 && (
+              <span className="nav-count sidebar-label" title="Offene Aufgaben">{openCount}</span>
+            )}
+          </Link>
         ))}
-
-        <Link
-          to="/garden"
-          className={`nav-item ${activePage === 'garden' ? 'active' : ''}`}
-          title={collapsed ? 'Mein Garten' : undefined}
-        >
-          <Sprout size={17} strokeWidth={1.75} />
-          <span className="sidebar-label">Mein Garten</span>
-        </Link>
-
-        <Link
-          to="/history"
-          className={`nav-item ${activePage === 'history' ? 'active' : ''}`}
-          title={collapsed ? 'Verlauf' : undefined}
-        >
-          <History size={17} strokeWidth={1.75} />
-          <span className="sidebar-label">Verlauf</span>
-        </Link>
 
         {isAdmin && (
           <Link to="/admin" className="nav-item" title={collapsed ? 'Admin' : undefined}>
