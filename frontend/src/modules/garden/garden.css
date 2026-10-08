@@ -405,3 +405,24 @@ a.nav-item { text-decoration: none; color: inherit; }
     animation: none !important;
   }
 }
+
+/* Knopf "Garten betreten" */
+.enter-world {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #9CC3A5));
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: translate 0.2s, box-shadow 0.2s;
+}
+.enter-world:hover { translate: 0 -2px; box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 45%, transparent); }
+.enter-world svg { animation: enter-sparkle 2.4s ease-in-out infinite; }
+@keyframes enter-sparkle { 0%, 100% { rotate: 0deg; scale: 1; } 50% { rotate: 15deg; scale: 1.15; } }
+@media (prefers-reduced-motion: reduce) { .enter-world svg { animation: none; } }
