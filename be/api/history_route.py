@@ -5,7 +5,7 @@ from be.core.db import get_db
 from be.models.user_model import User
 from be.services.history_service import HistoryService
 from be.schemas.history_schema import HistoryResponse, HistoryCreate
-from be.security.current_user import get_current_user
+from be.security.jwt_auth import get_current_user
 
 router = APIRouter(prefix="/history", tags=["Task History"])
 service = HistoryService()
