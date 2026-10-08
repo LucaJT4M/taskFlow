@@ -4,6 +4,7 @@ import RegisterForm from "./modules/login/RegisterForm";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TasksPage from "./modules/tasks/TasksPage";
 import GardenPage from "./modules/garden/GardenPage";
+import GardenWorldPage from "./modules/garden/world/GardenWorldPage";
 import HistoryPage from "./modules/history/HistoryPage";
 import CalendarPage from "./modules/calendar/CalendarPage";
 import ProtectedRoute from "./modules/extraRoutes/ProtectedRoute";
@@ -24,6 +25,7 @@ function App () {
         <Route element={<ProtectedRoute/>}>
           <Route path="/dashboard" element={<TasksPage/>}/>
           <Route path="/garden" element={<GardenPage/>}/>
+          <Route path="/garden/world" element={<GardenWorldPage/>}/>
           <Route path="/history" element={<HistoryPage/>}/>
           <Route path="/calendar" element={<CalendarPage/>}/>
         </Route>

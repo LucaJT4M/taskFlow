@@ -1,5 +1,6 @@
-import { useNavigate } from 'react-router-dom'
-import { CheckCircle2, Flame, Trees } from 'lucide-react'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { CheckCircle2, Flame, Trees, Sparkles } from 'lucide-react'
 import Sidebar from '../tasks/Sidebar'
 import { useTheme } from '../tasks/useTheme'
 import { useCurrentUser } from '../tasks/useCurrentUser'
@@ -8,12 +9,16 @@ import DecorLayer from '../../components/decor/DecorLayer'
 import GardenScene from './GardenScene'
 import CurrentPlantCard from './CurrentPlantCard'
 import { useGarden } from './useGarden'
+import CloudTransition from './world/CloudTransition'
 
 function GardenPage() {
   const { garden, error } = useGarden()
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const navigate = useNavigate()
+  const location = useLocation()
+  // Wolken: "cover" beim Betreten der Gartenwelt, "reveal" beim Zurückkommen
+  const [clouds, setClouds] = useState(location.state?.fromWorld ? 'reveal' : null)
 
 
   function handleLogout() {
@@ -42,6 +47,10 @@ function GardenPage() {
               <h1>Mein Garten</h1>
               <p className="subtitle">Jede erledigte Aufgabe lässt deinen Garten wachsen.</p>
             </div>
+            <button type="button" className="enter-world" onClick={() => setClouds('cover')}>
+              <Sparkles size={16} strokeWidth={2} />
+              Garten betreten
+            </button>
           </header>
 
           {error && <p className="error">Fehler: {error}</p>}
@@ -74,6 +83,17 @@ function GardenPage() {
           )}
         </div>
       </main>
+
+      {clouds === 'cover' && <CloudTransition mode="cover" onDone={() => navigate('/garden/world')} />}
+      {clouds === 'reveal' && (
+        <CloudTransition
+          mode="reveal"
+          onDone={() => {
+            setClouds(null)
+            navigate(location.pathname, { replace: true, state: null })
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -1,0 +1,69 @@
+.cloud-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cloud-transition.cover { pointer-events: all; }
+
+.cloud-fog {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, #FFFFFF 0%, #F2F3EE 55%, #DCE6E3 100%);
+}
+
+.cloud-puff {
+  position: absolute;
+  width: calc(var(--s) * 50vmax);
+  height: calc(var(--s) * 30vmax);
+  filter: blur(6px);
+}
+/* weiche Ballen, die nach außen durchsichtig werden -> fluffig statt "Eier" */
+.cloud-puff span {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 45% 38%,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(252, 252, 249, 0.96) 32%,
+    rgba(238, 242, 238, 0.7) 52%,
+    rgba(226, 233, 230, 0.25) 64%,
+    rgba(226, 233, 230, 0) 71%
+  );
+}
+.cloud-puff span:nth-child(1) { left: 0%;  top: 30%; width: 42%; height: 62%; }
+.cloud-puff span:nth-child(2) { left: 18%; top: 4%;  width: 46%; height: 80%; }
+.cloud-puff span:nth-child(3) { left: 44%; top: 12%; width: 40%; height: 70%; }
+.cloud-puff span:nth-child(4) { left: 62%; top: 34%; width: 36%; height: 56%; }
+.cloud-puff span:nth-child(5) { left: 22%; top: 40%; width: 58%; height: 58%; }
+
+/* Zuziehen: Wolken kommen von links und rechts, Nebel wird dicht */
+.cloud-transition.cover .cloud-fog { animation: fog-in 0.9s ease-in both; }
+.cloud-transition.cover .cloud-puff {
+  animation: puff-in 0.95s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+  animation-delay: var(--d);
+}
+
+/* Aufziehen: Nebel löst sich, Wolken treiben nach außen und werden größer (Abstieg) */
+.cloud-transition.reveal .cloud-fog { animation: fog-out 1.3s ease-out 0.2s both; }
+.cloud-transition.reveal .cloud-puff {
+  animation: puff-out 1.9s cubic-bezier(0.45, 0, 0.3, 1) both;
+  animation-delay: calc(0.1s + var(--d));
+}
+
+@keyframes fog-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fog-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes puff-in {
+  from { translate: calc(var(--side) * 70vw) 0; scale: 0.8; opacity: 0; }
+  to   { translate: 0 0; scale: 1; opacity: 1; }
+}
+@keyframes puff-out {
+  from { translate: 0 0; scale: 1; opacity: 1; }
+  to   { translate: calc(var(--side) * 75vw) -6vh; scale: 1.8; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-transition * { animation: none !important; }
+  .cloud-transition.reveal { display: none; }
+}
