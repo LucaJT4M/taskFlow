@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Check, ListTodo, Circle, CircleDot, CircleCheck,
-  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield, Sprout, History,
+  Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Shield, Sprout, History, CalendarDays,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -49,6 +49,15 @@ function Sidebar({ filter, onFilterChange, counts, username, isAdmin, activePage
             <span className="nav-count sidebar-label">{counts[key]}</span>
           </button>
         ))}
+
+        <Link
+          to="/calendar"
+          className={`nav-item ${activePage === 'calendar' ? 'active' : ''}`}
+          title={collapsed ? 'Kalender' : undefined}
+        >
+          <CalendarDays size={17} strokeWidth={1.75} />
+          <span className="sidebar-label">Kalender</span>
+        </Link>
 
         <Link
           to="/garden"
