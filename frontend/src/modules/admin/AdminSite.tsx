@@ -53,12 +53,12 @@ function AdminSite() {
         setIsEditUserOpen(true);
     }
 
-    async function handleEditUser(username: string, password: string) {
+    async function handleEditUser(username: string, password: string, role: "user" | "admin") {
         if (!editingUser) {
             return;
         }
 
-        await editUser(editingUser.username, username, password);
+        await editUser(editingUser.username, username, password, role);
         setIsEditUserOpen(false);
         setEditingUser(null);
     }
@@ -156,6 +156,7 @@ function AdminSite() {
                                     <li key={user.id} className={isActive ? "is-active" : ""}>
                                         <div className="admin-user-main">
                                             <h3>{user.username}</h3>
+                                            <span className="admin-subtitle">{user.role}</span>
                                         </div>
                                         <div className="admin-actions">
                                             <button type="button" className="admin-mini-btn" onClick={() => setSelectedUserId(user.id)}>

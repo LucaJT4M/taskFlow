@@ -1,6 +1,7 @@
 export type UserItem = {
     id: number;
     username: string;
+    role: "user" | "admin";
 };
 
 export type TaskItem = {

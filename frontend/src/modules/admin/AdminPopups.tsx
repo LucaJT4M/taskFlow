@@ -56,16 +56,19 @@ export function AddUserModal({ isOpen, onClose, onSubmit }: CreateUserModalProps
 export function EditUserModal({ isOpen, onClose, user, onSubmit }: EditUserModalProps) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState<"user" | "admin">("user");
 
     useEffect(() => {
         if (!user) {
             setUsername("");
             setPassword("");
+            setRole("user");
             return;
         }
 
         setUsername(user.username);
         setPassword("");
+        setRole(user.role);
     }, [user]);
 
     if (!isOpen || !user) {
@@ -74,7 +77,7 @@ export function EditUserModal({ isOpen, onClose, user, onSubmit }: EditUserModal
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        await onSubmit(username.trim(), password);
+        await onSubmit(username.trim(), password, role);
         setPassword("");
     }
 
@@ -91,6 +94,12 @@ export function EditUserModal({ isOpen, onClose, user, onSubmit }: EditUserModal
 
                     <label htmlFor="edit-password">Password</label>
                     <input id="edit-password" type="password" placeholder="Leave empty to keep current password" value={password} onChange={(event) => setPassword(event.target.value)} />
+
+                    <label htmlFor="edit-role">Role</label>
+                    <select id="edit-role" value={role} onChange={(event) => setRole(event.target.value as "user" | "admin")}>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
 
                     <div className="admin-modal-actions">
                         <button type="button" className="admin-btn admin-btn-secondary" onClick={onClose}>

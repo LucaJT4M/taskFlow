@@ -31,6 +31,17 @@ def test_user_update_accepts_a_valid_password():
     assert user_update.password == "a longer secure password"
 
 
+def test_short_password_has_custom_validation_message():
+    with pytest.raises(ValidationError) as error:
+        UserCreate(
+            username="alice",
+            password="short",
+            role=UserRole.USER,
+        )
+
+    assert "Passwort should have at least 12 characters" in str(error.value)
+
+
 @pytest.mark.parametrize(
     "password",
     [

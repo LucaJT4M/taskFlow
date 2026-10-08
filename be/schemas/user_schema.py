@@ -1,19 +1,26 @@
 from typing import Optional
 from be.core.roles import UserRole
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, field_validator, ConfigDict
 
 MIN_PASSWORD_LENGTH = 12
 MAX_PASSWORD_LENGTH = 128
 
 class PasswordMixin(BaseModel):
-    password: str = Field(
-        min_length=MIN_PASSWORD_LENGTH,
-        max_length=MAX_PASSWORD_LENGTH,
-    )
+    password: str
 
     @field_validator("password")
     @classmethod
     def validate_password(cls, password: str) -> str:
+        if len(password) < MIN_PASSWORD_LENGTH:
+            raise ValueError(
+                f"Password should have at least {MIN_PASSWORD_LENGTH} characters"
+            )
+
+        if len(password) > MAX_PASSWORD_LENGTH:
+            raise ValueError(
+                f"Passwort should have at most {MAX_PASSWORD_LENGTH} characters"
+            )
+
         if password.strip() != password:
             raise ValueError("Password must not start or end with whitespace")
 
@@ -44,11 +51,7 @@ class UserResponse(BaseModel):
 
 class UserUpdate(BaseModel):
     username: str | None = None
-    password: str | None = Field(
-        default=None,
-        min_length=MIN_PASSWORD_LENGTH,
-        max_length=MAX_PASSWORD_LENGTH,
-    )
+    password: str | None = None
     role: UserRole | None = None
 
     @field_validator("password")
@@ -56,6 +59,16 @@ class UserUpdate(BaseModel):
     def validate_password(cls, password: str | None) -> str | None:
         if password is None:
             return None
+
+        if len(password) < MIN_PASSWORD_LENGTH:
+            raise ValueError(
+                f"Password should have at least {MIN_PASSWORD_LENGTH} characters"
+            )
+
+        if len(password) > MAX_PASSWORD_LENGTH:
+            raise ValueError(
+                f"Password should have at most {MAX_PASSWORD_LENGTH} characters"
+            )
 
         if password.strip() != password:
             raise ValueError("Password must not start or end with whitespace")

@@ -13,7 +13,7 @@ export type CreateUserModalProps = BaseModalProps & {
 
 export type EditUserModalProps = BaseModalProps & {
     user: UserItem | null;
-    onSubmit: (username: string, password: string) => Promise<void> | void;
+    onSubmit: (username: string, password: string, role: UserItem["role"]) => Promise<void> | void;
 };
 
 export type CreateTaskModalProps = BaseModalProps & {

@@ -40,16 +40,22 @@ async function addUserRequest(username: string, password: string) {
     return (await response.json()) as UserItem;
 }
 
-async function updateUserRequest(targetUsername: string, username: string, password: string) {
+async function updateUserRequest(
+    targetUsername: string,
+    username: string,
+    password: string,
+    role: UserItem["role"],
+) {
     const token = localStorage.getItem("access_token");
 
-    const body: { username?: string; password?: string } = {};
+    const body: { username?: string; password?: string; role?: UserItem["role"] } = {};
     if (username.trim()) {
         body.username = username.trim();
     }
     if (password.trim()) {
         body.password = password;
     }
+    body.role = role;
 
     if (Object.keys(body).length === 0) {
         throw new Error("No changes provided");
@@ -123,9 +129,9 @@ export function useUsers() {
             return created;
         })
 
-    const editUser = (targetUsername: string, username: string, password: string) =>
+    const editUser = (targetUsername: string, username: string, password: string, role: UserItem["role"]) =>
         run(async () => {
-            const updated = await updateUserRequest(targetUsername, username, password)
+            const updated = await updateUserRequest(targetUsername, username, password, role)
             await refreshUsers();
             return updated;
         })
