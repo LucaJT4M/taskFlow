@@ -1,6 +1,7 @@
-import { Check, Moon, Sun } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '../tasks/useTheme'
 import DecorLayer from '../../components/decor/DecorLayer'
+import BrandIcon from '../../components/BrandIcon'
 
 /**
  * Gemeinsamer Rahmen für Login und Registrierung:
@@ -24,7 +25,7 @@ function AuthLayout({ ariaLabel, children }) {
       </button>
 
       <div className="brand auth-brand">
-        <span className="brand-mark"><Check size={15} strokeWidth={3} /></span>
+        <BrandIcon />
         TaskFlow
       </div>
 

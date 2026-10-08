@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import Sidebar from '../tasks/Sidebar'
-import { useTasks } from '../tasks/useTasks'
 import { useTheme } from '../tasks/useTheme'
 import { useCurrentUser } from '../tasks/useCurrentUser'
 import { logout } from '../../services/authService'
@@ -14,20 +13,12 @@ import { groupByDay } from './historyDates'
 import './history.css'
 
 function HistoryPage() {
-  const { tasks } = useTasks()
   const { entries, error } = useHistory()
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
 
-  const countBy = (status) => tasks.filter((t) => t.status === status).length
-  const counts = {
-    all: tasks.length,
-    todo: countBy('todo'),
-    in_progress: countBy('in_progress'),
-    done: countBy('done'),
-  }
 
   function handleLogout() {
     logout()
@@ -44,9 +35,6 @@ function HistoryPage() {
     <div className="app-dark app-layout" data-theme={theme}>
       <DecorLayer variant="app" />
       <Sidebar
-        filter={null}
-        onFilterChange={(filter) => navigate('/dashboard', { state: { filter } })}
-        counts={counts}
         username={user?.username}
         isAdmin={user?.username === 'admin'}
         activePage="history"

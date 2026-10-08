@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { CheckCircle2, Flame, Trees } from 'lucide-react'
 import Sidebar from '../tasks/Sidebar'
-import { useTasks } from '../tasks/useTasks'
 import { useTheme } from '../tasks/useTheme'
 import { useCurrentUser } from '../tasks/useCurrentUser'
 import { logout } from '../../services/authService'
@@ -11,37 +10,22 @@ import CurrentPlantCard from './CurrentPlantCard'
 import { useGarden } from './useGarden'
 
 function GardenPage() {
-  const { tasks } = useTasks()
   const { garden, error } = useGarden()
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const navigate = useNavigate()
 
-  const countBy = (status) => tasks.filter((t) => t.status === status).length
-  const counts = {
-    all: tasks.length,
-    todo: countBy('todo'),
-    in_progress: countBy('in_progress'),
-    done: countBy('done'),
-  }
 
   function handleLogout() {
     logout()
     navigate('/')
   }
 
-  // Klick auf einen Filter in der Seitenleiste -> zurück zum Board mit diesem Filter
-  function openFilter(filter) {
-    navigate('/dashboard', { state: { filter } })
-  }
 
   return (
     <div className="app-dark app-layout" data-theme={theme}>
       <DecorLayer variant="app" />
       <Sidebar
-        filter={null}
-        onFilterChange={openFilter}
-        counts={counts}
         username={user?.username}
         isAdmin={user?.username === 'admin'}
         activePage="garden"

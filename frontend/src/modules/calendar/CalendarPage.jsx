@@ -25,13 +25,6 @@ function CalendarPage() {
   })
   const [selected, setSelected] = useState(todayIso)
 
-  const countBy = (status) => tasks.filter((t) => t.status === status).length
-  const counts = {
-    all: tasks.length,
-    todo: countBy('todo'),
-    in_progress: countBy('in_progress'),
-    done: countBy('done'),
-  }
 
   const days = monthDays(month.getFullYear(), month.getMonth())
   const tasksByDay = groupByDueDate(tasks)
@@ -66,12 +59,10 @@ function CalendarPage() {
     <div className="app-dark app-layout" data-theme={theme}>
       <DecorLayer variant="app" />
       <Sidebar
-        filter={null}
-        onFilterChange={(filter) => navigate('/dashboard', { state: { filter } })}
-        counts={counts}
         username={user?.username}
         isAdmin={user?.username === 'admin'}
         activePage="calendar"
+        openCount={tasks.filter((t) => t.status !== 'done').length}
         theme={theme}
         onToggleTheme={toggleTheme}
         onLogout={handleLogout}
