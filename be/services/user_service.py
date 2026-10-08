@@ -17,8 +17,6 @@ class UserService:
     def check_for_admin(self, db):
         users = self.get_users(db)
         admin_is_there = any(u.role == UserRole.ADMIN for u in users)
-        print("printing users:")
-        print(users)
 
         if not admin_is_there:
             new_admin = users[0]
@@ -56,7 +54,7 @@ class UserService:
         return user
 
     def  get_users(self, db: Session) -> list[User]:
-        return db.query(User)
+        return db.query(User).order_by(User.id)
 
     def delete_user(self, db, username):
         try:
