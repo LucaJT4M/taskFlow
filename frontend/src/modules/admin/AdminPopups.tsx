@@ -186,16 +186,19 @@ export function CreateTaskModal({ isOpen, onClose, users, selectedUserId, onSubm
 
 export function EditTaskModal({ isOpen, onClose, task, onSubmit }: EditTaskModalProps) {
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [status, setStatus] = useState<TaskStatusApi>("todo");
 
     useEffect(() => {
         if (!task) {
             setTitle("");
+            setDescription("");
             setStatus("todo");
             return;
         }
 
         setTitle(task.title);
+        setDescription(task.description);
         if (task.status === "Done") {
             setStatus("done");
         } else if (task.status === "In Progress") {
@@ -211,7 +214,7 @@ export function EditTaskModal({ isOpen, onClose, task, onSubmit }: EditTaskModal
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        await onSubmit(title.trim(), status);
+        await onSubmit(title.trim(), description.trim(), status);
     }
 
     return (
@@ -229,6 +232,15 @@ export function EditTaskModal({ isOpen, onClose, task, onSubmit }: EditTaskModal
                         placeholder="Task title"
                         value={title}
                         onChange={(event) => setTitle(event.target.value)}
+                    />
+
+                    <label htmlFor="edit-task-description">Description</label>
+                    <textarea
+                        id="edit-task-description"
+                        rows={3}
+                        placeholder="Task description"
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
                     />
 
                     <label htmlFor="edit-task-status">Status</label>

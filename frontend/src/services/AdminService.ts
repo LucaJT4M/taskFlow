@@ -100,6 +100,7 @@ export function convertTasksToTaskItems(tasks: unknown[]): TaskItem[] {
             id: Number(rawTask.id ?? 0),
             userId: Number(rawTask.owner_id ?? rawTask.userId ?? 0),
             title: typeof rawTask.title === "string" && rawTask.title.trim() ? rawTask.title : "Untitled task",
+            description: typeof rawTask.description === "string" ? rawTask.description : "",
             status: normalizeStatus(rawTask.status),
         };
     });

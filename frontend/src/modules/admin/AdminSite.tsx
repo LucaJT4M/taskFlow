@@ -83,13 +83,14 @@ function AdminSite() {
         setIsEditTaskOpen(true);
     }
 
-    async function handleEditTask(title: string, status: "todo" | "in_progress" | "done") {
+    async function handleEditTask(title: string, description: string, status: "todo" | "in_progress" | "done") {
         if (!editingTask || !title) {
             return;
         }
 
         await editTask(editingTask, {
             title,
+            description,
             status,
         });
 
