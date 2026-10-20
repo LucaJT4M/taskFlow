@@ -1,11 +1,12 @@
-import { WEEKDAYS } from './calendarUtils'
+import { weekdays } from './calendarUtils'
+import { t } from '../../i18n'
 
 const MAX_VISIBLE = 3
 
 function MonthGrid({ days, tasksByDay, todayIso, selected, onSelect }) {
   return (
     <div className="month-grid" role="grid">
-      {WEEKDAYS.map((d, i) => (
+      {weekdays().map((d, i) => (
         <div key={d} className={`weekday ${i >= 5 ? 'weekend' : ''}`}>{d}</div>
       ))}
 
@@ -28,16 +29,16 @@ function MonthGrid({ days, tasksByDay, todayIso, selected, onSelect }) {
           >
             <span className="day-number">{date.getDate()}</span>
             <span className="day-tasks">
-              {tasks.slice(0, MAX_VISIBLE).map((t) => (
+              {tasks.slice(0, MAX_VISIBLE).map((task) => (
                 <span
-                  key={t.id}
-                  className={`day-chip ${t.status} ${isPast && t.status !== 'done' ? 'overdue' : ''}`}
-                  title={t.title}
+                  key={task.id}
+                  className={`day-chip ${task.status} ${isPast && task.status !== 'done' ? 'overdue' : ''}`}
+                  title={task.title}
                 >
-                  {t.title}
+                  {task.title}
                 </span>
               ))}
-              {hidden > 0 && <span className="day-more">+{hidden} weitere</span>}
+              {hidden > 0 && <span className="day-more">{t('cal.more', { n: hidden })}</span>}
             </span>
           </button>
         )

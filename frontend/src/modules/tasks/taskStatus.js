@@ -1,5 +1,9 @@
-export const STATUSES = [
-  { status: 'todo', title: 'To Do' },
-  { status: 'in_progress', title: 'In Arbeit' },
-  { status: 'done', title: 'Erledigt' },
-]
+import { t } from '../../i18n'
+
+// title als Getter: wird bei jedem Zugriff in der aktuellen Sprache gelesen
+export const STATUSES = ['todo', 'in_progress', 'done'].map((status) => ({
+  status,
+  get title() {
+    return t(`status.${status}`)
+  },
+}))

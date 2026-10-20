@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { sign_up } from "../../services/authService";
 import AuthLayout from "./AuthLayout";
 import { blowLeavesAway } from "../../components/decor/pageTransition";
+import { t } from "../../i18n";
 
 function RegisterForm() {
     const navigate = useNavigate();
@@ -23,31 +24,31 @@ function RegisterForm() {
     }
 
     return (
-        <AuthLayout ariaLabel="Registrieren">
-            <h1 className="auth-title">Konto erstellen</h1>
-            <p className="auth-subtitle">In wenigen Sekunden startklar.</p>
+        <AuthLayout ariaLabel={t('register.aria')}>
+            <h1 className="auth-title">{t('register.title')}</h1>
+            <p className="auth-subtitle">{t('register.subtitle')}</p>
 
             <form className="auth-card" onSubmit={handleSubmit}>
-                <label htmlFor="register-username" className="auth-label">Benutzername</label>
+                <label htmlFor="register-username" className="auth-label">{t('auth.username')}</label>
                 <input
                     id="register-username"
                     name="username"
                     type="text"
                     autoComplete="username"
-                    placeholder="Benutzername wählen"
+                    placeholder={t('register.usernamePh')}
                     className="auth-input"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
 
-                <label htmlFor="register-password" className="auth-label">Passwort</label>
+                <label htmlFor="register-password" className="auth-label">{t('auth.password')}</label>
                 <div className="auth-input-row">
                     <input
                         id="register-password"
                         name="password"
                         type={showPassword ? "text" : "password"}
                         autoComplete="new-password"
-                        placeholder="Passwort wählen"
+                        placeholder={t('register.passwordPh')}
                         className="auth-input"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -56,20 +57,20 @@ function RegisterForm() {
                         type="button"
                         className="auth-toggle"
                         onClick={() => setShowPassword((prev) => !prev)}
-                        aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                        aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                     >
                         {showPassword ? <EyeOff size={17} strokeWidth={1.75} /> : <Eye size={17} strokeWidth={1.75} />}
                     </button>
                 </div>
 
-                <label htmlFor="register-password-repeat" className="auth-label">Passwort wiederholen</label>
+                <label htmlFor="register-password-repeat" className="auth-label">{t('register.repeat')}</label>
                 <div className="auth-input-row">
                     <input
                         id="register-password-repeat"
                         name="password-repeat"
                         type={showConfirmPassword ? "text" : "password"}
                         autoComplete="new-password"
-                        placeholder="Passwort wiederholen"
+                        placeholder={t('register.repeat')}
                         className="auth-input"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -78,18 +79,18 @@ function RegisterForm() {
                         type="button"
                         className="auth-toggle"
                         onClick={() => setShowConfirmPassword((prev) => !prev)}
-                        aria-label={showConfirmPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                        aria-label={showConfirmPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                     >
                         {showConfirmPassword ? <EyeOff size={17} strokeWidth={1.75} /> : <Eye size={17} strokeWidth={1.75} />}
                     </button>
                 </div>
 
-                <button type="submit" className="auth-button">Konto erstellen</button>
+                <button type="submit" className="auth-button">{t('register.title')}</button>
             </form>
 
             <p className="auth-switch-text">
-                Schon ein Konto?{" "}
-                <Link className="auth-switch-link" to="/login">Zur Anmeldung</Link>
+                {t('register.haveAccount')}{" "}
+                <Link className="auth-switch-link" to="/login">{t('register.toLogin')}</Link>
             </p>
         </AuthLayout>
     );

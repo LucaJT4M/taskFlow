@@ -5,6 +5,7 @@ import { useState } from 'react'
 import DueBadge from './DueBadge'
 import { dueInfo } from './dueDate'
 import AssigneeChip from '../teams/AssigneeChip'
+import { t } from '../../i18n'
 
 const ORDER = STATUSES.map((s) => s.status)
 
@@ -53,18 +54,18 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
             if (e.key === 'Enter') handleSave()
             if (e.key === 'Escape') handleCancel()
           }}
-          placeholder="Titel"
+          placeholder={t('form.title')}
           autoFocus
         />
         <textarea
           className="edit-desc"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Beschreibung (optional)"
+          placeholder={t('form.description')}
           rows={3}
         />
         <label className="edit-date">
-          Fällig am
+          {t('form.due')}
           <input
             type="date"
             value={dueDate}
@@ -72,15 +73,15 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
           />
           {dueDate && (
             <button type="button" className="link-clear" onClick={() => setDueDate('')}>
-              entfernen
+              {t('card.removeDate')}
             </button>
           )}
         </label>
         {members && (
           <label className="edit-date">
-            Zuständig
+            {t('form.assignee')}
             <select value={assignee} onChange={(e) => setAssignee(e.target.value)}>
-              <option value="">Niemand</option>
+              <option value="">{t('form.nobody')}</option>
               {members.map((m) => (
                 <option key={m.user_id} value={m.user_id}>{m.username}</option>
               ))}
@@ -89,10 +90,10 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
         )}
         <div className="edit-actions">
           <button className="btn-ghost" onClick={handleCancel}>
-            Abbrechen
+            {t('common.cancel')}
           </button>
           <button className="btn-save" onClick={() => handleSave()}>
-            Speichern
+            {t('common.save')}
           </button>
         </div>
       </article>
@@ -112,11 +113,11 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
           {statusTitle}
         </span>
         <div className="card-actions">
-          <button className="icon-btn" title="Zurück" disabled={index === 0}
+          <button className="icon-btn" title={t('card.back')} disabled={index === 0}
             onClick={() => onMove(task, ORDER[index - 1])}>
             <ChevronLeft size={16} strokeWidth={1.75} />
           </button>
-          <button className="icon-btn" title="Weiter" disabled={index === ORDER.length - 1}
+          <button className="icon-btn" title={t('card.next')} disabled={index === ORDER.length - 1}
             onClick={(e) => {
               const next = ORDER[index + 1]
               if (next === 'done') burstLeaves(e.currentTarget)
@@ -124,11 +125,11 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
             }}>
             <ChevronRight size={16} strokeWidth={1.75} />
           </button>
-          <button className="icon-btn delete" title="Löschen"
+          <button className="icon-btn delete" title={t('common.delete')}
             onClick={() => onDelete(task)}>
             <Trash2 size={15} strokeWidth={1.75} />
           </button>
-          <button className="icon-btn edit" title="Bearbeiten"
+          <button className="icon-btn edit" title={t('common.edit')}
             onClick={() => setIsEditing(true)}>
             <Edit2 size={15} strokeWidth={1.75} />
           </button>

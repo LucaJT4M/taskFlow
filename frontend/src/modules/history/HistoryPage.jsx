@@ -11,6 +11,7 @@ import HistoryEntry from './HistoryEntry'
 import { useHistory } from './useHistory'
 import { groupByDay } from './historyDates'
 import './history.css'
+import { t } from '../../i18n'
 
 function HistoryPage() {
   const { entries, error } = useHistory()
@@ -47,19 +48,19 @@ function HistoryPage() {
         <div className="tasks-page history-page">
           <header className="tasks-header">
             <div>
-              <p className="eyebrow">Verlauf</p>
-              <h1>Gelöschte Aufgaben</h1>
+              <p className="eyebrow">{t('hist.eyebrow')}</p>
+              <h1>{t('hist.title')}</h1>
               <p className="subtitle">
                 {entries
-                  ? `${entries.length} ${entries.length === 1 ? 'Eintrag' : 'Einträge'}`
-                  : 'Wird geladen …'}
+                  ? t('hist.count', { n: entries.length })
+                  : t('common.loading')}
               </p>
             </div>
             {entries?.length > 0 && (
               <label className="history-search">
                 <Search size={15} strokeWidth={1.75} />
                 <input
-                  placeholder="Im Verlauf suchen"
+                  placeholder={t('hist.search')}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
@@ -67,17 +68,17 @@ function HistoryPage() {
             )}
           </header>
 
-          {error && <p className="error">Fehler: {error}</p>}
+          {error && <p className="error">{t('common.error', { msg: error })}</p>}
 
           {entries && entries.length === 0 && (
             <div className="empty">
               <Sprout />
-              Noch nichts gelöscht – gelöschte Aufgaben erscheinen hier.
+              {t('hist.empty')}
             </div>
           )}
 
           {entries && entries.length > 0 && groups.length === 0 && (
-            <p className="empty">Keine Treffer für „{query}“.</p>
+            <p className="empty">{t('hist.noMatch', { q: query })}</p>
           )}
 
           {groups.map((group) => (

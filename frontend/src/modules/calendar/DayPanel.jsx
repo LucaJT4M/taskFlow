@@ -3,6 +3,7 @@ import { Check, Plus } from 'lucide-react'
 import { STATUSES } from '../tasks/taskStatus'
 import { burstLeaves } from '../../components/decor/leafBurst'
 import { dayTitle } from './calendarUtils'
+import { t } from '../../i18n'
 
 /** Rechte Spalte: Aufgaben des gewählten Tages + schnell eine neue anlegen */
 function DayPanel({ iso, tasks, todayIso, onToggle, onCreate }) {
@@ -17,11 +18,11 @@ function DayPanel({ iso, tasks, todayIso, onToggle, onCreate }) {
 
   return (
     <aside className="day-panel">
-      <p className="eyebrow">{iso === todayIso ? 'Heute' : 'Ausgewählter Tag'}</p>
+      <p className="eyebrow">{iso === todayIso ? t('cal.today') : t('cal.selected')}</p>
       <h2>{dayTitle(iso)}</h2>
 
       {tasks.length === 0 ? (
-        <p className="day-empty">Für diesen Tag ist nichts geplant.</p>
+        <p className="day-empty">{t('cal.nothing')}</p>
       ) : (
         <ul className="day-list">
           {tasks.map((task) => {
@@ -32,7 +33,7 @@ function DayPanel({ iso, tasks, todayIso, onToggle, onCreate }) {
                 <button
                   type="button"
                   className={`checkbox ${isDone ? 'checked' : ''}`}
-                  title={isDone ? 'Als offen markieren' : 'Als erledigt markieren'}
+                  title={isDone ? t('task.markOpen') : t('task.markDone')}
                   onClick={(e) => {
                     if (!isDone) burstLeaves(e.currentTarget)
                     onToggle(task, { status: isDone ? 'todo' : 'done' })
@@ -45,7 +46,7 @@ function DayPanel({ iso, tasks, todayIso, onToggle, onCreate }) {
                   {task.description && <div className="day-item-desc">{task.description}</div>}
                   <span className="status-label">
                     <span className={`dot ${task.status}`} />
-                    {overdue ? 'Überfällig' : STATUSES.find((s) => s.status === task.status)?.title}
+                    {overdue ? t('cal.overdue') : STATUSES.find((s) => s.status === task.status)?.title}
                   </span>
                 </div>
               </li>
@@ -56,11 +57,11 @@ function DayPanel({ iso, tasks, todayIso, onToggle, onCreate }) {
 
       <form className="day-add" onSubmit={handleSubmit}>
         <input
-          placeholder="Neue Aufgabe für diesen Tag"
+          placeholder={t('cal.newPh')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <button type="submit" title="Hinzufügen" disabled={!title.trim()}>
+        <button type="submit" title={t('common.add')} disabled={!title.trim()}>
           <Plus size={16} strokeWidth={2} />
         </button>
       </form>

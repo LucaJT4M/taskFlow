@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Check, Copy, Link2, RefreshCw } from 'lucide-react'
 import { formatCode } from './teamsApi'
+import { t } from '../../i18n'
 
 /** Einladungscode anzeigen und kopieren (Code oder fertigen Link) */
 function InvitePanel({ team, isOwner, onNewCode }) {
@@ -20,21 +21,21 @@ function InvitePanel({ team, isOwner, onNewCode }) {
 
   return (
     <div className="invite-panel">
-      <p className="invite-label">Einladungscode</p>
+      <p className="invite-label">{t('invite.label')}</p>
       <div className="invite-code">{code}</div>
       <div className="invite-buttons">
         <button type="button" className="btn-ghost" onClick={() => copy('code', team.invite_code)}>
           {copied === 'code' ? <Check size={14} /> : <Copy size={14} strokeWidth={1.75} />}
-          {copied === 'code' ? 'Kopiert' : 'Code kopieren'}
+          {copied === 'code' ? t('invite.copied') : t('invite.copyCode')}
         </button>
         <button type="button" className="btn-ghost" onClick={() => copy('link', link)}>
           {copied === 'link' ? <Check size={14} /> : <Link2 size={14} strokeWidth={1.75} />}
-          {copied === 'link' ? 'Kopiert' : 'Link kopieren'}
+          {copied === 'link' ? t('invite.copied') : t('invite.copyLink')}
         </button>
       </div>
       {isOwner && (
         <button type="button" className="link-btn" onClick={onNewCode}>
-          <RefreshCw size={12} strokeWidth={2} /> Neuen Code erzeugen (alter wird ungültig)
+          <RefreshCw size={12} strokeWidth={2} /> {t('invite.newCode')}
         </button>
       )}
     </div>

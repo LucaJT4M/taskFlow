@@ -11,6 +11,7 @@ import MonthGrid from './MonthGrid'
 import DayPanel from './DayPanel'
 import { groupByDueDate, monthDays, monthTitle, toISO } from './calendarUtils'
 import './calendar.css'
+import { t } from '../../i18n'
 
 function CalendarPage() {
   const { tasks, error, addTask, editTask } = useTasks()
@@ -31,7 +32,7 @@ function CalendarPage() {
   const inThisMonth = days
     .filter((d) => d.inMonth)
     .reduce((sum, d) => sum + (tasksByDay[d.iso]?.length ?? 0), 0)
-  const withoutDate = tasks.filter((t) => !t.due_date && t.status !== 'done').length
+  const withoutDate = tasks.filter((task) => !task.due_date && task.status !== 'done').length
 
   function changeMonth(step) {
     setMonth((m) => new Date(m.getFullYear(), m.getMonth() + step, 1))
@@ -62,7 +63,7 @@ function CalendarPage() {
         username={user?.username}
         isAdmin={user?.username === 'admin'}
         activePage="calendar"
-        openCount={tasks.filter((t) => t.status !== 'done').length}
+        openCount={tasks.filter((task) => task.status !== 'done').length}
         theme={theme}
         onToggleTheme={toggleTheme}
         onLogout={handleLogout}
@@ -72,25 +73,25 @@ function CalendarPage() {
         <div className="tasks-page calendar-page">
           <header className="tasks-header">
             <div>
-              <p className="eyebrow">Kalender</p>
+              <p className="eyebrow">{t('cal.eyebrow')}</p>
               <h1>{monthTitle(month)}</h1>
               <p className="subtitle">
-                {inThisMonth} {inThisMonth === 1 ? 'Aufgabe' : 'Aufgaben'} in diesem Monat
-                {withoutDate > 0 && ` · ${withoutDate} offen ohne Datum`}
+                {t('cal.summary', { n: inThisMonth })}
+                {withoutDate > 0 && t('cal.noDate', { n: withoutDate })}
               </p>
             </div>
             <div className="month-nav">
-              <button type="button" className="icon-btn" title="Vorheriger Monat" onClick={() => changeMonth(-1)}>
+              <button type="button" className="icon-btn" title={t('cal.prev')} onClick={() => changeMonth(-1)}>
                 <ChevronLeft size={18} strokeWidth={1.75} />
               </button>
-              <button type="button" className="btn-ghost" onClick={goToday}>Heute</button>
-              <button type="button" className="icon-btn" title="Nächster Monat" onClick={() => changeMonth(1)}>
+              <button type="button" className="btn-ghost" onClick={goToday}>{t('cal.today')}</button>
+              <button type="button" className="icon-btn" title={t('cal.next')} onClick={() => changeMonth(1)}>
                 <ChevronRight size={18} strokeWidth={1.75} />
               </button>
             </div>
           </header>
 
-          {error && <p className="error">Fehler: {error}</p>}
+          {error && <p className="error">{t('common.error', { msg: error })}</p>}
 
           <div className="calendar-layout">
             <MonthGrid

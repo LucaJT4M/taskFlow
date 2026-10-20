@@ -1,10 +1,12 @@
+import { t, locale } from '../../i18n'
+
 // Datum -> "YYYY-MM-DD" (lokale Zeit, so wie due_date im Backend gespeichert ist)
 export function toISO(date) {
   const pad = (n) => String(n).padStart(2, '0')
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 
-export const WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+export const weekdays = () => t('cal.weekdays')
 
 /**
  * Alle Tage, die in der Monatsansicht sichtbar sind:
@@ -38,10 +40,10 @@ export function groupByDueDate(tasks) {
 }
 
 export function monthTitle(date) {
-  return date.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
+  return date.toLocaleDateString(locale(), { month: 'long', year: 'numeric' })
 }
 
 export function dayTitle(iso) {
   const [y, m, d] = iso.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+  return new Date(y, m - 1, d).toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
 }

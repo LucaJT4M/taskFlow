@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import Plant from './Plant'
 import GardenDefs from './GardenDefs'
+import { t } from '../../i18n'
 
 /**
  * Kleine Meldung unten rechts, wenn eine erledigte Aufgabe
@@ -23,10 +24,10 @@ function GrowthToast({ info, onClose, onOpenGarden }) {
         <strong>{info.title}</strong>
         <p>{info.text}</p>
         <button type="button" className="link-btn" onClick={onOpenGarden}>
-          Zum Garten →
+          {t('growth.toGarden')}
         </button>
       </div>
-      <button type="button" className="icon-btn" onClick={onClose} title="Schließen">
+      <button type="button" className="icon-btn" onClick={onClose} title={t('common.close')}>
         <X size={15} strokeWidth={1.75} />
       </button>
     </div>

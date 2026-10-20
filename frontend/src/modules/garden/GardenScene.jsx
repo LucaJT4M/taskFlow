@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import Plant, { STAGE_HEIGHT } from './Plant'
 import GardenDefs from './GardenDefs'
 import { KIND_NAMES } from './plantKinds'
+import { t, stageName } from '../../i18n'
 import { seededRandom } from './random'
 import { Critters, ForegroundGrass, FrontMeadow, Ground, Sky, Texture, scenePhase } from './SceneBackdrop'
 import { burstLeaves } from '../../components/decor/leafBurst'
@@ -50,12 +51,12 @@ function StreakFlower({ x, color, i }) {
 function tooltipText(plant, garden) {
   const isCurrent = plant.index === garden.current.index
   return {
-    title: `${KIND_NAMES[plant.kind]} · ${plant.stage_name}`,
+    title: `${KIND_NAMES[plant.kind]} · ${stageName(plant.stage_name)}`,
     text: isCurrent
       ? plant.next_stage_name
-        ? `Wächst gerade · noch ${plant.tasks_to_next} bis „${plant.next_stage_name}“`
-        : 'Wächst gerade'
-      : `Ausgewachsen · ${garden.plant_size} erledigte Aufgaben`,
+        ? t('garden.tipGrowing', { n: plant.tasks_to_next, stage: stageName(plant.next_stage_name) })
+        : t('garden.growing')
+      : t('garden.tipGrown', { n: garden.plant_size }),
   }
 }
 
@@ -93,7 +94,7 @@ function GardenScene({ garden, theme }) {
 
   return (
     <div className="garden-card">
-      <svg className={`garden-scene phase-${phase}`} viewBox={`0 0 1000 ${VIEW_H}`} role="img" aria-label="Dein Garten">
+      <svg className={`garden-scene phase-${phase}`} viewBox={`0 0 1000 ${VIEW_H}`} role="img" aria-label={t('garden.aria')}>
         <GardenDefs />
         <Sky phase={phase} />
         <Ground />
@@ -131,7 +132,7 @@ function GardenScene({ garden, theme }) {
 
       {garden.total_completed === 0 && (
         <p className="garden-hint">
-          Erledige deine erste Aufgabe – dann keimt hier dein erster Samen.
+          {t('garden.hint')}
         </p>
       )}
     </div>

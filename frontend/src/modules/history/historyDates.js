@@ -1,3 +1,5 @@
+import { t, locale } from '../../i18n'
+
 // Das Backend speichert die Zeit in UTC, aber ohne "Z" am Ende.
 // Ohne "Z" würde der Browser sie als lokale Zeit lesen (2 Stunden falsch).
 export function parseUtc(value) {
@@ -11,13 +13,13 @@ function startOfDay(date) {
 
 export function dayLabel(date) {
   const diff = Math.round((startOfDay(new Date()) - startOfDay(date)) / 86400000)
-  if (diff === 0) return 'Heute'
-  if (diff === 1) return 'Gestern'
-  return date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+  if (diff === 0) return t('hist.today')
+  if (diff === 1) return t('hist.yesterday')
+  return date.toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
 export function timeLabel(date) {
-  return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' })
 }
 
 /** Gruppiert Einträge nach Tag: [{ label, items }] – neueste zuerst */

@@ -9,6 +9,7 @@ import DecorLayer from '../../components/decor/DecorLayer'
 import Sprout from '../../components/decor/Sprout'
 import { createTeam, getTeams, joinTeam } from './teamsApi'
 import './teams.css'
+import { t } from '../../i18n'
 
 /** Übersicht: eigene Teams, neues Team erstellen, mit Code beitreten */
 function TeamsPage() {
@@ -74,31 +75,31 @@ function TeamsPage() {
         <div className="tasks-page teams-page">
           <header className="tasks-header">
             <div>
-              <p className="eyebrow">Teams</p>
-              <h1>Gemeinsam arbeiten</h1>
+              <p className="eyebrow">{t('nav.teams')}</p>
+              <h1>{t('teams.title')}</h1>
               <p className="subtitle">
-                {teams ? `${teams.length} ${teams.length === 1 ? 'Team' : 'Teams'}` : 'Wird geladen …'}
-                {' · '}Aufgaben teilen, verteilen und zusammen erledigen
+                {teams ? t('teams.count', { n: teams.length }) : t('common.loading')}
+                {' · '}{t('teams.tagline')}
               </p>
             </div>
           </header>
 
-          {error && <p className="error">Fehler: {error}</p>}
+          {error && <p className="error">{t('common.error', { msg: error })}</p>}
 
           <div className="team-actions">
             <form className="team-action-card" onSubmit={handleCreate}>
               <div className="team-action-icon"><Plus size={18} strokeWidth={1.75} /></div>
               <div className="team-action-body">
-                <h2>Neues Team</h2>
-                <p>Du wirst Besitzer und kannst andere einladen.</p>
+                <h2>{t('teams.newTitle')}</h2>
+                <p>{t('teams.newText')}</p>
                 <div className="inline-field">
                   <input
-                    placeholder="z. B. Projekt LF10"
+                    placeholder={t('teams.namePh')}
                     maxLength={60}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <button type="submit" disabled={!name.trim() || busy}>Erstellen</button>
+                  <button type="submit" disabled={!name.trim() || busy}>{t('teams.create')}</button>
                 </div>
               </div>
             </form>
@@ -106,8 +107,8 @@ function TeamsPage() {
             <form className="team-action-card" onSubmit={handleJoin}>
               <div className="team-action-icon"><KeyRound size={18} strokeWidth={1.75} /></div>
               <div className="team-action-body">
-                <h2>Team beitreten</h2>
-                <p>Mit dem Einladungscode aus deinem Team.</p>
+                <h2>{t('teams.joinTitle')}</h2>
+                <p>{t('teams.joinText')}</p>
                 <div className="inline-field">
                   <input
                     className="code-input"
@@ -117,7 +118,7 @@ function TeamsPage() {
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
                     autoFocus={!!params.get('join')}
                   />
-                  <button type="submit" disabled={!code.trim() || busy}>Beitreten</button>
+                  <button type="submit" disabled={!code.trim() || busy}>{t('teams.join')}</button>
                 </div>
               </div>
             </form>
@@ -126,7 +127,7 @@ function TeamsPage() {
           {teams && teams.length === 0 && (
             <div className="empty">
               <Sprout />
-              Du bist noch in keinem Team – erstelle eins oder tritt mit einem Code bei.
+              {t('teams.empty')}
             </div>
           )}
 
@@ -139,13 +140,13 @@ function TeamsPage() {
                       {team.name[0]}
                     </span>
                     {team.my_role === 'owner' && (
-                      <span className="role-pill"><Crown size={12} strokeWidth={2} /> Besitzer</span>
+                      <span className="role-pill"><Crown size={12} strokeWidth={2} /> {t('teams.owner')}</span>
                     )}
                   </div>
                   <h3>{team.name}</h3>
                   <div className="team-card-meta">
-                    <span><Users size={14} strokeWidth={1.75} /> {team.member_count} {team.member_count === 1 ? 'Mitglied' : 'Mitglieder'}</span>
-                    <span>{team.open_tasks} offen</span>
+                    <span><Users size={14} strokeWidth={1.75} /> {t('teams.members', { n: team.member_count })}</span>
+                    <span>{t('teams.open', { n: team.open_tasks })}</span>
                   </div>
                   <ArrowRight className="team-card-arrow" size={16} strokeWidth={1.75} />
                 </Link>

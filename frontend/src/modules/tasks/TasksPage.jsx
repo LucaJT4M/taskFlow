@@ -14,13 +14,10 @@ import DecorLayer from '../../components/decor/DecorLayer'
 import GrowthToast from '../garden/GrowthToast'
 import { useGarden } from '../garden/useGarden'
 import { describeGrowth } from '../garden/growth'
+import { t, locale } from '../../i18n'
 
-const FILTERS = [
-  { key: 'all', label: 'Alle' },
-  { key: 'todo', label: 'To Do' },
-  { key: 'in_progress', label: 'In Arbeit' },
-  { key: 'done', label: 'Erledigt' },
-]
+const FILTERS = ['all', 'todo', 'in_progress', 'done']
+const filterLabel = (key) => (key === 'all' ? t('filter.all') : t(`status.${key}`))
 
 function TasksPage() {
   const { garden, refresh: refreshGarden } = useGarden()
@@ -46,7 +43,7 @@ function TasksPage() {
     navigate('/')
   }
 
-  const countBy = (status) => tasks.filter((t) => t.status === status).length
+  const countBy = (status) => tasks.filter((task) => task.status === status).length
   const counts = {
     all: tasks.length,
     todo: countBy('todo'),
@@ -54,8 +51,8 @@ function TasksPage() {
     done: countBy('done'),
   }
 
-  const visibleTasks = filter === 'all' ? tasks : tasks.filter((t) => t.status === filter)
-  const today = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+  const visibleTasks = filter === 'all' ? tasks : tasks.filter((task) => task.status === filter)
+  const today = new Date().toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
     <div className="app-dark app-layout" data-theme={theme}>
@@ -75,18 +72,18 @@ function TasksPage() {
           <header className="tasks-header">
             <div>
               <p className="eyebrow">{today}</p>
-              <h1>Meine Aufgaben</h1>
-              <p className="subtitle">{counts.all - counts.done} offen · {counts.done} erledigt</p>
+              <h1>{t('tasks.title')}</h1>
+              <p className="subtitle">{t('tasks.summary', { open: counts.all - counts.done, done: counts.done })}</p>
             </div>
           </header>
 
-          {error && <p className="error">Fehler: {error}</p>}
+          {error && <p className="error">{t('common.error', { msg: error })}</p>}
           <TaskForm onCreate={addTask} />
 
           {/* Filter nach Status + Ansicht wechseln */}
           <div className="task-toolbar">
-            <div className="filter-tabs" role="tablist" aria-label="Aufgaben filtern">
-              {FILTERS.map(({ key, label }) => (
+            <div className="filter-tabs" role="tablist" aria-label={t('tasks.filterAria')}>
+              {FILTERS.map((key) => (
                 <button
                   key={key}
                   role="tab"
@@ -95,7 +92,7 @@ function TasksPage() {
                   onClick={() => setFilter(key)}
                 >
                   {key !== 'all' && <span className={`dot ${key}`} />}
-                  {label}
+                  {filterLabel(key)}
                   <span className="filter-count">{counts[key]}</span>
                 </button>
               ))}
@@ -106,11 +103,11 @@ function TasksPage() {
               <div className="view-switch">
                 <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
                   <LayoutList size={15} strokeWidth={1.75} />
-                  Liste
+                  {t('view.list')}
                 </button>
                 <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>
                   <Kanban size={15} strokeWidth={1.75} />
-                  Board
+                  {t('view.board')}
                 </button>
               </div>
             </div>

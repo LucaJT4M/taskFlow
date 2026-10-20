@@ -4,6 +4,7 @@ import { ArrowLeft, CheckCircle2, Droplets, Flame, Locate, Minus, Plus, Trees } 
 import { useTheme } from '../../tasks/useTheme'
 import { useGarden } from '../useGarden'
 import { KIND_NAMES } from '../plantKinds'
+import { t, stageName } from '../../../i18n'
 import GardenDefs from '../GardenDefs'
 import { burstLeaves } from '../../../components/decor/leafBurst'
 import CloudTransition from './CloudTransition'
@@ -98,8 +99,8 @@ function GardenWorldPage() {
     const zoom = minScale() * 1.6
     centerOn(SPAWN.x, SPAWN.y, zoom * 0.78, false)
     const raf = requestAnimationFrame(() => requestAnimationFrame(() => centerOn(SPAWN.x, SPAWN.y, zoom, true)))
-    const t = setTimeout(() => { follow.current = true }, 2300)
-    return () => { cancelAnimationFrame(raf); clearTimeout(t) }
+    const timer = setTimeout(() => { follow.current = true }, 2300)
+    return () => { cancelAnimationFrame(raf); clearTimeout(timer) }
   }, [centerOn])
 
   function zoomAt(factor, mx = window.innerWidth / 2, my = window.innerHeight / 2, animate = false) {
@@ -220,7 +221,7 @@ function GardenWorldPage() {
     if (!p) return
     const name = KIND_NAMES[p.plant.kind]
     if (wateredRef.current.has(index)) {
-      setToast({ text: `${name} wurde heute schon gegossen 🌤️`, key: Date.now() })
+      setToast({ text: t('world.already', { name }), key: Date.now() })
       return
     }
     const next = new Set(wateredRef.current)
@@ -229,19 +230,19 @@ function GardenWorldPage() {
     saveWatered(next)
     setWatered(next)
     setEffect({ index, x: p.x, y: p.y, r: p.r, petals: p.plant.stage === 'bloom', key: Date.now() })
-    setToast({ text: `${name} freut sich über das Wasser! 💧`, key: Date.now() })
+    setToast({ text: t('world.thanks', { name }), key: Date.now() })
   }, [])
 
   useEffect(() => {
     if (!effect) return
-    const t = setTimeout(() => setEffect(null), 1800)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => setEffect(null), 1800)
+    return () => clearTimeout(timer)
   }, [effect])
 
   useEffect(() => {
     if (!toast) return
-    const t = setTimeout(() => setToast(null), 2600)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => setToast(null), 2600)
+    return () => clearTimeout(timer)
   }, [toast])
 
   // ---------- Eingaben ----------
@@ -250,7 +251,7 @@ function GardenWorldPage() {
   }
 
   useEffect(() => {
-    const t = setTimeout(() => setShowHint(false), 9000)
+    const timer = setTimeout(() => setShowHint(false), 9000)
     const down = (e) => {
       if (e.key === 'Escape') return leave()
       if (KEYS[e.code]) {
@@ -270,7 +271,7 @@ function GardenWorldPage() {
     window.addEventListener('keyup', up)
     window.addEventListener('blur', blur)
     return () => {
-      clearTimeout(t)
+      clearTimeout(timer)
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
       window.removeEventListener('blur', blur)
@@ -387,30 +388,30 @@ function GardenWorldPage() {
       {/* ---------- Oberfläche ---------- */}
       <div className="world-ui top-left">
         <button type="button" className="world-btn" onClick={leave}>
-          <ArrowLeft size={16} strokeWidth={2} /> Zurück
+          <ArrowLeft size={16} strokeWidth={2} /> {t('world.back')}
         </button>
         <div className="world-card">
-          <strong>Mein Garten</strong>
+          <strong>{t('garden.title')}</strong>
           {garden && (
             <div className="world-stats">
-              <span title="Erledigte Aufgaben"><CheckCircle2 size={14} /> {garden.total_completed}</span>
-              <span title="Ausgewachsene Pflanzen"><Trees size={14} /> {garden.grown_plants}</span>
-              <span title="Tage in Folge"><Flame size={14} /> {garden.streak_days}</span>
-              <span title="Heute gegossen"><Droplets size={14} /> {watered.size}</span>
+              <span title={t('world.statDone')}><CheckCircle2 size={14} /> {garden.total_completed}</span>
+              <span title={t('world.statPlants')}><Trees size={14} /> {garden.grown_plants}</span>
+              <span title={t('world.statStreak')}><Flame size={14} /> {garden.streak_days}</span>
+              <span title={t('world.statWatered')}><Droplets size={14} /> {watered.size}</span>
             </div>
           )}
           {current && current.next_stage_name && (
             <p className="world-next">
-              {KIND_NAMES[current.kind]} wächst · noch {current.tasks_to_next} bis „{current.next_stage_name}“
+              {t('world.next', { kind: KIND_NAMES[current.kind], n: current.tasks_to_next, stage: stageName(current.next_stage_name) })}
             </p>
           )}
         </div>
       </div>
 
       <div className="world-ui bottom-right">
-        <button type="button" className="world-btn icon" title="Hineinzoomen" onClick={() => zoomAt(1.3, undefined, undefined, true)}><Plus size={18} /></button>
-        <button type="button" className="world-btn icon" title="Herauszoomen" onClick={() => zoomAt(1 / 1.3, undefined, undefined, true)}><Minus size={18} /></button>
-        <button type="button" className="world-btn icon" title="Zur Figur" onClick={() => { follow.current = true }}>
+        <button type="button" className="world-btn icon" title={t('world.zoomIn')} onClick={() => zoomAt(1.3, undefined, undefined, true)}><Plus size={18} /></button>
+        <button type="button" className="world-btn icon" title={t('world.zoomOut')} onClick={() => zoomAt(1 / 1.3, undefined, undefined, true)}><Minus size={18} /></button>
+        <button type="button" className="world-btn icon" title={t('world.locate')} onClick={() => { follow.current = true }}>
           <Locate size={18} />
         </button>
       </div>
@@ -419,18 +420,18 @@ function GardenWorldPage() {
       {near && phase === 'world' && (
         <div className="world-action" key={near.plant.index}>
           <div>
-            <strong>{KIND_NAMES[near.plant.kind]} · {near.plant.stage_name}</strong>
+            <strong>{KIND_NAMES[near.plant.kind]} · {stageName(near.plant.stage_name)}</strong>
             <span>
               {near.plant.index === current?.index
-                ? `Wächst gerade · ${near.plant.growth}/${garden.plant_size} Aufgaben`
-                : `Ausgewachsen · ${garden.plant_size} Aufgaben`}
+                ? t('world.growing', { g: near.plant.growth, s: garden.plant_size })
+                : t('world.grown', { s: garden.plant_size })}
             </span>
           </div>
           {watered.has(near.plant.index) ? (
-            <span className="world-done"><Droplets size={15} /> Heute gegossen</span>
+            <span className="world-done"><Droplets size={15} /> {t('world.watered')}</span>
           ) : (
             <button type="button" className="world-water" onClick={() => waterPlant(near.plant.index)}>
-              <Droplets size={16} /> Gießen <kbd>E</kbd>
+              <Droplets size={16} /> {t('world.water')} <kbd>E</kbd>
             </button>
           )}
         </div>
@@ -439,17 +440,17 @@ function GardenWorldPage() {
       {toast && <div className="world-toast" key={toast.key}>{toast.text}</div>}
 
       {showHint && phase === 'world' && !near && (
-        <div className="world-hint">WASD / Pfeiltasten: laufen · Klick: hingehen · E: gießen · Esc: verlassen</div>
+        <div className="world-hint">{t('world.hint')}</div>
       )}
 
       {garden && garden.total_completed === 0 && phase === 'world' && (
-        <div className="world-empty">Erledige deine erste Aufgabe – dann keimt hier dein erster Samen. 🌱</div>
+        <div className="world-empty">{t('world.empty')}</div>
       )}
 
       {hover && (
         <div className="world-tooltip" style={{ left: hover.cx, top: hover.cy }}>
-          <strong>{KIND_NAMES[hover.plant.kind]} · {hover.plant.stage_name}</strong>
-          <span>Klicken, um hinzugehen</span>
+          <strong>{KIND_NAMES[hover.plant.kind]} · {stageName(hover.plant.stage_name)}</strong>
+          <span>{t('world.clickToGo')}</span>
         </div>
       )}
 

@@ -2,6 +2,8 @@ import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '../tasks/useTheme'
 import DecorLayer from '../../components/decor/DecorLayer'
 import BrandIcon from '../../components/BrandIcon'
+import { t } from '../../i18n'
+import LanguageToggle from '../../i18n/LanguageToggle'
 
 /**
  * Gemeinsamer Rahmen für Login und Registrierung:
@@ -19,10 +21,11 @@ function AuthLayout({ ariaLabel, children }) {
         type="button"
         className="theme-toggle"
         onClick={toggleTheme}
-        title={theme === 'light' ? 'Dunkles Design' : 'Helles Design'}
+        title={theme === 'light' ? t('theme.dark') : t('theme.light')}
       >
         {theme === 'light' ? <Moon size={17} strokeWidth={1.75} /> : <Sun size={17} strokeWidth={1.75} />}
       </button>
+      <LanguageToggle />
 
       <div className="brand auth-brand">
         <BrandIcon />

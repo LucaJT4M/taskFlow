@@ -1,13 +1,15 @@
 // Export und Import von Aufgaben als JSON oder CSV.
 // Alles passiert im Browser – das Backend wird nur zum Anlegen der importierten Aufgaben genutzt.
 
+import { t } from '../../i18n'
+
 const FIELDS = ['title', 'description', 'status', 'due_date']
 const STATUSES = ['todo', 'in_progress', 'done']
 // auch deutsche Statusnamen beim Import verstehen (z. B. aus Excel)
 const STATUS_ALIASES = {
   'to do': 'todo', todo: 'todo', offen: 'todo',
   'in arbeit': 'in_progress', in_progress: 'in_progress', 'in progress': 'in_progress',
-  erledigt: 'done', done: 'done', fertig: 'done',
+  erledigt: 'done', done: 'done', fertig: 'done', open: 'todo',
 }
 
 // ---------------- Export ----------------
@@ -38,7 +40,7 @@ export function exportJSON(tasks) {
     exported_at: new Date().toISOString(),
     tasks: tasks.map(pick),
   }
-  download(JSON.stringify(data, null, 2), `taskflow-aufgaben-${stamp()}.json`, 'application/json')
+  download(JSON.stringify(data, null, 2), `${t('io.filePrefix')}-${stamp()}.json`, 'application/json')
 }
 
 // Semikolon als Trennzeichen: so öffnet ein deutsches Excel die Datei direkt richtig
@@ -50,9 +52,9 @@ function csvCell(value) {
 }
 
 export function exportCSV(tasks) {
-  const rows = [FIELDS.join(SEP), ...tasks.map((t) => FIELDS.map((f) => csvCell(t[f])).join(SEP))]
+  const rows = [FIELDS.join(SEP), ...tasks.map((task) => FIELDS.map((f) => csvCell(task[f])).join(SEP))]
   // ﻿ (BOM) = Excel erkennt Umlaute (ä, ö, ü) korrekt
-  download('﻿' + rows.join('\r\n'), `taskflow-aufgaben-${stamp()}.csv`, 'text/csv;charset=utf-8')
+  download('﻿' + rows.join('\r\n'), `${t('io.filePrefix')}-${stamp()}.csv`, 'text/csv;charset=utf-8')
 }
 
 // ---------------- Import ----------------
@@ -99,15 +101,15 @@ function normalizeDate(value) {
 
 function normalizeTask(raw) {
   const title = String(raw.title ?? raw.titel ?? '').trim()
-  if (!title) return { error: 'Titel fehlt' }
-  if (title.length > 200) return { error: 'Titel zu lang' }
+  if (!title) return { error: t('io.err.noTitle') }
+  if (title.length > 200) return { error: t('io.err.titleLong') }
 
   const statusRaw = String(raw.status ?? 'todo').trim().toLowerCase()
   const status = STATUS_ALIASES[statusRaw] ?? (STATUSES.includes(statusRaw) ? statusRaw : null)
-  if (!status) return { error: `Unbekannter Status „${raw.status}“` }
+  if (!status) return { error: t('io.err.status', { value: raw.status }) }
 
   const due = normalizeDate(raw.due_date ?? raw['fällig'] ?? raw.faellig)
-  if (due === undefined) return { error: `Ungültiges Datum „${raw.due_date}“` }
+  if (due === undefined) return { error: t('io.err.date', { value: raw.due_date }) }
 
   const description = String(raw.description ?? raw.beschreibung ?? '').trim() || null
   return { task: { title, description, status, due_date: due } }
@@ -128,10 +130,10 @@ export async function readImportFile(file, existingTasks) {
     try {
       data = JSON.parse(text)
     } catch {
-      throw new Error('Die JSON-Datei ist fehlerhaft.')
+      throw new Error(t('io.err.badJson'))
     }
     rawList = Array.isArray(data) ? data : data.tasks
-    if (!Array.isArray(rawList)) throw new Error('In der JSON-Datei wurde keine Aufgabenliste gefunden.')
+    if (!Array.isArray(rawList)) throw new Error(t('io.err.noList'))
   } else {
     rawList = parseCSV(text)
   }
@@ -142,7 +144,7 @@ export async function readImportFile(file, existingTasks) {
   rawList.forEach((raw, i) => {
     const { task, error } = normalizeTask(raw ?? {})
     if (error) return invalid.push({ line: i + 1, error })
-    if (existingTasks.some((t) => sameTask(t, task)) || valid.some((t) => sameTask(t, task))) {
+    if (existingTasks.some((other) => sameTask(other, task)) || valid.some((other) => sameTask(other, task))) {
       duplicates++
       return
     }

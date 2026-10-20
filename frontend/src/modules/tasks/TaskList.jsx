@@ -4,13 +4,14 @@ import Sprout from '../../components/decor/Sprout'
 import { burstLeaves } from '../../components/decor/leafBurst'
 import DueBadge from './DueBadge'
 import AssigneeChip from '../teams/AssigneeChip'
+import { t } from '../../i18n'
 
 function TaskList({ tasks, onUpdate, onDelete, members }) {
   if (tasks.length === 0) {
     return (
       <div className="empty">
         <Sprout />
-        Noch keine Aufgaben – leg oben deine erste an.
+        {t('list.empty')}
       </div>
     )
   }
@@ -23,7 +24,7 @@ function TaskList({ tasks, onUpdate, onDelete, members }) {
           <div key={task.id} className={`task-row ${task.status}`}>
             <button
               className={`checkbox ${isDone ? 'checked' : ''}`}
-              title={isDone ? 'Als offen markieren' : 'Als erledigt markieren'}
+              title={isDone ? t('task.markOpen') : t('task.markDone')}
               onClick={(e) => {
                 if (!isDone) burstLeaves(e.currentTarget)
                 onUpdate(task, { status: isDone ? 'todo' : 'done' })
@@ -54,7 +55,7 @@ function TaskList({ tasks, onUpdate, onDelete, members }) {
               ))}
             </select>
 
-            <button className="icon-btn delete" title="Löschen" onClick={() => onDelete(task)}><Trash2 size={15} strokeWidth={1.75} /></button>
+            <button className="icon-btn delete" title={t('common.delete')} onClick={() => onDelete(task)}><Trash2 size={15} strokeWidth={1.75} /></button>
           </div>
         )
       })}

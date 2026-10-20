@@ -10,6 +10,7 @@ import GardenScene from './GardenScene'
 import CurrentPlantCard from './CurrentPlantCard'
 import { useGarden } from './useGarden'
 import CloudTransition from './world/CloudTransition'
+import { t } from '../../i18n'
 
 function GardenPage() {
   const { garden, error } = useGarden()
@@ -43,37 +44,37 @@ function GardenPage() {
         <div className="tasks-page garden-page">
           <header className="tasks-header">
             <div>
-              <p className="eyebrow">Belohnungen</p>
-              <h1>Mein Garten</h1>
-              <p className="subtitle">Jede erledigte Aufgabe lässt deinen Garten wachsen.</p>
+              <p className="eyebrow">{t('garden.eyebrow')}</p>
+              <h1>{t('garden.title')}</h1>
+              <p className="subtitle">{t('garden.subtitle')}</p>
             </div>
             <button type="button" className="enter-world" onClick={() => setClouds('cover')}>
               <Sparkles size={16} strokeWidth={2} />
-              Garten betreten
+              {t('garden.enter')}
             </button>
           </header>
 
-          {error && <p className="error">Fehler: {error}</p>}
+          {error && <p className="error">{t('common.error', { msg: error })}</p>}
 
           {!garden ? (
-            <p className="empty">Garten wird geladen …</p>
+            <p className="empty">{t('garden.loading')}</p>
           ) : (
             <>
               <div className="garden-stats">
                 <div className="stat">
                   <CheckCircle2 size={18} strokeWidth={1.75} />
                   <strong>{garden.total_completed}</strong>
-                  <span>Aufgaben erledigt</span>
+                  <span>{t('garden.statDone', { n: garden.total_completed })}</span>
                 </div>
                 <div className="stat">
                   <Trees size={18} strokeWidth={1.75} />
                   <strong>{garden.grown_plants}</strong>
-                  <span>{garden.grown_plants === 1 ? 'Pflanze' : 'Pflanzen'} ausgewachsen</span>
+                  <span>{t('garden.statPlants', { n: garden.grown_plants })}</span>
                 </div>
                 <div className="stat">
                   <Flame size={18} strokeWidth={1.75} />
                   <strong>{garden.streak_days}</strong>
-                  <span>{garden.streak_days === 1 ? 'Tag' : 'Tage'} in Folge</span>
+                  <span>{t('garden.statStreak', { n: garden.streak_days })}</span>
                 </div>
               </div>
 

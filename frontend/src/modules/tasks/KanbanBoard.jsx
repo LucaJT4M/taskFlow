@@ -1,6 +1,7 @@
 import TaskCard from './TaskCard'
 import { STATUSES } from './taskStatus'
 import Sprout from '../../components/decor/Sprout'
+import { t } from '../../i18n'
 
 function KanbanBoard({ tasks, onUpdate, onDelete, members }) {
   return (
@@ -18,14 +19,14 @@ function KanbanBoard({ tasks, onUpdate, onDelete, members }) {
               {columnTasks.length === 0 && (
                 <div className="column-empty">
                   <Sprout />
-                  Keine Aufgaben
+                  {t('board.empty')}
                 </div>
               )}
               {columnTasks.map((task) => (
                 <TaskCard
                   key={task.id}
                   task={task}
-                  onMove={(t, newStatus) => onUpdate(t, { status: newStatus })}
+                  onMove={(task, newStatus) => onUpdate(task, { status: newStatus })}
                   onDelete={onDelete}
                   onEdit={onUpdate}
                   members={members}

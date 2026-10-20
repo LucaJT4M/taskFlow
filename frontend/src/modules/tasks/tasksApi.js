@@ -1,4 +1,5 @@
 import { API_URL } from '../../config'
+import { serverMessage } from '../../i18n'
 
 export async function request(path, options = {}) {
   const token = localStorage.getItem('access_token')
@@ -23,7 +24,7 @@ export async function request(path, options = {}) {
     let message = `HTTP ${res.status}`
     try {
       const body = await res.json()
-      if (typeof body.detail === 'string') message = body.detail
+      if (typeof body.detail === 'string') message = serverMessage(body.detail)
     } catch {
       // keine JSON-Antwort
     }

@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react'
 import { STATUSES } from '../tasks/taskStatus'
 import { parseUtc, timeLabel } from './historyDates'
+import { t } from '../../i18n'
 
 function HistoryEntry({ entry }) {
   const status = STATUSES.find((s) => s.status === entry.status)
@@ -20,7 +21,7 @@ function HistoryEntry({ entry }) {
             <span className={`dot ${entry.status}`} />
             {status?.title ?? entry.status}
           </span>
-          <time dateTime={entry.deleted_date}>gelöscht um {timeLabel(parseUtc(entry.deleted_date))}</time>
+          <time dateTime={entry.deleted_date}>{t('hist.deletedAt', { time: timeLabel(parseUtc(entry.deleted_date)) })}</time>
         </div>
       </div>
     </li>

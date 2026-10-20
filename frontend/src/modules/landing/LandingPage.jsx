@@ -9,6 +9,8 @@ import Grass from './Grass'
 import FallingLeaves from './FallingLeaves'
 import './landing.css'
 import BrandIcon from '../../components/BrandIcon'
+import { t } from '../../i18n'
+import LanguageToggle from '../../i18n/LanguageToggle'
 
 const LEAVE_MS = 550 // so lange sinkt der Inhalt "in die Erde"
 
@@ -51,10 +53,11 @@ function LandingPage() {
         type="button"
         className="theme-toggle landing-theme"
         onClick={toggleTheme}
-        title={theme === 'light' ? 'Dunkles Design' : 'Helles Design'}
+        title={theme === 'light' ? t('theme.dark') : t('theme.light')}
       >
         {theme === 'light' ? <Moon size={17} strokeWidth={1.75} /> : <Sun size={17} strokeWidth={1.75} />}
       </button>
+      <LanguageToggle className="landing-theme" />
 
       <main className="landing-hero">
         <div className="brand landing-brand">
@@ -63,14 +66,13 @@ function LandingPage() {
         </div>
 
         <h1 className="landing-title">
-          Deine Aufgaben.
+          {t('landing.title1')}
           <br />
-          <span>In Ruhe wachsen lassen.</span>
+          <span>{t('landing.title2')}</span>
         </h1>
 
         <p className="landing-text">
-          TaskFlow ist dein ruhiges Kanban-Board: Aufgaben anlegen, verschieben,
-          erledigen – und dabei den Überblick behalten.
+          {t('landing.text')}
         </p>
 
         <button type="button" className="landing-cta" onClick={handleStart} disabled={phase !== 'idle'}>
@@ -81,13 +83,13 @@ function LandingPage() {
               <path className="cta-leaf" d="M12 13 C 15.5 13, 19 10.5, 19.5 7 C 16 7, 12.5 9, 12 13 Z" />
             </svg>
           </span>
-          {loggedIn ? 'Zum Board' : 'Loslegen'}
+          {loggedIn ? t('landing.toBoard') : t('landing.start')}
           <ArrowRight size={18} strokeWidth={2} />
         </button>
 
         {!loggedIn && (
           <p className="landing-note">
-            Noch kein Konto? <Link to="/signup">Registrieren</Link>
+            {t('landing.noAccount')} <Link to="/signup">{t('landing.register')}</Link>
           </p>
         )}
       </main>

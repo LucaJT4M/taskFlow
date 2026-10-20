@@ -1,3 +1,5 @@
+import { t, locale } from '../../i18n'
+
 const DAY = 24 * 60 * 60 * 1000
 
 // "2026-10-10" -> lokales Datum (ohne Zeitzonen-Verschiebung)
@@ -21,14 +23,14 @@ export function dueInfo(value, status) {
   if (!date) return null
 
   const days = Math.round((date - startOfToday()) / DAY)
-  const short = date.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })
-  const full = date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const short = date.toLocaleDateString(locale(), { day: 'numeric', month: 'short' })
+  const full = date.toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
   if (status === 'done') return { label: short, tone: 'done', full }
-  if (days < 0) return { label: days === -1 ? 'Seit gestern überfällig' : `Überfällig · ${short}`, tone: 'overdue', full }
-  if (days === 0) return { label: 'Heute fällig', tone: 'today', full }
-  if (days === 1) return { label: 'Morgen fällig', tone: 'soon', full }
-  if (days < 7) return { label: date.toLocaleDateString('de-DE', { weekday: 'long' }), tone: 'soon', full }
+  if (days < 0) return { label: days === -1 ? t('due.yesterday') : t('due.overdue', { date: short }), tone: 'overdue', full }
+  if (days === 0) return { label: t('due.today'), tone: 'today', full }
+  if (days === 1) return { label: t('due.tomorrow'), tone: 'soon', full }
+  if (days < 7) return { label: date.toLocaleDateString(locale(), { weekday: 'long' }), tone: 'soon', full }
   return { label: short, tone: 'later', full }
 }
 
