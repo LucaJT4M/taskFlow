@@ -5,6 +5,7 @@ import Sidebar from './Sidebar'
 import KanbanBoard from './KanbanBoard'
 import TaskList from './TaskList'
 import TaskForm from './TaskForm'
+import ExportImportMenu from './ExportImportMenu'
 import { useTasks } from './useTasks'
 import { useTheme } from './useTheme'
 import { logout } from '../../services/authService'
@@ -24,7 +25,7 @@ const FILTERS = [
 function TasksPage() {
   const { garden, refresh: refreshGarden } = useGarden()
   const [growth, setGrowth] = useState(null)
-  const { tasks, error, addTask, editTask, removeTask } = useTasks({ onTaskCompleted: handleTaskCompleted })
+  const { tasks, error, addTask, editTask, removeTask, importTasks } = useTasks({ onTaskCompleted: handleTaskCompleted })
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const [view, setView] = useState('board') // 'board' | 'list'
@@ -100,15 +101,18 @@ function TasksPage() {
               ))}
             </div>
 
-            <div className="view-switch">
-              <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
-                <LayoutList size={15} strokeWidth={1.75} />
-                Liste
-              </button>
-              <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>
-                <Kanban size={15} strokeWidth={1.75} />
-                Board
-              </button>
+            <div className="toolbar-right">
+              <ExportImportMenu tasks={tasks} onImport={importTasks} />
+              <div className="view-switch">
+                <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
+                  <LayoutList size={15} strokeWidth={1.75} />
+                  Liste
+                </button>
+                <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>
+                  <Kanban size={15} strokeWidth={1.75} />
+                  Board
+                </button>
+              </div>
             </div>
           </div>
 

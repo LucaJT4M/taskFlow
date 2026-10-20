@@ -44,11 +44,27 @@ export function useTasks({ onTaskCompleted } = {}) {
       if (changes.status === 'done' && task.status !== 'done') onTaskCompleted?.(updated)
     })
 
+  // Mehrere Aufgaben nacheinander anlegen (Import). Gibt die Anzahl der erfolgreich angelegten zurück.
+  async function importTasks(list) {
+    let count = 0
+    setError(null)
+    for (const data of list) {
+      try {
+        const created = await createTask(data)
+        setTasks((prev) => [...prev, created])
+        count++
+      } catch (err) {
+        setError(err.message)
+      }
+    }
+    return count
+  }
+
   const removeTask = (task) =>
     run(async () => {
       await deleteTask(task.id)
       setTasks((prev) => prev.filter((t) => t.id !== task.id))
     })
   
-  return { tasks, error, addTask, addTaskAsAdmin, editTask, removeTask }
+  return { tasks, error, addTask, addTaskAsAdmin, editTask, removeTask, importTasks }
 }
