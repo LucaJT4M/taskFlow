@@ -8,5 +8,6 @@ export type TaskItem = {
     id: number;
     userId: number;
     title: string;
+    description: string;
     status: "To Do" | "In Progress" | "Done";
 };

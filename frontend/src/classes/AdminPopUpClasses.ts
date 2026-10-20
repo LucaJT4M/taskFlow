@@ -24,7 +24,7 @@ export type CreateTaskModalProps = BaseModalProps & {
 
 export type EditTaskModalProps = BaseModalProps & {
     task: TaskItem | null;
-    onSubmit: (title: string, status: TaskStatusApi) => Promise<void> | void;
+    onSubmit: (title: string, description: string, status: TaskStatusApi) => Promise<void> | void;
 };
 
 export type ConfirmActionModalProps = BaseModalProps & {
