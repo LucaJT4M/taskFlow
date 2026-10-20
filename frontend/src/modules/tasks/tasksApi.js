@@ -47,4 +47,4 @@ export const updateTask = (id, changes) =>
   request(`/tasks/${id}`, { method: 'PATCH', body: JSON.stringify(changes) })
 
 export const deleteTask = (id) =>
-  request(`/tasks/${id}`, { method: 'DELETE' })
+  request(`/tasks/${id}`, { method: 'DELETE', keepalive: true }) // keepalive: klappt auch, wenn die Seite gerade geschlossen wird

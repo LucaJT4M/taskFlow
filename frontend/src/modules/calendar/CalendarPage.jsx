@@ -61,7 +61,7 @@ function CalendarPage() {
       <DecorLayer variant="app" />
       <Sidebar
         username={user?.username}
-        isAdmin={user?.username === 'admin'}
+        isAdmin={user?.role === 'admin'}
         activePage="calendar"
         openCount={tasks.filter((task) => task.status !== 'done').length}
         theme={theme}

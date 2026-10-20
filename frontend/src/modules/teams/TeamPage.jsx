@@ -5,6 +5,8 @@ import Sidebar from '../tasks/Sidebar'
 import KanbanBoard from '../tasks/KanbanBoard'
 import TaskList from '../tasks/TaskList'
 import TaskForm from '../tasks/TaskForm'
+import UndoToast from '../tasks/UndoToast'
+import { useUndoDelete } from '../tasks/useUndoDelete'
 import { useTheme } from '../tasks/useTheme'
 import { useCurrentUser } from '../tasks/useCurrentUser'
 import { logout } from '../../services/authService'
@@ -43,7 +45,9 @@ function TeamPage() {
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const tm = useTeam(teamId)
-  const { team, tasks } = tm
+  const { team } = tm
+  const deletion = useUndoDelete(tm.removeTask, `taskflow-pending-delete-team-${teamId}`)
+  const tasks = tm.tasks.filter((x) => !deletion.isHidden(x))
 
   const [view, setView] = useState('board')
   const [filter, setFilter] = useState('all')
@@ -241,10 +245,11 @@ function TeamPage() {
           </div>
 
           {view === 'board'
-            ? <KanbanBoard tasks={visible} onUpdate={tm.editTask} onDelete={tm.removeTask} members={team.members} />
-            : <TaskList tasks={visible} onUpdate={tm.editTask} onDelete={tm.removeTask} members={team.members} />}
+            ? <KanbanBoard tasks={visible} onUpdate={tm.editTask} onDelete={deletion.requestDelete} onCreate={tm.addTask} members={team.members} />
+            : <TaskList tasks={visible} onUpdate={tm.editTask} onDelete={deletion.requestDelete} members={team.members} />}
         </>
       )}
+      <UndoToast key={deletion.last?.id} task={deletion.last} onUndo={deletion.undo} />
     </Shell>
   )
 }

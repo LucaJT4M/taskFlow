@@ -1,26 +1,43 @@
-import { STATUSES } from './taskStatus'
-import { ChevronLeft, ChevronRight, Edit2, Trash2 } from 'lucide-react'
-import { burstLeaves } from '../../components/decor/leafBurst'
 import { useState } from 'react'
+import { Check } from 'lucide-react'
+import { STATUSES } from './taskStatus'
+import { burstLeaves } from '../../components/decor/leafBurst'
 import DueBadge from './DueBadge'
+import TaskMenu from './TaskMenu'
 import { dueInfo } from './dueDate'
 import AssigneeChip from '../teams/AssigneeChip'
 import { t } from '../../i18n'
 
-const ORDER = STATUSES.map((s) => s.status)
+// Klicks auf diese Elemente sollen die Karte NICHT in den Bearbeiten-Modus schalten
+const INTERACTIVE = 'button, a, input, select, textarea, .task-menu'
 
-
-// members: nur bei Team-Aufgaben (zeigt und ändert, wer zuständig ist)
-function TaskCard({ task, onMove, onDelete, onEdit, members }) {
-  const index = ORDER.indexOf(task.status)
-  const statusTitle = STATUSES[index]?.title
-  const overdue = dueInfo(task.due_date, task.status)?.tone === 'overdue'
+/**
+ * Eine Aufgabe auf dem Board.
+ * - Kreis links: direkt erledigen / wieder öffnen
+ * - Klick auf die Karte: bearbeiten
+ * - "⋯": bearbeiten, verschieben, löschen
+ * - ziehen (Drag & Drop) in eine andere Spalte
+ * members: nur bei Team-Aufgaben (zeigt und ändert, wer zuständig ist)
+ */
+function TaskCard({ task, onMove, onDelete, onEdit, members, onDragStart, onDragEnd, dragging }) {
+  const statusTitle = STATUSES.find((s) => s.status === task.status)?.title
+  const tone = dueInfo(task.due_date, task.status)?.tone
+  const isDone = task.status === 'done'
 
   const [isEditing, setIsEditing] = useState(false)
   const [title, setTitel] = useState(task.title)
   const [description, setDescription] = useState(task.description ?? '')
   const [dueDate, setDueDate] = useState(task.due_date ?? '')
   const [assignee, setAssignee] = useState(task.assignee_id ?? '')
+
+  // Beim Öffnen immer die aktuellen Werte der Aufgabe übernehmen
+  function startEditing() {
+    setTitel(task.title)
+    setDescription(task.description ?? '')
+    setDueDate(task.due_date ?? '')
+    setAssignee(task.assignee_id ?? '')
+    setIsEditing(true)
+  }
 
   function handleSave() {
     const newTitle = title.trim()
@@ -36,13 +53,13 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
   }
 
   function handleCancel() {
-    setTitel(task.title)
-    setDescription(task.description ?? '')
-    setDueDate(task.due_date ?? '')
-    setAssignee(task.assignee_id ?? '')
     setIsEditing(false)
   }
 
+  function moveTo(status, event) {
+    if (status === 'done' && event?.currentTarget) burstLeaves(event.currentTarget)
+    onMove(task, status)
+  }
 
   if (isEditing) {
     return (
@@ -61,6 +78,7 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
           className="edit-desc"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          onKeyDown={(e) => e.key === 'Escape' && handleCancel()}
           placeholder={t('form.description')}
           rows={3}
         />
@@ -101,39 +119,48 @@ function TaskCard({ task, onMove, onDelete, onEdit, members }) {
   }
 
   return (
-    <article className={`card ${task.status} ${overdue ? 'overdue' : ''}`}>
-      <div className="card-title">{task.title}</div>
-      {task.description && <p>{task.description}</p>}
-      <DueBadge task={task} />
-      <AssigneeChip task={task} members={members} />
+    <article
+      className={`card ${task.status} ${tone ? `due-${tone}` : ''} ${dragging ? 'dragging' : ''}`}
+      draggable={Boolean(onDragStart)}
+      onDragStart={(e) => {
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.setData('text/plain', String(task.id))
+        onDragStart?.(task)
+      }}
+      onDragEnd={() => onDragEnd?.()}
+      onClick={(e) => { if (!e.target.closest(INTERACTIVE)) startEditing() }}
+      onKeyDown={(e) => { if (e.key === 'Enter' && e.target === e.currentTarget) startEditing() }}
+      tabIndex={0}
+      aria-label={`${task.title} – ${t('card.editHint')}`}
+    >
+      <div className="card-head">
+        <button
+          type="button"
+          className={`card-check ${isDone ? 'checked' : ''}`}
+          title={isDone ? t('task.markOpen') : t('task.markDone')}
+          aria-label={isDone ? t('task.markOpen') : t('task.markDone')}
+          onClick={(e) => moveTo(isDone ? 'todo' : 'done', e)}
+        >
+          <Check size={12} strokeWidth={3} />
+        </button>
+        <div className="card-title">{task.title}</div>
+        <TaskMenu task={task} onEdit={startEditing} onMove={moveTo} onDelete={() => onDelete(task)} />
+      </div>
+
+      {task.description && <p className="card-desc">{task.description}</p>}
+
+      {(task.due_date || members) && (
+        <div className="card-meta">
+          <DueBadge task={task} />
+          <AssigneeChip task={task} members={members} />
+        </div>
+      )}
 
       <div className="card-footer">
         <span className="status-label">
           <span className={`dot ${task.status}`} />
           {statusTitle}
         </span>
-        <div className="card-actions">
-          <button className="icon-btn" title={t('card.back')} disabled={index === 0}
-            onClick={() => onMove(task, ORDER[index - 1])}>
-            <ChevronLeft size={16} strokeWidth={1.75} />
-          </button>
-          <button className="icon-btn" title={t('card.next')} disabled={index === ORDER.length - 1}
-            onClick={(e) => {
-              const next = ORDER[index + 1]
-              if (next === 'done') burstLeaves(e.currentTarget)
-              onMove(task, next)
-            }}>
-            <ChevronRight size={16} strokeWidth={1.75} />
-          </button>
-          <button className="icon-btn delete" title={t('common.delete')}
-            onClick={() => onDelete(task)}>
-            <Trash2 size={15} strokeWidth={1.75} />
-          </button>
-          <button className="icon-btn edit" title={t('common.edit')}
-            onClick={() => setIsEditing(true)}>
-            <Edit2 size={15} strokeWidth={1.75} />
-          </button>
-        </div>
       </div>
     </article>
   )

@@ -17,7 +17,8 @@ export const createTeamTask = (id, task) =>
   request(`/teams/${id}/tasks`, { method: 'POST', body: JSON.stringify(task) })
 export const updateTeamTask = (id, taskId, changes) =>
   request(`/teams/${id}/tasks/${taskId}`, { method: 'PATCH', body: JSON.stringify(changes) })
-export const deleteTeamTask = (id, taskId) => request(`/teams/${id}/tasks/${taskId}`, { method: 'DELETE' })
+export const deleteTeamTask = (id, taskId) =>
+  request(`/teams/${id}/tasks/${taskId}`, { method: 'DELETE', keepalive: true })
 
 /** "PKB5ZRDL" -> "PKB5-ZRDL" (besser lesbar) */
 export const formatCode = (code = '') => code.replace(/(.{4})(?=.)/g, '$1-')

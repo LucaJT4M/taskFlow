@@ -754,7 +754,7 @@ body { margin: 0; }
 /* ========== Export / Import ========== */
 .toolbar-right { display: flex; align-items: center; gap: 10px; }
 .io-menu { position: relative; }
-.io-trigger { height: 40px; background: var(--surface); box-shadow: var(--shadow); }
+.io-trigger { white-space: nowrap; height: 40px; background: var(--surface); box-shadow: var(--shadow); }
 .io-dropdown {
   position: absolute;
   right: 0;

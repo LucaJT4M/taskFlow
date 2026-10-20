@@ -4,6 +4,8 @@ import { LayoutList, Kanban } from 'lucide-react'
 import Sidebar from './Sidebar'
 import KanbanBoard from './KanbanBoard'
 import TaskList from './TaskList'
+import UndoToast from './UndoToast'
+import { useUndoDelete } from './useUndoDelete'
 import TaskForm from './TaskForm'
 import ExportImportMenu from './ExportImportMenu'
 import { useTasks } from './useTasks'
@@ -22,7 +24,10 @@ const filterLabel = (key) => (key === 'all' ? t('filter.all') : t(`status.${key}
 function TasksPage() {
   const { garden, refresh: refreshGarden } = useGarden()
   const [growth, setGrowth] = useState(null)
-  const { tasks, error, addTask, editTask, removeTask, importTasks } = useTasks({ onTaskCompleted: handleTaskCompleted })
+  const { tasks: allTasks, error, addTask, editTask, removeTask, importTasks } = useTasks({ onTaskCompleted: handleTaskCompleted })
+  // Gelöschte Aufgaben verschwinden sofort, werden aber erst nach 5 s wirklich gelöscht (Rückgängig)
+  const deletion = useUndoDelete(removeTask, 'taskflow-pending-delete')
+  const tasks = allTasks.filter((task) => !deletion.isHidden(task))
   const { theme, toggleTheme } = useTheme()
   const user = useCurrentUser()
   const [view, setView] = useState('board') // 'board' | 'list'
@@ -114,10 +119,12 @@ function TasksPage() {
           </div>
 
           {view === 'board'
-            ? <KanbanBoard tasks={visibleTasks} onUpdate={editTask} onDelete={removeTask} />
-            : <TaskList tasks={visibleTasks} onUpdate={editTask} onDelete={removeTask} />}
+            ? <KanbanBoard tasks={visibleTasks} onUpdate={editTask} onDelete={deletion.requestDelete} onCreate={addTask} />
+            : <TaskList tasks={visibleTasks} onUpdate={editTask} onDelete={deletion.requestDelete} />}
         </div>
       </main>
+
+      <UndoToast key={deletion.last?.id} task={deletion.last} onUndo={deletion.undo} />
 
       {growth && (
         <GrowthToast
