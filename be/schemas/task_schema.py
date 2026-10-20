@@ -19,6 +19,8 @@ class TaskUpdate(BaseModel):
 class TaskResponse(TaskCreate):
     id: int
     owner_id: int
+    team_id: int | None = None
+    assignee_id: int | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

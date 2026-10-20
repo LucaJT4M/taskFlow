@@ -14,7 +14,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 # create_all() legt nur fehlende TABELLEN an, keine fehlenden Spalten –
 # deshalb ergänzen wir sie hier einmalig per ALTER TABLE.
 NEW_COLUMNS = {
-    "tasks": {"due_date": "DATE"},
+    "tasks": {"due_date": "DATE", "team_id": "INTEGER", "assignee_id": "INTEGER"},
     "users": {"role": "VARCHAR(20) NOT NULL DEFAULT 'user'"},
 }
 

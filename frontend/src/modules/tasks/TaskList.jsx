@@ -3,8 +3,9 @@ import { Check, Trash2 } from 'lucide-react'
 import Sprout from '../../components/decor/Sprout'
 import { burstLeaves } from '../../components/decor/leafBurst'
 import DueBadge from './DueBadge'
+import AssigneeChip from '../teams/AssigneeChip'
 
-function TaskList({ tasks, onUpdate, onDelete }) {
+function TaskList({ tasks, onUpdate, onDelete, members }) {
   if (tasks.length === 0) {
     return (
       <div className="empty">
@@ -37,6 +38,7 @@ function TaskList({ tasks, onUpdate, onDelete }) {
             </div>
 
             <DueBadge task={task} />
+            <AssigneeChip task={task} members={members} />
 
             <span className={`dot ${task.status}`} />
             <select

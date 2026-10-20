@@ -5,6 +5,7 @@ from be.security.password import hash_password, verify_password
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from be.services.task_service import TaskService
+from be.services.team_service import TeamService
 from be.models.history_model import History_Task
 from be.core.roles import UserRole
 from sqlalchemy.orm import Session
@@ -12,6 +13,7 @@ from sqlalchemy.orm import Session
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 task_service = TaskService()
+team_service = TeamService()
 
 class UserService:
     def check_for_admin(self, db):
@@ -63,6 +65,9 @@ class UserService:
             if not user:
                 raise ValueError("No User found in DB")
 
+            # leave all teams first (ownership is handed over, assigned tasks are unassigned)
+            team_service.remove_user_everywhere(db, user)
+
             # delete Tasks of user
             tasks = task_service.get_tasks(db, user)
             for t in tasks:
@@ -87,6 +92,9 @@ class UserService:
                 if not user:
                     raise ValueError("No User found in DB")
     
+                # leave all teams first (ownership is handed over, assigned tasks are unassigned)
+                team_service.remove_user_everywhere(db, user)
+
                 # delete Tasks of user
                 tasks = task_service.get_tasks(db, user)
                 for t in tasks:

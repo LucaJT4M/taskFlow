@@ -13,10 +13,10 @@ class TaskNotFoundError(Exception):
 
 class TaskService:
     def _query_for(self, db: Session, user: User):
-        """Admin sieht alle Aufgaben, alle anderen nur ihre eigenen."""
+        """Admin sieht alle Aufgaben, alle anderen nur ihre eigenen (Team-Aufgaben laufen über /teams)."""
         query = db.query(Task)
         if user.username != ADMIN_USERNAME:
-            query = query.filter(Task.owner_id == user.id)
+            query = query.filter(Task.owner_id == user.id, Task.team_id.is_(None))
         return query
 
     def get_tasks(self, db: Session, user: User) -> list[Task]:

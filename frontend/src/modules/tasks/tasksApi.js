@@ -18,7 +18,19 @@ export async function request(path, options = {}) {
     throw new Error('Sitzung abgelaufen')
   }
 
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  if (!res.ok) {
+    // Fehlermeldung vom Backend übernehmen (z. B. "Kein Team mit diesem Einladungscode gefunden")
+    let message = `HTTP ${res.status}`
+    try {
+      const body = await res.json()
+      if (typeof body.detail === 'string') message = body.detail
+    } catch {
+      // keine JSON-Antwort
+    }
+    const error = new Error(message)
+    error.status = res.status
+    throw error
+  }
   return res.status === 204 ? null : res.json()
 }
 

@@ -7,6 +7,8 @@ import GardenPage from "./modules/garden/GardenPage";
 import GardenWorldPage from "./modules/garden/world/GardenWorldPage";
 import HistoryPage from "./modules/history/HistoryPage";
 import CalendarPage from "./modules/calendar/CalendarPage";
+import TeamsPage from "./modules/teams/TeamsPage";
+import TeamPage from "./modules/teams/TeamPage";
 import ProtectedRoute from "./modules/extraRoutes/ProtectedRoute";
 import AdminRoute from "./modules/extraRoutes/AdminRoute";
 import AdminSite from "./modules/admin/AdminSite";
@@ -28,6 +30,8 @@ function App () {
           <Route path="/garden/world" element={<GardenWorldPage/>}/>
           <Route path="/history" element={<HistoryPage/>}/>
           <Route path="/calendar" element={<CalendarPage/>}/>
+          <Route path="/teams" element={<TeamsPage/>}/>
+          <Route path="/teams/:teamId" element={<TeamPage/>}/>
         </Route>
 
         {/* Admin Routes */}

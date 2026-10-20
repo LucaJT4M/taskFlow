@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  LayoutDashboard, CalendarDays, Sprout, History, Shield,
+  LayoutDashboard, CalendarDays, Users, Sprout, History, Shield,
   Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 import BrandIcon from '../../components/BrandIcon'
@@ -10,6 +10,7 @@ import BrandIcon from '../../components/BrandIcon'
 const PAGES = [
   { key: 'tasks', to: '/dashboard', label: 'Aufgaben', icon: LayoutDashboard },
   { key: 'calendar', to: '/calendar', label: 'Kalender', icon: CalendarDays },
+  { key: 'teams', to: '/teams', label: 'Teams', icon: Users },
   { key: 'garden', to: '/garden', label: 'Mein Garten', icon: Sprout },
   { key: 'history', to: '/history', label: 'Verlauf', icon: History },
 ]

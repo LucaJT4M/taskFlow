@@ -4,11 +4,13 @@ import { burstLeaves } from '../../components/decor/leafBurst'
 import { useState } from 'react'
 import DueBadge from './DueBadge'
 import { dueInfo } from './dueDate'
+import AssigneeChip from '../teams/AssigneeChip'
 
 const ORDER = STATUSES.map((s) => s.status)
 
 
-function TaskCard({ task, onMove, onDelete, onEdit }) {
+// members: nur bei Team-Aufgaben (zeigt und ändert, wer zuständig ist)
+function TaskCard({ task, onMove, onDelete, onEdit, members }) {
   const index = ORDER.indexOf(task.status)
   const statusTitle = STATUSES[index]?.title
   const overdue = dueInfo(task.due_date, task.status)?.tone === 'overdue'
@@ -17,6 +19,7 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
   const [title, setTitel] = useState(task.title)
   const [description, setDescription] = useState(task.description ?? '')
   const [dueDate, setDueDate] = useState(task.due_date ?? '')
+  const [assignee, setAssignee] = useState(task.assignee_id ?? '')
 
   function handleSave() {
     const newTitle = title.trim()
@@ -26,6 +29,7 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
       title: newTitle,
       description: description.trim() || null,
       due_date: dueDate || null,
+      ...(members && { assignee_id: assignee ? Number(assignee) : null }),
     })
     setIsEditing(false)
   }
@@ -34,6 +38,7 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
     setTitel(task.title)
     setDescription(task.description ?? '')
     setDueDate(task.due_date ?? '')
+    setAssignee(task.assignee_id ?? '')
     setIsEditing(false)
   }
 
@@ -71,6 +76,17 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
             </button>
           )}
         </label>
+        {members && (
+          <label className="edit-date">
+            Zuständig
+            <select value={assignee} onChange={(e) => setAssignee(e.target.value)}>
+              <option value="">Niemand</option>
+              {members.map((m) => (
+                <option key={m.user_id} value={m.user_id}>{m.username}</option>
+              ))}
+            </select>
+          </label>
+        )}
         <div className="edit-actions">
           <button className="btn-ghost" onClick={handleCancel}>
             Abbrechen
@@ -88,6 +104,7 @@ function TaskCard({ task, onMove, onDelete, onEdit }) {
       <div className="card-title">{task.title}</div>
       {task.description && <p>{task.description}</p>}
       <DueBadge task={task} />
+      <AssigneeChip task={task} members={members} />
 
       <div className="card-footer">
         <span className="status-label">

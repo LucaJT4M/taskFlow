@@ -19,7 +19,7 @@ KINDS = ["eiche", "kirsche", "tanne", "birke"]  # Reihenfolge der Pflanzenarten 
 
 
 class GardenService:
-    def reward_task(self, db: Session, task: Task) -> bool:
+    def reward_task(self, db: Session, task: Task, owner_id: int | None = None) -> bool:
         """Lässt den Garten des Besitzers wachsen – pro Aufgabe nur einmal.
 h
         Kein commit hier: Der Aufrufer speichert zusammen mit der Aufgabe.
@@ -27,7 +27,8 @@ h
         already = db.query(Reward).filter(Reward.task_id == task.id).first()
         if already:
             return False
-        db.add(Reward(owner_id=task.owner_id, task_id=task.id))
+        # owner_id: bei Team-Aufgaben wächst der Garten von dem, der sie erledigt hat
+        db.add(Reward(owner_id=owner_id or task.owner_id, task_id=task.id))
         return True
 
     def get_garden(self, db: Session, user: User) -> dict:

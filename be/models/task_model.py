@@ -10,3 +10,5 @@ class Task(Base):
     status = Column(String(20), nullable=False, default="todo")
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     due_date = Column(Date, nullable=True)  # Fälligkeitsdatum (optional)
+    team_id = Column(Integer, ForeignKey("teams.id"), nullable=True, index=True)  # leer = persönliche Aufgabe
+    assignee_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # wer im Team zuständig ist

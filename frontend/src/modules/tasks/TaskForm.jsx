@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { todayISO } from './dueDate'
 
-function TaskForm({ onCreate }) {
+// members: nur im Team – dann kann man direkt jemanden zuständig machen
+function TaskForm({ onCreate, members }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [dueDate, setDueDate] = useState('')
+  const [assignee, setAssignee] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -14,10 +16,12 @@ function TaskForm({ onCreate }) {
       title: title.trim(),
       description: description.trim() || null,
       due_date: dueDate || null,
+      ...(members && { assignee_id: assignee ? Number(assignee) : null }),
     })
     setTitle('')
     setDescription('')
     setDueDate('')
+    setAssignee('')
   }
 
   return (
@@ -41,6 +45,20 @@ function TaskForm({ onCreate }) {
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
       />
+      {members && (
+        <select
+          className={`assignee-select ${assignee ? 'filled' : ''}`}
+          aria-label="Zuständig"
+          title="Wer ist zuständig?"
+          value={assignee}
+          onChange={(e) => setAssignee(e.target.value)}
+        >
+          <option value="">Niemand</option>
+          {members.map((m) => (
+            <option key={m.user_id} value={m.user_id}>{m.username}</option>
+          ))}
+        </select>
+      )}
       <button type="submit">
         <Plus size={16} strokeWidth={2} />
         Hinzufügen
