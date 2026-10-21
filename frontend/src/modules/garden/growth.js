@@ -2,7 +2,7 @@ import { t, stageName } from '../../i18n'
 
 function nextStepText(plant) {
   if (!plant.next_stage_name) return t('garden.grown')
-  return t('garden.until', { n: plant.points_to_next, stage: stageName(plant.next_stage_name) })
+  return t('garden.until', { n: (plant.points_to_next ?? plant.tasks_to_next), stage: stageName(plant.next_stage_name) })
 }
 
 /**

@@ -54,7 +54,7 @@ function tooltipText(plant, garden) {
     title: `${KIND_NAMES[plant.kind]} · ${stageName(plant.stage_name)}`,
     text: isCurrent
       ? plant.next_stage_name
-        ? t('garden.tipGrowing', { n: plant.points_to_next, stage: stageName(plant.next_stage_name) })
+        ? t('garden.tipGrowing', { n: (plant.points_to_next ?? plant.tasks_to_next), stage: stageName(plant.next_stage_name) })
         : t('garden.growing')
       : t('garden.tipGrown', { n: garden.plant_size }),
   }
