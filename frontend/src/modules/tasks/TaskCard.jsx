@@ -4,6 +4,9 @@ import { STATUSES } from './taskStatus'
 import { burstLeaves } from '../../components/decor/leafBurst'
 import DueBadge from './DueBadge'
 import TaskMenu from './TaskMenu'
+import PriorityBadge from './PriorityBadge'
+import PriorityPicker from './PriorityPicker'
+import { usePrioritySuggestion } from './priority'
 import { dueInfo } from './dueDate'
 import AssigneeChip from '../teams/AssigneeChip'
 import { t } from '../../i18n'
@@ -29,6 +32,8 @@ function TaskCard({ task, onMove, onDelete, onEdit, members, onDragStart, onDrag
   const [description, setDescription] = useState(task.description ?? '')
   const [dueDate, setDueDate] = useState(task.due_date ?? '')
   const [assignee, setAssignee] = useState(task.assignee_id ?? '')
+  const [priority, setPriority] = useState('auto')
+  const suggestion = usePrioritySuggestion({ title, description, due_date: dueDate }, isEditing && priority === 'auto')
 
   // Beim Öffnen immer die aktuellen Werte der Aufgabe übernehmen
   function startEditing() {
@@ -36,6 +41,7 @@ function TaskCard({ task, onMove, onDelete, onEdit, members, onDragStart, onDrag
     setDescription(task.description ?? '')
     setDueDate(task.due_date ?? '')
     setAssignee(task.assignee_id ?? '')
+    setPriority(task.priority_auto === false ? task.priority : 'auto')
     setIsEditing(true)
   }
 
@@ -48,8 +54,19 @@ function TaskCard({ task, onMove, onDelete, onEdit, members, onDragStart, onDrag
       description: description.trim() || null,
       due_date: dueDate || null,
       ...(members && { assignee_id: assignee ? Number(assignee) : null }),
+      ...priorityChange(priority),
     })
     setIsEditing(false)
+  }
+
+  // Nur schicken, was sich an der Wichtigkeit wirklich geändert hat
+  function priorityChange(value) {
+    if (value === 'auto') return task.priority_auto === false ? { priority_auto: true } : {}
+    return task.priority_auto !== false || task.priority !== value ? { priority: value } : {}
+  }
+
+  function setPriorityDirect(value) {
+    onEdit(task, priorityChange(value))
   }
 
   function handleCancel() {
@@ -94,6 +111,10 @@ function TaskCard({ task, onMove, onDelete, onEdit, members, onDragStart, onDrag
               {t('card.removeDate')}
             </button>
           )}
+        </label>
+        <label className="edit-date">
+          {t('prio.label')}
+          <PriorityPicker value={priority} onChange={setPriority} suggestion={suggestion} fallback={task.priority} compact />
         </label>
         {members && (
           <label className="edit-date">
@@ -144,13 +165,14 @@ function TaskCard({ task, onMove, onDelete, onEdit, members, onDragStart, onDrag
           <Check size={12} strokeWidth={3} />
         </button>
         <div className="card-title">{task.title}</div>
-        <TaskMenu task={task} onEdit={startEditing} onMove={moveTo} onDelete={() => onDelete(task)} />
+        <TaskMenu task={task} onEdit={startEditing} onMove={moveTo} onDelete={() => onDelete(task)} onPriority={setPriorityDirect} />
       </div>
 
       {task.description && <p className="card-desc">{task.description}</p>}
 
-      {(task.due_date || members) && (
+      {!isDone && (
         <div className="card-meta">
+          <PriorityBadge task={task} />
           <DueBadge task={task} />
           <AssigneeChip task={task} members={members} />
         </div>

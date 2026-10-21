@@ -18,6 +18,7 @@ class Reward(Base):
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     task_id = Column(Integer, nullable=False, unique=True)
+    points = Column(Integer, nullable=False, default=2)  # Wachstum: Wichtigkeit der Aufgabe (1–3)
     created_at = Column(
         DateTime(timezone=True),
         nullable=False,

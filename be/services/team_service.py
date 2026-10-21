@@ -8,6 +8,7 @@ from be.models.team_model import Team, TeamMember
 from be.models.user_model import User
 from be.schemas.team_schema import TeamTaskCreate, TeamTaskUpdate
 from be.services.garden_service import GardenService
+from be.services import priority_service
 
 garden_service = GardenService()
 
@@ -220,12 +221,15 @@ class TeamService:
 
     def get_team_tasks(self, db: Session, team_id: int, user: User) -> list[Task]:
         self._membership(db, team_id, user)
-        return db.query(Task).filter(Task.team_id == team_id).order_by(Task.id).all()
+        tasks = db.query(Task).filter(Task.team_id == team_id).order_by(Task.id).all()
+        if priority_service.refresh(tasks):
+            db.commit()
+        return tasks
 
     def create_team_task(self, db: Session, team_id: int, data: TeamTaskCreate, user: User) -> Task:
         self._membership(db, team_id, user)
         self._check_assignee(db, team_id, data.assignee_id)
-        task = Task(**data.model_dump(), owner_id=user.id, team_id=team_id)
+        task = Task(**priority_service.prepare_new(data.model_dump()), owner_id=user.id, team_id=team_id)
         db.add(task)
         db.flush()
         if task.status == "done":
@@ -242,8 +246,7 @@ class TeamService:
         if "assignee_id" in changes:
             self._check_assignee(db, team_id, changes["assignee_id"])
         was_done = task.status == "done"
-        for key, value in changes.items():
-            setattr(task, key, value)
+        priority_service.apply_update(task, changes)
         if not was_done and task.status == "done":
             # der Garten von dem, der sie erledigt hat, wächst
             garden_service.reward_task(db, task, owner_id=user.id)

@@ -65,5 +65,7 @@ class TeamTaskResponse(TeamTaskCreate):
     id: int
     owner_id: int
     team_id: int
+    priority: int = 2
+    priority_auto: bool = True
 
     model_config = ConfigDict(from_attributes=True)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, Integer, String, Text, ForeignKey
+from sqlalchemy import Boolean, Column, Date, Integer, String, Text, ForeignKey
 from be.core.db import Base
 
 class Task(Base):
@@ -12,3 +12,5 @@ class Task(Base):
     due_date = Column(Date, nullable=True)  # Fälligkeitsdatum (optional)
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=True, index=True)  # leer = persönliche Aufgabe
     assignee_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # wer im Team zuständig ist
+    priority = Column(Integer, nullable=False, default=2)  # Wichtigkeit: 1 niedrig, 2 mittel, 3 hoch
+    priority_auto = Column(Boolean, nullable=False, default=True)  # True = automatisch bestimmt

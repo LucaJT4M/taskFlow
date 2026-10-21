@@ -20,11 +20,11 @@ def test_reward_task_adds_reward_once():
 
 
 def test_plant_reports_current_and_next_stage():
-    plant = GardenService()._plant(index=0, growth=3)
+    plant = GardenService()._plant(index=0, growth=7)
 
     assert plant["stage"] == "bush"
     assert plant["next_stage_name"] == "Baum"
-    assert plant["tasks_to_next"] == 3
+    assert plant["points_to_next"] == 5
 
 
 def test_garden_counts_completed_tasks_and_plants():
@@ -33,14 +33,15 @@ def test_garden_counts_completed_tasks_and_plants():
     user = User(id=2, username="alice", hashed_password="hash")
     dates = [datetime.now(timezone.utc)] * 3
     db.query.return_value.filter.return_value.all.return_value = [
-        MagicMock(created_at=date) for date in dates
+        MagicMock(created_at=date, points=p) for date, p in zip(dates, [1, 2, 3])
     ]
 
     result = service.get_garden(db, user)
 
     assert result["total_completed"] == 3
+    assert result["total_points"] == 6  # niedrig + mittel + hoch
     assert result["grown_plants"] == 0
-    assert result["current"]["growth"] == 3
+    assert result["current"]["growth"] == 6
 
 
 def test_streak_counts_consecutive_days():

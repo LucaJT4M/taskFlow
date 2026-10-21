@@ -6,15 +6,17 @@ from be.models.reward_model import Reward
 from be.models.task_model import Task
 from be.models.user_model import User
 
-# Ab wie vielen erledigten Aufgaben eine Pflanze welche Stufe erreicht
+# Wachstumspunkte pro erledigter Aufgabe = ihre Wichtigkeit:
+# niedrig +1, mittel +2, hoch +3  (wichtige Aufgaben lassen den Garten schneller wachsen)
+# Ab wie vielen Punkten eine Pflanze welche Stufe erreicht:
 STAGES = [
-    {"key": "seed", "name": "Samen", "min_tasks": 0},
-    {"key": "sprout", "name": "Spross", "min_tasks": 1},
-    {"key": "bush", "name": "Busch", "min_tasks": 3},
-    {"key": "tree", "name": "Baum", "min_tasks": 6},
-    {"key": "bloom", "name": "Blüte", "min_tasks": 10},
+    {"key": "seed", "name": "Samen", "min_points": 0},
+    {"key": "sprout", "name": "Spross", "min_points": 2},
+    {"key": "bush", "name": "Busch", "min_points": 6},
+    {"key": "tree", "name": "Baum", "min_points": 12},
+    {"key": "bloom", "name": "Blüte", "min_points": 20},
 ]
-PLANT_SIZE = STAGES[-1]["min_tasks"]  # nach 10 Aufgaben ist eine Pflanze ausgewachsen
+PLANT_SIZE = STAGES[-1]["min_points"]  # 20 Punkte = ca. 10 mittlere Aufgaben pro Pflanze
 KINDS = ["eiche", "kirsche", "tanne", "birke"]  # Reihenfolge der Pflanzenarten im Garten
 
 
@@ -28,19 +30,21 @@ h
         if already:
             return False
         # owner_id: bei Team-Aufgaben wächst der Garten von dem, der sie erledigt hat
-        db.add(Reward(owner_id=owner_id or task.owner_id, task_id=task.id))
+        db.add(Reward(owner_id=owner_id or task.owner_id, task_id=task.id, points=task.priority or 2))
         return True
 
     def get_garden(self, db: Session, user: User) -> dict:
-        dates = [r.created_at for r in db.query(Reward.created_at).filter(Reward.owner_id == user.id).all()]
-        total = len(dates)
-        grown = total // PLANT_SIZE
+        rows = db.query(Reward.created_at, Reward.points).filter(Reward.owner_id == user.id).all()
+        dates = [r.created_at for r in rows]
+        points = sum(r.points or 2 for r in rows)
+        grown = points // PLANT_SIZE
 
         plants = [self._plant(i, PLANT_SIZE) for i in range(grown)]
-        plants.append(self._plant(grown, total % PLANT_SIZE))  # die Pflanze, die gerade wächst
+        plants.append(self._plant(grown, points % PLANT_SIZE))  # die Pflanze, die gerade wächst
 
         return {
-            "total_completed": total,
+            "total_completed": len(rows),
+            "total_points": points,
             "grown_plants": grown,
             "streak_days": self._streak(dates),
             "plant_size": PLANT_SIZE,
@@ -50,8 +54,8 @@ h
         }
 
     def _plant(self, index: int, growth: int) -> dict:
-        stage = max((s for s in STAGES if growth >= s["min_tasks"]), key=lambda s: s["min_tasks"])
-        nxt = next((s for s in STAGES if s["min_tasks"] > growth), None)
+        stage = max((s for s in STAGES if growth >= s["min_points"]), key=lambda s: s["min_points"])
+        nxt = next((s for s in STAGES if s["min_points"] > growth), None)
         return {
             "index": index,
             "kind": KINDS[index % len(KINDS)],
@@ -59,7 +63,7 @@ h
             "stage": stage["key"],
             "stage_name": stage["name"],
             "next_stage_name": nxt["name"] if nxt else None,
-            "tasks_to_next": nxt["min_tasks"] - growth if nxt else 0,
+            "points_to_next": nxt["min_points"] - growth if nxt else 0,
         }
 
     def _streak(self, dates: list[datetime]) -> int:

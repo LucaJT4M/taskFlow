@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import TaskCard from './TaskCard'
 import { STATUSES } from './taskStatus'
+import { sortByPriority } from './priority'
 import Sprout from '../../components/decor/Sprout'
 import { burstLeaves } from '../../components/decor/leafBurst'
 import { t } from '../../i18n'
@@ -41,7 +42,9 @@ function KanbanBoard({ tasks, onUpdate, onDelete, onCreate, members }) {
   return (
     <div className={`board ${dragged ? 'is-dragging' : ''}`}>
       {STATUSES.map((col) => {
-        const columnTasks = tasks.filter((task) => task.status === col.status)
+        // wichtige Aufgaben oben, erledigte in der Reihenfolge, wie sie kamen
+        const inColumn = tasks.filter((task) => task.status === col.status)
+        const columnTasks = col.status === 'done' ? inColumn : sortByPriority(inColumn)
         const isTarget = dragged && over === col.status && dragged.status !== col.status
         return (
           <section

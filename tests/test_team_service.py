@@ -137,3 +137,14 @@ def test_last_member_leaving_deletes_team(db):
     assert db.get(Team, team_id) is None
     assert db.query(Task).count() == 0
     assert db.query(TeamMember).count() == 0
+
+
+def test_reward_points_follow_priority(db, team):
+    team_id, anna, ben = team
+    low = service.create_team_task(db, team_id, TeamTaskCreate(title="Irgendwann aufräumen"), anna)
+    high = service.create_team_task(db, team_id, TeamTaskCreate(title="Abgabe Bericht", priority=3), anna)
+    for task in (low, high):
+        service.update_team_task(db, team_id, task.id, TeamTaskUpdate(status="done"), ben)
+
+    points = {r.task_id: r.points for r in db.query(Reward).all()}
+    assert points == {low.id: 1, high.id: 3}

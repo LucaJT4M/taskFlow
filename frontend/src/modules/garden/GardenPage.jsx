@@ -47,6 +47,7 @@ function GardenPage() {
               <p className="eyebrow">{t('garden.eyebrow')}</p>
               <h1>{t('garden.title')}</h1>
               <p className="subtitle">{t('garden.subtitle')}</p>
+              <p className="garden-rule">{t('garden.rule')}</p>
             </div>
             <button type="button" className="enter-world" onClick={() => setClouds('cover')}>
               <Sparkles size={16} strokeWidth={2} />

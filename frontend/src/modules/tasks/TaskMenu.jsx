@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { STATUSES } from './taskStatus'
+import PriorityBars from './PriorityBars'
+import { LEVELS, levelName } from './priority'
 import { t } from '../../i18n'
 
 /** Das "⋯"-Menü einer Karte: bearbeiten, verschieben, löschen (funktioniert auch auf dem Handy) */
-function TaskMenu({ task, onEdit, onMove, onDelete }) {
+function TaskMenu({ task, onEdit, onMove, onDelete, onPriority }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -49,6 +51,29 @@ function TaskMenu({ task, onEdit, onMove, onDelete }) {
               <ArrowRight size={13} strokeWidth={1.75} className="menu-arrow" />
             </button>
           ))}
+          {onPriority && task.status !== 'done' && (
+            <>
+              <p className="task-menu-label">{t('prio.label')}</p>
+              <div className="task-menu-prio">
+                {LEVELS.slice().reverse().map((level) => (
+                  <button
+                    key={level}
+                    type="button"
+                    title={levelName(level)}
+                    className={task.priority === level ? 'active' : ''}
+                    onClick={pick(() => onPriority(level))}
+                  >
+                    <PriorityBars level={level} size={13} /> {levelName(level)}
+                  </button>
+                ))}
+              </div>
+              {task.priority_auto === false && (
+                <button type="button" role="menuitem" onClick={pick(() => onPriority('auto'))}>
+                  ✨ {t('prio.backToAuto')}
+                </button>
+              )}
+            </>
+          )}
           <div className="task-menu-sep" />
           <button type="button" role="menuitem" className="danger" onClick={pick(() => onDelete())}>
             <Trash2 size={14} strokeWidth={1.75} /> {t('common.delete')}

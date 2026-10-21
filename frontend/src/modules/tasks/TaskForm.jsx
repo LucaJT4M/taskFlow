@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { todayISO } from './dueDate'
+import PriorityPicker from './PriorityPicker'
+import { usePrioritySuggestion } from './priority'
 import { t } from '../../i18n'
 
 // members: nur im Team – dann kann man direkt jemanden zuständig machen
@@ -9,6 +11,8 @@ function TaskForm({ onCreate, members }) {
   const [description, setDescription] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [assignee, setAssignee] = useState('')
+  const [priority, setPriority] = useState('auto') // 'auto' oder 1/2/3
+  const suggestion = usePrioritySuggestion({ title, description, due_date: dueDate }, priority === 'auto')
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -17,12 +21,14 @@ function TaskForm({ onCreate, members }) {
       title: title.trim(),
       description: description.trim() || null,
       due_date: dueDate || null,
+      priority: priority === 'auto' ? null : priority, // null = Backend bestimmt automatisch
       ...(members && { assignee_id: assignee ? Number(assignee) : null }),
     })
     setTitle('')
     setDescription('')
     setDueDate('')
     setAssignee('')
+    setPriority('auto')
   }
 
   return (
@@ -46,6 +52,7 @@ function TaskForm({ onCreate, members }) {
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
       />
+      <PriorityPicker value={priority} onChange={setPriority} suggestion={suggestion} />
       {members && (
         <select
           className={`assignee-select ${assignee ? 'filled' : ''}`}

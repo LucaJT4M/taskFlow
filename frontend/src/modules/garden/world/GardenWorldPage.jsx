@@ -402,7 +402,7 @@ function GardenWorldPage() {
           )}
           {current && current.next_stage_name && (
             <p className="world-next">
-              {t('world.next', { kind: KIND_NAMES[current.kind], n: current.tasks_to_next, stage: stageName(current.next_stage_name) })}
+              {t('world.next', { kind: KIND_NAMES[current.kind], n: current.points_to_next, stage: stageName(current.next_stage_name) })}
             </p>
           )}
         </div>

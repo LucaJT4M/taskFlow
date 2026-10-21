@@ -4,6 +4,8 @@ import Sprout from '../../components/decor/Sprout'
 import { burstLeaves } from '../../components/decor/leafBurst'
 import DueBadge from './DueBadge'
 import AssigneeChip from '../teams/AssigneeChip'
+import PriorityBadge from './PriorityBadge'
+import { sortByPriority } from './priority'
 import { t } from '../../i18n'
 
 function TaskList({ tasks, onUpdate, onDelete, members }) {
@@ -18,7 +20,7 @@ function TaskList({ tasks, onUpdate, onDelete, members }) {
 
   return (
     <div className="task-list">
-      {tasks.map((task) => {
+      {sortByPriority(tasks.filter((x) => x.status !== 'done')).concat(tasks.filter((x) => x.status === 'done')).map((task) => {
         const isDone = task.status === 'done'
         return (
           <div key={task.id} className={`task-row ${task.status}`}>
@@ -38,6 +40,7 @@ function TaskList({ tasks, onUpdate, onDelete, members }) {
               {task.description && <div className="task-desc">{task.description}</div>}
             </div>
 
+            {!isDone && <PriorityBadge task={task} />}
             <DueBadge task={task} />
             <AssigneeChip task={task} members={members} />
 

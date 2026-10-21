@@ -426,3 +426,17 @@ a.nav-item { text-decoration: none; color: inherit; }
 .enter-world svg { animation: enter-sparkle 2.4s ease-in-out infinite; }
 @keyframes enter-sparkle { 0%, 100% { rotate: 0deg; scale: 1; } 50% { rotate: 15deg; scale: 1.15; } }
 @media (prefers-reduced-motion: reduce) { .enter-world svg { animation: none; } }
+
+/* Wichtigkeit -> Wachstum */
+.garden-rule { margin: 8px 0 0; font-size: 13px; color: var(--text-faint); }
+.growth-points {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+}

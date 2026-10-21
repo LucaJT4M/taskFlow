@@ -2,7 +2,7 @@ import { t, stageName } from '../../i18n'
 
 function nextStepText(plant) {
   if (!plant.next_stage_name) return t('garden.grown')
-  return t('garden.until', { n: plant.tasks_to_next, stage: stageName(plant.next_stage_name) })
+  return t('garden.until', { n: plant.points_to_next, stage: stageName(plant.next_stage_name) })
 }
 
 /**
@@ -14,13 +14,15 @@ export function describeGrowth(before, after) {
   if (before && after.total_completed <= before.total_completed) return null
 
   const plant = after.current
+  // so viele Wachstumspunkte hat die Aufgabe gebracht (= ihre Wichtigkeit)
+  const points = before ? after.total_points - before.total_points : null
 
   if (before && after.grown_plants > before.grown_plants) {
     const grown = after.plants[after.plants.length - 2] ?? plant
-    return { title: t('growth.grownTitle'), text: t('growth.newSeed'), plant: grown }
+    return { title: t('growth.grownTitle'), text: t('growth.newSeed'), plant: grown, points }
   }
   if (!before || plant.stage !== before.current.stage) {
-    return { title: t('growth.newStage', { stage: stageName(plant.stage_name) }), text: nextStepText(plant), plant }
+    return { title: t('growth.newStage', { stage: stageName(plant.stage_name) }), text: nextStepText(plant), plant, points }
   }
-  return { title: t('growth.growing'), text: nextStepText(plant), plant }
+  return { title: t('growth.growing'), text: nextStepText(plant), plant, points }
 }

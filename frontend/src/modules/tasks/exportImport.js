@@ -3,7 +3,9 @@
 
 import { t } from '../../i18n'
 
-const FIELDS = ['title', 'description', 'status', 'due_date']
+const FIELDS = ['title', 'description', 'status', 'due_date', 'priority']
+// Wichtigkeit beim Import: Zahl 1–3 oder Name; leer = automatisch
+const PRIORITY_ALIASES = { 1: 1, 2: 2, 3: 3, niedrig: 1, low: 1, mittel: 2, medium: 2, hoch: 3, high: 3 }
 const STATUSES = ['todo', 'in_progress', 'done']
 // auch deutsche Statusnamen beim Import verstehen (z. B. aus Excel)
 const STATUS_ALIASES = {
@@ -32,7 +34,9 @@ function download(content, filename, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-const pick = (task) => Object.fromEntries(FIELDS.map((f) => [f, task[f] ?? null]))
+// Wichtigkeit nur mitnehmen, wenn sie von Hand gewählt wurde (sonst wird sie neu berechnet)
+const forExport = (task) => ({ ...task, priority: task.priority_auto === false ? task.priority : null })
+const pick = (task) => Object.fromEntries(FIELDS.map((f) => [f, forExport(task)[f] ?? null]))
 
 export function exportJSON(tasks) {
   const data = {
@@ -52,7 +56,7 @@ function csvCell(value) {
 }
 
 export function exportCSV(tasks) {
-  const rows = [FIELDS.join(SEP), ...tasks.map((task) => FIELDS.map((f) => csvCell(task[f])).join(SEP))]
+  const rows = [FIELDS.join(SEP), ...tasks.map(forExport).map((task) => FIELDS.map((f) => csvCell(task[f])).join(SEP))]
   // ﻿ (BOM) = Excel erkennt Umlaute (ä, ö, ü) korrekt
   download('﻿' + rows.join('\r\n'), `${t('io.filePrefix')}-${stamp()}.csv`, 'text/csv;charset=utf-8')
 }
@@ -112,7 +116,8 @@ function normalizeTask(raw) {
   if (due === undefined) return { error: t('io.err.date', { value: raw.due_date }) }
 
   const description = String(raw.description ?? raw.beschreibung ?? '').trim() || null
-  return { task: { title, description, status, due_date: due } }
+  const priority = PRIORITY_ALIASES[String(raw.priority ?? raw['wichtigkeit'] ?? '').trim().toLowerCase()] ?? null
+  return { task: { title, description, status, due_date: due, priority } }
 }
 
 const sameTask = (a, b) =>

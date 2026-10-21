@@ -4,11 +4,12 @@ from sqlalchemy.orm import Session
 from be.core.db import get_db
 from be.core.roles import UserRole
 from be.models.user_model import User
-from be.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse, TaskAdminCreate
+from be.schemas.task_schema import TaskCreate, TaskUpdate, TaskResponse, TaskAdminCreate, PrioritySuggestRequest, PrioritySuggestion
 from be.security.jwt_auth import get_current_user
 from be.services.task_service import TaskService, TaskNotFoundError
 from be.services.user_service import UserService
 from be.services.history_service import HistoryService, HistoryCreate
+from be.services import priority_service
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 task_service = TaskService()
@@ -22,6 +23,11 @@ def get_tasks(db: Session = Depends(get_db), user: User = Depends(get_current_us
 @router.post("", response_model=TaskResponse, status_code=201)
 def create_task(data: TaskCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     return task_service.create_task(db, data, user)
+
+@router.post("/priority/suggest", response_model=PrioritySuggestion)
+def suggest_priority(data: PrioritySuggestRequest, user: User = Depends(get_current_user)):
+    """Vorschlag für die Wichtigkeit, während man eine Aufgabe eintippt (speichert nichts)"""
+    return priority_service.suggest(data.title, data.description, data.due_date)
 
 @router.post("/create_as_admin", response_model=TaskResponse)
 def create_task_as_admin(data: TaskAdminCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):

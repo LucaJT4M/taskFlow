@@ -4,6 +4,7 @@ from be.models.task_model import Task
 from be.models.user_model import User
 from be.schemas.task_schema import TaskCreate, TaskUpdate
 from be.services.garden_service import GardenService
+from be.services import priority_service
 
 ADMIN_USERNAME = "admin"
 garden_service = GardenService()
@@ -20,7 +21,10 @@ class TaskService:
         return query
 
     def get_tasks(self, db: Session, user: User) -> list[Task]:
-        return self._query_for(db, user).order_by(Task.id).all()
+        tasks = self._query_for(db, user).order_by(Task.id).all()
+        if priority_service.refresh(tasks):  # z. B. Frist ist näher gerückt
+            db.commit()
+        return tasks
 
     def get_task(self, db: Session, task_id: int, user: User) -> Task:
         task = self._query_for(db, user).filter(Task.id == task_id).first()
@@ -29,7 +33,8 @@ class TaskService:
         return task
 
     def create_task(self, db: Session, data: TaskCreate, user: User) -> Task:
-        task = Task(**data.model_dump(), owner_id=user.id)
+        # Wichtigkeit: gewählt oder automatisch (Schlüsselwörter + Fälligkeit)
+        task = Task(**priority_service.prepare_new(data.model_dump()), owner_id=user.id)
         db.add(task)
         db.flush()  # schreibt die Aufgabe in die DB (ohne commit), damit task.id existiert
         if task.status == "done":
@@ -41,8 +46,7 @@ class TaskService:
     def update_task(self, db: Session, task_id: int, data: TaskUpdate, user: User) -> Task:
         task = self.get_task(db, task_id, user)
         was_done = task.status == "done"
-        for key, value in data.model_dump(exclude_unset=True).items():
-            setattr(task, key, value)
+        priority_service.apply_update(task, data.model_dump(exclude_unset=True))
         # Aufgabe wurde gerade erledigt -> der Garten des Besitzers wächst
         if not was_done and task.status == "done":
             garden_service.reward_task(db, task)

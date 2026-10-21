@@ -21,7 +21,10 @@ function GrowthToast({ info, onClose, onOpenGarden }) {
         <Plant kind={info.plant.kind} stage={info.plant.stage} seed={info.plant.index} />
       </svg>
       <div className="growth-toast-text">
-        <strong>{info.title}</strong>
+        <strong>
+          {info.title}
+          {info.points > 0 && <span className="growth-points">{t('growth.pointsBadge', { n: info.points })}</span>}
+        </strong>
         <p>{info.text}</p>
         <button type="button" className="link-btn" onClick={onOpenGarden}>
           {t('growth.toGarden')}
