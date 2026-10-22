@@ -1,5 +1,5 @@
 import secrets
-
+import logging
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,8 @@ from be.models.user_model import User
 from be.schemas.team_schema import TeamTaskCreate, TeamTaskUpdate
 from be.services.garden_service import GardenService
 from be.services import priority_service
+
+logger = logging.getLogger(__name__)
 
 garden_service = GardenService()
 

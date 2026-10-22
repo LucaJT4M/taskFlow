@@ -8,6 +8,10 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 from be.core.db import get_db
 from be.models.task_model import Task
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 router = APIRouter(prefix="/health", tags=["Health"])
 garden_service = GardenService()

@@ -7,8 +7,11 @@ Version 1 arbeitet mit Schlüsselwörtern und dem Fälligkeitsdatum.
 Später kann suggest() durch eine KI ersetzt werden – der Rest der App
 (Endpunkte, Belohnungen, Frontend) bleibt dabei gleich.
 """
+import logging
 import re
 from datetime import date
+
+logger = logging.getLogger(__name__)
 
 LOW, MEDIUM, HIGH = 1, 2, 3
 

@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy.orm import Session
 
 from be.models.task_model import Task
@@ -6,11 +8,15 @@ from be.schemas.task_schema import TaskCreate, TaskUpdate
 from be.services.garden_service import GardenService
 from be.services import priority_service
 
+logger = logging.getLogger(__name__)
+
 ADMIN_USERNAME = "admin"
 garden_service = GardenService()
 
+
 class TaskNotFoundError(Exception):
     """Wird geworfen, wenn die Aufgabe nicht existiert oder dem Benutzer nicht gehört."""
+
 
 class TaskService:
     def _query_for(self, db: Session, user: User):
@@ -29,6 +35,7 @@ class TaskService:
     def get_task(self, db: Session, task_id: int, user: User) -> Task:
         task = self._query_for(db, user).filter(Task.id == task_id).first()
         if not task:
+            logger.warning("Aufgabe %s nicht gefunden (Benutzer %s)", task_id, user.username)
             raise TaskNotFoundError(f"Task {task_id} not found")
         return task
 
@@ -41,6 +48,10 @@ class TaskService:
             garden_service.reward_task(db, task)
         db.commit()  # ein einziger commit für Aufgabe + Belohnung
         db.refresh(task)
+        logger.info(
+            "Aufgabe %s erstellt von %s (Wichtigkeit %s, %s)",
+            task.id, user.username, task.priority, "automatisch" if task.priority_auto else "manuell",
+        )
         return task
 
     def update_task(self, db: Session, task_id: int, data: TaskUpdate, user: User) -> Task:
@@ -50,6 +61,7 @@ class TaskService:
         # Aufgabe wurde gerade erledigt -> der Garten des Besitzers wächst
         if not was_done and task.status == "done":
             garden_service.reward_task(db, task)
+            logger.info("Aufgabe %s erledigt von %s (+%s Punkte)", task.id, user.username, task.priority)
         db.commit()
         db.refresh(task)
         return task
@@ -58,3 +70,4 @@ class TaskService:
         task = self.get_task(db, task_id, user)
         db.delete(task)
         db.commit()
+        logger.info("Aufgabe %s gelöscht von %s", task_id, user.username)

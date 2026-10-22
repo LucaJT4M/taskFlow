@@ -8,6 +8,10 @@ from be.services.user_service import UserService
 from be.schemas.user_schema import UserResponse, UserCreate, UserUpdate
 from be.core.roles import UserRole
 from be.security.jwt_auth import get_current_user
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 router = APIRouter(prefix="/user", tags=["Users"])
 service = UserService()

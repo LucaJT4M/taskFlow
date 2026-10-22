@@ -11,6 +11,10 @@ from be.schemas.team_schema import (
 from be.security.jwt_auth import get_current_user
 from be.services.history_service import HistoryService
 from be.services.team_service import TeamError, TeamService
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 router = APIRouter(prefix="/teams", tags=["Teams"])
 service = TeamService()

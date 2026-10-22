@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
@@ -5,6 +6,8 @@ from sqlalchemy.orm import Session
 from be.models.reward_model import Reward
 from be.models.task_model import Task
 from be.models.user_model import User
+
+logger = logging.getLogger(__name__)
 
 # Wachstumspunkte pro erledigter Aufgabe = ihre Wichtigkeit:
 # niedrig +1, mittel +2, hoch +3  (wichtige Aufgaben lassen den Garten schneller wachsen)

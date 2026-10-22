@@ -10,6 +10,10 @@ from be.services.task_service import TaskService, TaskNotFoundError
 from be.services.user_service import UserService
 from be.services.history_service import HistoryService, HistoryCreate
 from be.services import priority_service
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 task_service = TaskService()

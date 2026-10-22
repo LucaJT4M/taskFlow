@@ -1,7 +1,10 @@
+import logging
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from be.models.history_model import History_Task
 from be.schemas.history_schema import HistoryCreate
+
+logger = logging.getLogger(__name__)
 
 class HistoryService:
     def get_history_of_user(self, db: Session, user_id: int):

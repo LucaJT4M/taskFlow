@@ -8,6 +8,10 @@ from be.services.user_service import UserService
 from be.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from be.core.db import get_db
 from be.security.jwt_auth import get_current_user, create_access_token
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 user_service = UserService()
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -16,14 +20,15 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user_service.check_for_admin(db)
     user = user_service.authenticate_user(db, form_data.username, form_data.password)
-
     if not user:
+        logger.warning("Login fehlgeschlagen für Benutzer %s", form_data.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"}
         )
     
+    logger.info("Login erfolgreich: %s", user.username)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
 

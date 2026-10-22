@@ -6,6 +6,9 @@ from be.models.user_model import User
 from be.schemas.garden_schema import GardenResponse
 from be.security.jwt_auth import get_current_user
 from be.services.garden_service import GardenService
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/garden", tags=["Garden"])
 garden_service = GardenService()

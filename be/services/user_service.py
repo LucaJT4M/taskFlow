@@ -9,6 +9,9 @@ from be.services.team_service import TeamService
 from be.models.history_model import History_Task
 from be.core.roles import UserRole
 from sqlalchemy.orm import Session
+import logging
+
+logger = logging.getLogger(__name__)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
